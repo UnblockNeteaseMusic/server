@@ -6,8 +6,6 @@ module.exports = (list, info) => {
 		const authorname = song.artists.name
 		info.artists.forEach(artists => 
 		{
-		console.log(artists.name)
-		console.log(authorname)
 		if(!authorname.includes(artists.name))
 		    judge = true
 		});
