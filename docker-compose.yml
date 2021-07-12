@@ -5,8 +5,8 @@ services:
     build: .
     environment:
       NODE_ENV: production
-      SOURCE: ${SOURCE-bilibili kugou kuwo}
+      SOURCE: ${SOURCE:-bilibili kugou kuwo}
 
     ports:
-      - ${HTTP_PROXY_PORT-8080}:8080
-      - ${HTTPS_PROXY_PORT-8081}:8081
+      - ${HTTP_PROXY_PORT:-8080}:8080
+      - ${HTTPS_PROXY_PORT:-8081}:8081
