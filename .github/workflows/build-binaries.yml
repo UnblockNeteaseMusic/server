@@ -25,9 +25,11 @@ jobs:
         platforms: all
 
     - name: Building to executable file
-      run: npx pkg .
+      run: npx pkg --compress Brotli .
     
     - name: Publishing to GitHub Releases
       uses: softprops/action-gh-release@v1
       with:
         draft: true
+        files: |
+          ./dist/*
