@@ -401,8 +401,8 @@ const tryMatch = (ctx) => {
 	const { req, netease } = ctx;
 	const { jsonBody } = netease;
 	/** @type {Promise<any>[]} */
-	let tasks,
-		target = 0;
+	let tasks;
+	let target = 0;
 
 	const inject = (item) => {
 		item.flag = 0;
