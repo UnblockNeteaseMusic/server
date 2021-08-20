@@ -1,15 +1,10 @@
 const cache = require('../cache');
 const request = require('../request');
 const parse = (query) =>
-	(query || '')
-		.split('&')
-		.reduce(
-			(result, item) => (
-				(item = item.split('=').map(decodeURIComponent)),
-				Object.assign({}, result, { [item[0]]: item[1] })
-			),
-			{}
-		);
+	(query || '').split('&').reduce((result, item) => {
+		const splitItem = item.split('=').map(decodeURIComponent);
+		return Object.assign({}, result, { [splitItem[0]]: splitItem[1] });
+	}, {});
 
 // const proxy = require('url').parse('http://127.0.0.1:1080')
 const proxy = undefined;
