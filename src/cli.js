@@ -172,7 +172,8 @@ const help = () => {
 		.map((option) => {
 			const { flags } = option;
 			const name = option.metavar || option.dest;
-			let use = '';
+			/** @type {string} */
+			let use;
 			if (
 				['store_true', 'store_false', 'help', 'version'].includes(
 					option.action

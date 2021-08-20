@@ -116,7 +116,7 @@ hook.request.before = (ctx) => {
 				req.headers['X-Real-IP'] = '118.88.88.88';
 				if (req.url.includes('stream')) return; // look living eapi can not be decrypted
 				if (body) {
-					let data = null;
+					let data;
 					const netease = {};
 					netease.pad = (body.match(/%0+$/) || [''])[0];
 					netease.forward = url.path === '/api/linux/forward';
@@ -329,7 +329,7 @@ hook.negotiate.before = (ctx) => {
 const pretendPlay = (ctx) => {
 	const { req, netease } = ctx;
 	const turn = 'http://music.163.com/api/song/enhance/player/url';
-	let query = null;
+	let query;
 	if (netease.forward) {
 		const { id, br } = netease.param;
 		netease.param = { ids: `["${id}"]`, br };
@@ -400,7 +400,8 @@ const computeHash = (task) =>
 const tryMatch = (ctx) => {
 	const { req, netease } = ctx;
 	const { jsonBody } = netease;
-	let tasks = [],
+	/** @type {Promise<any>[]} */
+	let tasks,
 		target = 0;
 
 	const inject = (item) => {
