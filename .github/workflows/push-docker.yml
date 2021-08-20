@@ -7,6 +7,7 @@ on:
       - 'ci/docker-push'
     paths-ignore:
       - '**.md'
+      - '.github/**/*'
 
   release:
     types:
