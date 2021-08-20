@@ -289,7 +289,7 @@ hook.request.after = (ctx) => {
 				parse(req.url).resolve(proxyRes.headers.location),
 				req.headers
 			).then((response) => (ctx.proxyRes = response));
-		} else if (/p\d+c*\.music.126.net/.test(req.url)) {
+		} else if (/p\d+c*\.music\.126\.net/.test(req.url)) {
 			proxyRes.headers['content-type'] = 'audio/*';
 		}
 	}
