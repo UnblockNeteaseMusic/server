@@ -18,7 +18,7 @@ const cli = {
 		// metavar - A name for the argument in usage messages.
 		// help - A brief description of what the argument does.
 
-		// required - Whether or not the command-line option may be omitted (optionals only).
+		// required - Whether the command-line option may be omitted (optionals only).
 		// default - The value produced if the argument is absent from the command line.
 		// type - The type to which the command-line argument should be converted.
 		// choices - A container of the allowable values for the argument.
