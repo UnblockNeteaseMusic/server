@@ -12,9 +12,12 @@ const filter = (object, keys) =>
 const limit = (text) => {
 	const output = [text[0]];
 	const length = () => output.reduce((sum, token) => sum + token.length, 0);
-	text.slice(1).some((token) =>
-		length() > 15 ? true : (output.push(token), false)
-	);
+	text.slice(1).some((token) => {
+		if (length() > 15) return true;
+
+		output.push(token);
+		return false;
+	});
 	return output;
 };
 
