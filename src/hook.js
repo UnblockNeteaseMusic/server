@@ -170,7 +170,7 @@ hook.request.before = (ctx) => {
 			web: true,
 			path: url.path
 				.replace(/^\/weapi\//, '/api/')
-				.replace(/\?.+$/, '')
+				.split("?").shift() // remove the query parameters
 				.replace(/\/\d*$/, ''),
 		};
 	} else if (req.url.includes('package')) {
@@ -288,7 +288,7 @@ hook.request.after = (ctx) => {
 				parse(req.url).resolve(proxyRes.headers.location),
 				req.headers
 			).then((response) => (ctx.proxyRes = response));
-		} else if (/p\d+c*.music.126.net/.test(req.url)) {
+		} else if (/p\d+c*\.music.126.net/.test(req.url)) {
 			proxyRes.headers['content-type'] = 'audio/*';
 		}
 	}

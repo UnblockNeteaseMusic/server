@@ -6,6 +6,7 @@ const parse = require('url').parse;
 const sni = require('./sni');
 const hook = require('./hook');
 const request = require('./request');
+const { isHost } = require('./utilities');
 
 const proxy = {
 	core: {
@@ -123,7 +124,7 @@ const proxy = {
 				if (ctx.decision === 'close')
 					return reject((ctx.error = ctx.decision));
 				const { req } = ctx;
-				if (req.url.includes('bilivideo.com')) {
+				if (isHost(url, 'bilivideo.com')) {
 					req.headers['referer'] = 'https://www.bilibili.com/';
 					req.headers['user-agent'] = 'okhttp/3.4.1';
 				}
