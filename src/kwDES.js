@@ -6,23 +6,24 @@
 
 const Long =
 	typeof BigInt === 'function' // BigInt support in Node 10+
-		? (n) => (
-				(n = BigInt(n)),
-				{
-					low: Number(n),
-					valueOf: () => n.valueOf(),
-					toString: () => n.toString(),
-					not: () => Long(~n),
-					isNegative: () => n < 0,
-					or: (x) => Long(n | BigInt(x)),
-					and: (x) => Long(n & BigInt(x)),
-					xor: (x) => Long(n ^ BigInt(x)),
-					equals: (x) => n === BigInt(x),
-					multiply: (x) => Long(n * BigInt(x)),
-					shiftLeft: (x) => Long(n << BigInt(x)),
-					shiftRight: (x) => Long(n >> BigInt(x)),
-				}
-		  )
+		? (n) => {
+				const bN = BigInt(n);
+
+				return {
+					low: Number(bN),
+					valueOf: () => bN.valueOf(),
+					toString: () => bN.toString(),
+					not: () => Long(~bN),
+					isNegative: () => bN < 0,
+					or: (x) => Long(bN | BigInt(x)),
+					and: (x) => Long(bN & BigInt(x)),
+					xor: (x) => Long(bN ^ BigInt(x)),
+					equals: (x) => bN === BigInt(x),
+					multiply: (x) => Long(bN * BigInt(x)),
+					shiftLeft: (x) => Long(bN << BigInt(x)),
+					shiftRight: (x) => Long(bN >> BigInt(x)),
+				};
+		  }
 		: (...args) => new (require('long'))(...args);
 
 const range = (n) => Array.from(new Array(n).keys());
