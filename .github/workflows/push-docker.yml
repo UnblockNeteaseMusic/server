@@ -68,5 +68,5 @@ jobs:
           push: true
           tags: >-
             ${{ env.image }}:${{ env.develop_tag }},
-            ${{ env.image }}:${{ env.release_tag }},
+            ${{ env.image }}:${{ env.released_tag }},
             ${{ env.image }}:${{ steps.tagName.outputs.tag }}
