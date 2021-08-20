@@ -466,8 +466,6 @@ const bitTransform = (arrInt, n, l) => {
 };
 
 const DES64 = (longs, l) => {
-	// long[], long
-	let SOut = Long(0);
 	const pR = range(8).map(() => Long(0));
 	const pSource = [Long(0), Long(0)];
 	let L = Long(0);
@@ -477,13 +475,14 @@ const DES64 = (longs, l) => {
 	pSource[1] = out.and(-4294967296).shiftRight(32);
 
 	range(16).forEach((i) => {
+		let SOut = Long(0);
+
 		R = Long(pSource[1]);
 		R = bitTransform(arrayE, 64, R);
 		R = R.xor(longs[i]);
 		range(8).forEach((j) => {
 			pR[j] = R.shiftRight(j * 8).and(255);
 		});
-		SOut = Long(0);
 		range(8)
 			.reverse()
 			.forEach((sbi) => {
