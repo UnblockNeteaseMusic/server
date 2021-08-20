@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - 'enhanced'
-      - 'ci/docker-push'
     paths-ignore:
       - '**.md'
       - '.github/**/*'
