@@ -195,7 +195,7 @@ hook.request.before = (ctx) => {
 };
 
 hook.request.after = (ctx) => {
-	const { req, proxyRes, netease, package } = ctx;
+	const { req, proxyRes, netease, package: pkg } = ctx;
 	if (
 		req.headers.host === 'tyst.migu.cn' &&
 		proxyRes.headers['content-range'] &&
@@ -282,7 +282,7 @@ hook.request.after = (ctx) => {
 					: body;
 			})
 			.catch((error) => (error ? console.log(error, req.url) : null));
-	} else if (package) {
+	} else if (pkg) {
 		if (new Set([201, 301, 302, 303, 307, 308]).has(proxyRes.statusCode)) {
 			return request(
 				req.method,
