@@ -28,7 +28,7 @@ const Long =
 const range = (n) => Array.from(new Array(n).keys());
 const power = (base, index) =>
 	Array(index)
-		.fill()
+		.fill(null)
 		.reduce((result) => result.multiply(base), Long(1));
 const LongArray = (...array) =>
 	array.map((n) => (n === -1 ? Long(-1, -1) : Long(n)));
