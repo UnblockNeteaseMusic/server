@@ -9,7 +9,9 @@ on:
       - '**.md'
 
   release:
-    types: [ published ]
+    types:
+      - prereleased
+      - published
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:

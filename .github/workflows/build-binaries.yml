@@ -13,7 +13,9 @@ on:
             - '**.md'
 
     release:
-        types: [published]
+      types:
+        - prereleased
+        - published
 
 jobs:
     build:
