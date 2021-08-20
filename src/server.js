@@ -11,7 +11,7 @@ const { isHost } = require('./utilities');
 const proxy = {
 	core: {
 		mitm: (req, res) => {
-			if (req.url == '/proxy.pac') {
+			if (req.url === '/proxy.pac') {
 				const url = parse('http://' + req.headers.host);
 				res.writeHead(200, {
 					'Content-Type': 'application/x-ns-proxy-autoconfig',
@@ -88,7 +88,7 @@ const proxy = {
 			delete req.headers['proxy-authorization'];
 		if (
 			server.authentication &&
-			credential != server.authentication &&
+			credential !== server.authentication &&
 			(socket || req.url.startsWith('http://'))
 		) {
 			if (socket)
@@ -106,7 +106,7 @@ const proxy = {
 		if (ctx.decision || ctx.req.local) return;
 		const url = parse((ctx.socket ? 'https://' : '') + ctx.req.url);
 		const match = (pattern) =>
-			url.href.search(new RegExp(pattern, 'g')) != -1;
+			url.href.search(new RegExp(pattern, 'g')) !== -1;
 		try {
 			const allow = server.whitelist.some(match);
 			const deny = server.blacklist.some(match);

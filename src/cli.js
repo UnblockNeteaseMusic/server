@@ -80,7 +80,7 @@ const cli = {
 			const index = part.startsWith('-')
 				? optionals[part]
 				: positionals.shift();
-			if (index == undefined)
+			if (index === undefined)
 				part.startsWith('-')
 					? error(`no such option: ${part}`)
 					: error(`extra arguments found: ${part}`);

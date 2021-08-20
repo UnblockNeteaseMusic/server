@@ -104,8 +104,8 @@ hook.request.before = (ctx) => {
 		[url.hostname, req.headers.host].some((host) =>
 			hook.target.host.has(host)
 		) &&
-		req.method == 'POST' &&
-		(url.path == '/api/linux/forward' || url.path.startsWith('/eapi/'))
+		req.method === 'POST' &&
+		(url.path === '/api/linux/forward' || url.path.startsWith('/eapi/'))
 	) {
 		return request
 			.read(req)
@@ -119,7 +119,7 @@ hook.request.before = (ctx) => {
 					let data = null;
 					const netease = {};
 					netease.pad = (body.match(/%0+$/) || [''])[0];
-					netease.forward = url.path == '/api/linux/forward';
+					netease.forward = url.path === '/api/linux/forward';
 					if (netease.forward) {
 						data = JSON.parse(
 							crypto.linuxapi
@@ -156,7 +156,7 @@ hook.request.before = (ctx) => {
 					ctx.netease = netease;
 					// console.log(netease.path, netease.param)
 
-					if (netease.path == '/api/song/enhance/download/url')
+					if (netease.path === '/api/song/enhance/download/url')
 						return pretendPlay(ctx);
 				}
 			})
@@ -170,7 +170,8 @@ hook.request.before = (ctx) => {
 			web: true,
 			path: url.path
 				.replace(/^\/weapi\//, '/api/')
-				.split("?").shift() // remove the query parameters
+				.split('?')
+				.shift() // remove the query parameters
 				.replace(/\/\d*$/, ''),
 		};
 	} else if (req.url.includes('package')) {
@@ -204,7 +205,7 @@ hook.request.after = (ctx) => {
 	if (
 		netease &&
 		hook.target.path.has(netease.path) &&
-		proxyRes.statusCode == 200
+		proxyRes.statusCode === 200
 	) {
 		return request
 			.read(proxyRes, true)
@@ -233,7 +234,7 @@ hook.request.after = (ctx) => {
 				) {
 					if (netease.path.includes('manipulate'))
 						return tryCollect(ctx);
-					else if (netease.path == '/api/song/like')
+					else if (netease.path === '/api/song/like')
 						return tryLike(ctx);
 				} else if (netease.path.includes('url')) return tryMatch(ctx);
 				else if (netease.path.includes('/usertool/sound/'))
@@ -263,9 +264,9 @@ hook.request.after = (ctx) => {
 							value['st'] = 0;
 							value['subp'] = 1;
 							value['pl'] =
-								value['pl'] == 0 ? 320000 : value['pl'];
+								value['pl'] === 0 ? 320000 : value['pl'];
 							value['dl'] =
-								value['dl'] == 0 ? 320000 : value['dl'];
+								value['dl'] === 0 ? 320000 : value['dl'];
 						}
 					}
 					return value;
@@ -302,7 +303,7 @@ hook.connect.before = (ctx) => {
 			hook.target.host.has(host)
 		)
 	) {
-		if (url.port == 80) {
+		if (url.port === 80) {
 			req.url = `${global.address || 'localhost'}:${global.port[0]}`;
 			req.local = true;
 		} else if (global.port[1]) {
@@ -405,8 +406,8 @@ const tryMatch = (ctx) => {
 	const inject = (item) => {
 		item.flag = 0;
 		if (
-			(item.code != 200 || item.freeTrialInfo) &&
-			(target == 0 || item.id == target)
+			(item.code !== 200 || item.freeTrialInfo) &&
+			(target === 0 || item.id === target)
 		) {
 			return match(item.id)
 				.then((song) => {
@@ -468,7 +469,7 @@ const tryMatch = (ctx) => {
 										  ),
 								[]
 							)
-							.filter((pair) => pair[0] != pair[1])[0];
+							.filter((pair) => pair[0] !== pair[1])[0];
 						return !difference || difference[0] <= difference[1];
 					};
 					const limit = { android: '0.0.0', osx: '0.0.0' };
@@ -500,7 +501,7 @@ const tryMatch = (ctx) => {
 					} catch (e) {}
 				})
 				.catch(() => {});
-		} else if (item.code == 200 && netease.web) {
+		} else if (item.code === 200 && netease.web) {
 			item.url = item.url.replace(
 				/(m\d+?)(?!c)\.music\.126\.net/,
 				'$1c.music.126.net'

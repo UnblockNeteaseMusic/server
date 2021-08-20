@@ -15,7 +15,7 @@ const playable = (song) => {
 	switchFlag.reverse();
 	const playFlag = switchFlag[0];
 	const tryFlag = switchFlag[13];
-	return playFlag == 1 || (playFlag == 1 && tryFlag == 1);
+	return playFlag === 1 || (playFlag === 1 && tryFlag === 1);
 };
 
 const format = (song) => ({
