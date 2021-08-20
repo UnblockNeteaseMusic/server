@@ -26,9 +26,9 @@ const getFormatData = (data) => {
 		const info = filter(data, ['id', 'name', 'alias', 'duration']);
 		info.name = (info.name || '')
 			.replace(/（\s*cover[:：\s][^）]+）/i, '')
-			.replace(/\(\s*cover[:：\s][^\)]+\)/i, '')
+			.replace(/\(\s*cover[:：\s][^)]+\)/i, '')
 			.replace(/（\s*翻自[:：\s][^）]+）/, '')
-			.replace(/\(\s*翻自[:：\s][^\)]+\)/, '');
+			.replace(/\(\s*翻自[:：\s][^)]+\)/, '');
 		info.album = filter(data.album, ['id', 'name']);
 		info.artists = data.artists.map((artist) =>
 			filter(artist, ['id', 'name'])
