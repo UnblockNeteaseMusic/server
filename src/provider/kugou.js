@@ -5,8 +5,6 @@ const crypto = require('../crypto');
 const request = require('../request');
 
 const format = (song) => {
-	// const SingerName = song.SingerName.split('、')
-	const singername = song.singername.split('、');
 	return {
 		// id: song.FileHash,
 		// name: song.SongName,

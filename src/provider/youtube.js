@@ -32,7 +32,7 @@ const signature = (id = '-tKVN2mAKRI') => {
 			).then((response) => response.body());
 		})
 		.then((body) => {
-			const [_, funcArg, funcBody] =
+			const [, funcArg, funcBody] =
 				/function\((\w+)\)\s*{([^}]+split\(""\)[^}]+join\(""\))};/.exec(
 					body
 				);

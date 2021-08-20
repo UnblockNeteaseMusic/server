@@ -55,8 +55,7 @@ const proxy = {
 				.catch(() => proxy.tunnel.close(ctx));
 		},
 	},
-	abort: (socket, from) => {
-		// console.log('call abort', from)
+	abort: (socket) => {
 		if (socket) socket.end();
 		if (socket && !socket.destroyed) socket.destroy();
 	},
