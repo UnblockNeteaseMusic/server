@@ -466,13 +466,12 @@ const bitTransform = (arrInt, n, l) => {
 
 const DES64 = (longs, l) => {
 	// long[], long
-	let out = Long(0);
 	let SOut = Long(0);
 	const pR = range(8).map(() => Long(0));
 	const pSource = [Long(0), Long(0)];
 	let L = Long(0);
 	let R = Long(0);
-	out = bitTransform(arrayIP, 64, l);
+	let out = bitTransform(arrayIP, 64, l);
 	pSource[0] = out.and(0xffffffff);
 	pSource[1] = out.and(-4294967296).shiftRight(32);
 
