@@ -124,7 +124,7 @@ const proxy = {
 				if (ctx.decision === 'close')
 					return reject((ctx.error = ctx.decision));
 				const { req } = ctx;
-				if (isHost(url, 'bilivideo.com')) {
+				if (isHost(req.url, 'bilivideo.com')) {
 					req.headers['referer'] = 'https://www.bilibili.com/';
 					req.headers['user-agent'] = 'okhttp/3.4.1';
 				}
