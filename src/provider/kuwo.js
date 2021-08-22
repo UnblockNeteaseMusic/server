@@ -63,6 +63,8 @@ const search = (info) => {
 		)
 		.then((response) => response.json())
 		.then((jsonBody) => {
+			if (jsonBody.code !== 200)
+				return Promise.reject();
 			const list = jsonBody.data.list.map(format);
 			const matched = select(list, info);
 			return matched ? matched.id : Promise.reject();
