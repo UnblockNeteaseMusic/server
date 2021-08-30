@@ -43,7 +43,7 @@ const track = (id) => {
 	const url = `https://www.yt-download.org/api/button/mp3/${id}`;
 	const regex = /<a[^>]*href=["']([^"']*)["']/;
 
-	return request('GET', url)
+	return request('GET', url, {}, null, proxy)
 	.then((response) => response.body())
 	.then((body) => {
 		var matched = body.match(regex);
