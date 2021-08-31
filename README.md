@@ -20,6 +20,20 @@ fork 自 [nondanee 的原版](https://github.com/nondanee/UnblockNeteaseMusic)�
 
 > macOS 因为签名问题，暂时不提供可执行文件。请先按照其他做法使用。
 
+### 注册成Windows服务
+
+#### 安装服务
+
+直接`clone`本项目，在项目根目录执行`node ./nw.js`，会有弹窗，直接确定即可，如果有安全管家等软件可能会阻止，直接允许即可，运行成功后可在电脑服务中看到该服务
+
+#### 配置
+
+http代理使用`127.0.0.1`，端口默认使用`8080`
+
+如果想要添加启动参数，请在项目根目录中的`nw.js`中配置`scriptOptions`
+
+> 如果想要卸载已安装的服务，请再次执行`node ./nw.js`
+
 ### Docker 作法
 
 #### Docker Hub
