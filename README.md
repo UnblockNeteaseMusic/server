@@ -122,6 +122,7 @@ optional arguments:
 | JSON_LOG       | bool | 输出机器可读的 JSON 记录格式                                                                      | `JSON_LOG=true`                                                  |
 | LOG_LEVEL      | str  | 日志输出等级。请见〈日志等级〉部分。                                                              | `LOG_LEVEL=debug`                                                |
 | LOG_FILE       | str  | 从 Pino 端设置日志输出的文件位置。也可以用 `*sh` 的输出重导向功能 (`node app.js >> app.log`) 代替 | `LOG_FILE=app.log`                                               |
+| VIP            | bool | 启用本地黑胶VIP                                                                                   | `VIP=true`                                                       |
 
 #### 日志等级 (`LOG_LEVEL`)
 
