@@ -11,7 +11,7 @@ const logger = logScope('hook');
 const cs = getManagedCacheStorage('hook');
 cs.aliveDuration = 7 * 24 * 60 * 60 * 1000;
 
-const VIP = (process.env.VIP || '').toLowerCase() === 'true'
+const ENABLE_LOCAL_VIP = (process.env.ENABLE_LOCAL_VIP || '').toLowerCase() === 'true'
 
 const hook = {
 	request: {
@@ -241,7 +241,7 @@ hook.request.after = (ctx) => {
 					netease.jsonBody = JSON.parse(
 						patch(crypto.eapi.decrypt(buffer).toString())
 					);
-					if (VIP) {
+					if (ENABLE_LOCAL_VIP) {
 						if (netease.path === '/batch' || netease.path === '/api/batch') {
 							var info = netease.jsonBody['/api/music-vip-membership/client/vip/info']
 							if (info) {
