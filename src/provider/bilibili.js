@@ -1,8 +1,4 @@
-const {
-	cacheStorage,
-	CacheStorageGroup,
-	getManagedCacheStorage,
-} = require('../cache');
+const { getManagedCacheStorage } = require('../cache');
 const insure = require('./insure');
 const select = require('./select');
 const request = require('../request');
@@ -14,11 +10,11 @@ const format = (song) => {
 		name: song.title,
 		// album: {id: song.album_id, name: song.album_title},
 		artists: { id: song.mid, name: song.author },
-		weight: 0
+		weight: 0,
 	};
 };
 
-var weight = 0
+var weight = 0;
 
 const search = (info) => {
 	const url =
@@ -30,7 +26,7 @@ const search = (info) => {
 		.then((jsonBody) => {
 			const list = jsonBody.data.result.map(format);
 			const matched = select(list, info);
-			weight = matched.weight
+			weight = matched.weight;
 			return matched ? matched.id : Promise.reject();
 		});
 };
@@ -47,9 +43,9 @@ const track = (id) => {
 			if (jsonBody.code === 0) {
 				// bilibili music requires referer, connect do not support referer, so change to http
 				return {
-					url: jsonBody.data.cdns[0].replace("https", "http"),
-					weight: weight
-				}
+					url: jsonBody.data.cdns[0].replace('https', 'http'),
+					weight: weight,
+				};
 			} else {
 				return Promise.reject();
 			}

@@ -1,6 +1,6 @@
 const find = require('./find');
 const request = require('../request');
-const select = require('./select')
+const select = require('./select');
 const {
 	PROVIDERS: providers,
 	DEFAULT_SOURCE: defaultSrc,
@@ -73,18 +73,17 @@ async function match(id, source, data) {
 			})
 		)
 	);
-	if(select.ENABLE_WEIGHTINGSYSTEM)
-	{
-	let lastWeighting=0;
-	let result;
-	for (let index of audioData) {
-		if (index.value && lastWeighting < index.value.weight) {
-		lastWeighting=index.value.weight
-		result = index.value
+	if (select.ENABLE_WEIGHTINGSYSTEM) {
+		let lastWeighting = 0;
+		let result;
+		for (let index of audioData) {
+			if (index.value && lastWeighting < index.value.weight) {
+				lastWeighting = index.value.weight;
+				result = index.value;
+			}
+		}
+		audioData = result;
 	}
-	}
-	audioData=result
-    }
 	const { id: audioId, name } = audioInfo;
 	const { url } = audioData;
 	const { weighting } = audioData;
@@ -94,7 +93,7 @@ async function match(id, source, data) {
 			audioId,
 			songName: name,
 			url,
-			weighting
+			weighting,
 		},
 		`Replaced: [${audioId}] ${name}`
 	);
@@ -103,12 +102,14 @@ async function match(id, source, data) {
 
 /**
  * Check and get the audio info of URL.
- * @param url The URL to be fetched.
+ * @param {string} url The URL to be fetched.
+ * @param {number} weight The weight of this URL.
+ * If not specified, it is 0 by default.
  * @return {Promise<AudioData>} The parsed audio data.
  */
-async function check(url, weight) {
+async function check(url, weight = 0) {
 	const isHost = isHostWrapper(url);
-	const song = { size: 0, br: null, url: null, md5: null, weight: weight};
+	const song = { size: 0, br: null, url: null, md5: null, weight: weight };
 	const header = {
 		range: 'bytes=0-8191',
 		'accept-encoding': 'identity',

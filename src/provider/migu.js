@@ -20,11 +20,11 @@ const format = (song) => {
 		name: song.title,
 		album: { id: song.albumId, name: song.albumName },
 		artists: singerId.map((id, index) => ({ id, name: singerName[index] })),
-		weight: 0
+		weight: 0,
 	};
 };
 
-var weight = 0
+var weight = 0;
 
 const search = (info) => {
 	const url =
@@ -64,10 +64,13 @@ const single = (id, format) => {
 			// return playUrl ? encodeURI('http:' + playUrl) : Promise.reject()
 			const { formatType } = jsonBody.data;
 			if (formatType !== format) return Promise.reject();
-			else return url ? {
-				url: jsonBody.data.url,
-				weight: weight
-			} : Promise.reject();
+			else
+				return url
+					? {
+							url: jsonBody.data.url,
+							weight: weight,
+					  }
+					: Promise.reject();
 		});
 };
 

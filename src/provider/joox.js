@@ -31,11 +31,11 @@ const format = (song) => {
 			id,
 			name: decode(name || ''),
 		})),
-		weight: 0
+		weight: 0,
 	};
 };
 
-var weight = 0
+var weight = 0;
 
 const search = (info) => {
 	const keyword = fit(info);
@@ -52,7 +52,7 @@ const search = (info) => {
 			const jsonBody = JSON.parse(body.replace(/'/g, '"'));
 			const list = jsonBody.itemlist.map(format);
 			const matched = select(list, info);
-			weight = matched.weight
+			weight = matched.weight;
 			return matched ? matched.id : Promise.reject();
 		});
 };
@@ -75,10 +75,11 @@ const track = (id) => {
 				jsonBody.mp3Url ||
 				jsonBody.m4aUrl
 			).replace(/M\d00([\w]+).mp3/, 'M800$1.mp3');
-			if (songUrl) return {
-				url: songUrl,
-				weight: weight
-			};
+			if (songUrl)
+				return {
+					url: songUrl,
+					weight: weight,
+				};
 			else return Promise.reject();
 		})
 		.catch(() => insure().joox.track(id));

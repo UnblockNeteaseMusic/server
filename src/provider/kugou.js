@@ -17,11 +17,11 @@ const format = (song) => {
 		name: song['songname'],
 		duration: song['duration'] * 1000,
 		album: { id: song['album_id'], name: song['album_name'] },
-		weight: 0
+		weight: 0,
 	};
 };
 
-var weight = 0
+var weight = 0;
 
 const search = (info) => {
 	const url =
@@ -37,7 +37,7 @@ const search = (info) => {
 			// const list = jsonBody.data.lists.map(format)
 			const list = jsonBody.data.info.map(format);
 			const matched = select(list, info);
-			weight = matched.weight
+			weight = matched.weight;
 			return matched ? matched : Promise.reject();
 		})
 		.catch(() => insure().kugou.search(info));
@@ -70,11 +70,13 @@ const single = (song, format) => {
 	return request('GET', url)
 		.then((response) => response.json())
 		.then((jsonBody) => {
-			const songUrl = jsonBody.url[0]
-			return songUrl ? {
-				url: songUrl,
-				weight: weight
-			} : Promise.reject()
+			const songUrl = jsonBody.url[0];
+			return songUrl
+				? {
+						url: songUrl,
+						weight: weight,
+				  }
+				: Promise.reject();
 		});
 };
 

@@ -123,7 +123,7 @@ optional arguments:
 | LOG_LEVEL              | str  | 日志输出等级。请见〈日志等级〉部分。                                                              | `LOG_LEVEL=debug`                                                |
 | LOG_FILE               | str  | 从 Pino 端设置日志输出的文件位置。也可以用 `*sh` 的输出重导向功能 (`node app.js >> app.log`) 代替 | `LOG_FILE=app.log`                                               |
 | ENABLE_LOCAL_VIP       | bool | 启用本地黑胶 VIP                                                                                  | `ENABLE_LOCAL_VIP=true`                                          |
-| ENABLE_WEIGHTINGSYSTEM | bool | 启用权重系统                                                                                      | `ENABLE_WEIGHTINGSYSTEM=true`                                    |
+| ENABLE_WEIGHTINGSYSTEM | bool | 启用音源自動权重系统                                                                              | `ENABLE_WEIGHTINGSYSTEM=true`                                    |
 
 #### 日志等级 (`LOG_LEVEL`)
 
