@@ -23,7 +23,10 @@ const track = (info) => {
 
 			const jsonBody = JSON.parse(body);
 			const matched = jsonBody.data.find((song) => song.id === info.id);
-			if (matched) return matched.url;
+			if (matched) return {
+				url: matched.url,
+				weight: Number.MAX_VALUE
+			};
 
 			return Promise.reject();
 		});

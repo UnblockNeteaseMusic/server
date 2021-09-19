@@ -15,7 +15,10 @@ const format = (song) => ({
 	duration: song.interval * 1000,
 	album: { id: song.album.mid, name: song.album.name },
 	artists: song.singer.map(({ mid, name }) => ({ id: mid, name })),
+	weight: 0
 });
+
+var weight = 0
 
 const search = (info) => {
 	const url =
@@ -32,6 +35,7 @@ const search = (info) => {
 		.then((jsonBody) => {
 			const list = jsonBody.data.song.list.map(format);
 			const matched = select(list, info);
+			weight = matched.weight
 			return matched ? matched.id : Promise.reject();
 		});
 };
@@ -64,8 +68,10 @@ const single = (id, format) => {
 		.then((jsonBody) => {
 			const { sip, midurlinfo } = jsonBody.req_0.data;
 			return midurlinfo[0].purl
-				? sip[0] + midurlinfo[0].purl
-				: Promise.reject();
+				? {
+					url: sip[0] + midurlinfo[0].purl,
+					weight: weight
+				} : Promise.reject();
 		});
 };
 

@@ -13,7 +13,10 @@ const format = (song) => ({
 	artists: song.artist
 		.split('&')
 		.map((name, index) => ({ id: index ? null : song.artistid, name })),
+	weight: 0
 });
+
+var weight = 0
 
 const search = (info) => {
 	// const url =
@@ -72,6 +75,7 @@ const search = (info) => {
 				return Promise.reject();
 			const list = jsonBody.data.list.map(format);
 			const matched = select(list, info);
+			weight = matched.weight
 			return matched ? matched.id : Promise.reject();
 		});
 };
@@ -95,7 +99,10 @@ const track = (id) => {
 		.then((response) => response.body())
 		.then((body) => {
 			const url = (body.match(/http[^\s$"]+/) || [])[0];
-			return url || Promise.reject();
+			return {
+				url: url,
+				weight: weight
+			} || Promise.reject();
 		})
 		.catch(() => insure().kuwo.track(id));
 };
