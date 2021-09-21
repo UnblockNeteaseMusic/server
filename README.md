@@ -36,6 +36,36 @@ http 代理使用 `127.0.0.1`，端口默认使用 `8080`。
 >
 > 安装服务后，会在项目根目录生成 `daemon` 文件夹。可在这里查看日志。
 
+### Ubuntu/Debian/Centos一键安装脚本
+```bash
+Ubuntu/Debian：
+wget -N --no-check-certificate https://raw.githubusercontent.com/byludy/unbloc163/main/unblock163.sh && chmod +x unblock163.sh && bash unblock163.sh
+
+Centos：
+wget -N --no-check-certificate https://raw.githubusercontent.com/byludy/unbloc163/main/unblock163.sh && chmod +x unblock163.sh && sh unblock163.sh
+```
+#### 文件路径
+安装目录：/usr/local/UnblockNeteaseMusic
+
+日志文件：/usr/local/UnblockNeteaseMusic/UnblockNeteaseMusic.log
+
+#### 命令
+启动：/etc/init.d/unblock163 start
+
+停止：/etc/init.d/unblock163 stop
+
+重启：/etc/init.d/unblock163 restart
+
+查看状态：/etc/init.d/unblock163 status
+
+#### 设置环境变量
+>编辑文件： vi /etc/init.d/unblock163
+```bash
+export ENABLE_FLAC=true
+export ENABLE_LOCAL_VIP=true
+export LOG_LEVEL=debug
+```
+
 ### Docker 作法
 
 #### Docker Hub
