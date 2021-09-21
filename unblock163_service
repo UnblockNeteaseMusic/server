@@ -1,0 +1,110 @@
+#!/bin/bash
+
+########### 环境变量 ###########
+#export ENABLE_LOCAL_VIP=true
+#export ENABLE_HTTPDNS=true
+#export LOG_LEVEL=debug
+###############################
+
+NAME="UnblockNeteaseMusic"
+NAME_BIN="UnblockNeteaseMusic"
+FOLDER="/usr/local/UnblockNeteaseMusic"
+FILE="${FOLDER}/app.js"
+FILE_CONF="${FOLDER}/UnblockNeteaseMusic.conf"
+FILE_LOG="${FOLDER}/UnblockNeteaseMusic.log"
+FILE_NODE="${FOLDER}/node/bin/node"
+
+GREEN_FONT_PREFIX="\033[32m" && RED_FONT_PREFIX="\033[31m" && GREEN_BACKGROUND_PREFIX="\033[42;37m" && RED_BACKGROUND_PREFIX="\033[41;37m" && FONT_COLOR_SUFFIX="\033[0m"
+INFO="${GREEN_FONT_PREFIX}[信息]${FONT_COLOR_SUFFIX}" && ERROR="${RED_FONT_PREFIX}[错误]${FONT_COLOR_SUFFIX}" && TIP="${GREEN_FONT_PREFIX}[注意]${FONT_COLOR_SUFFIX}"
+RETVAL=0
+
+_CHECK_PID(){
+	PID=$(ps -ef |grep "${NAME_BIN}" |grep -v "grep" |grep -v "init.d" |grep -v "service" |awk '{print $2}')
+	if [[ ! -z "${PID}" ]]; then
+		return 0
+	else
+		return 1
+	fi
+}
+_CONFIG_READ(){
+	[[ ! -e ${FILE_CONF} ]] && echo -e "${ERROR} ${NAME} 配置文件不存在 !" && exit 1
+	PORT=$(cat ${FILE_CONF}|grep 'PORT = '|awk -F 'PORT = ' '{print $NF}')
+	SOURCE=$(cat ${FILE_CONF}|grep 'SOURCE = '|awk -F 'SOURCE = ' '{print $NF}')
+	STRICT=$(cat ${FILE_CONF}|grep 'STRICT = '|awk -F 'STRICT = ' '{print $NF}')
+	ENDPOINT=$(cat ${FILE_CONF}|grep 'ENDPOINT = '|awk -F 'ENDPOINT = ' '{print $NF}')
+	ENDPOINTURL=$(cat ${FILE_CONF}|grep 'ENDPOINTURL = '|awk -F 'ENDPOINTURL = ' '{print $NF}')
+	FORCEHOST=$(cat ${FILE_CONF}|grep 'FORCEHOST = '|awk -F 'FORCEHOST = ' '{print $NF}')
+}
+_START(){
+	_CHECK_PID
+	if [[ ${?} == 0 ]]; then
+		echo -e "${INFO} $NAME (PID ${PID}) 正在运行..." && exit 0
+	else
+		_CONFIG_READ
+		echo -e "${INFO} $NAME 启动中..."
+		ulimit -n 51200
+		if [[ "${STRICT}" == "NO" ]]; then
+			ARGUMENTS_S=""
+		else
+			ARGUMENTS_S="-s"
+		fi
+		if [[ "${ENDPOINT}" == "NO" ]]; then
+			ARGUMENTS_E=""
+		else
+			ARGUMENTS_E="-e ${ENDPOINTURL}"
+		fi
+		if [[ -z "${FORCEHOST}" ]]; then
+			ARGUMENTS_F=""
+		else
+			ARGUMENTS_F="-f"
+		fi
+		nohup "${FILE_NODE}" "${FILE}" -a 0.0.0.0 -p ${PORT} -o ${SOURCE} ${ARGUMENTS_S} ${ARGUMENTS_E} ${ARGUMENTS_F} ${FORCEHOST} > "${FILE_LOG}" 2>&1 &
+		sleep 2s
+		_CHECK_PID
+		if [[ ${?} == 0 ]]; then
+			echo -e "${INFO} $NAME 启动成功 !"
+		else
+			echo -e "${ERROR} $NAME 启动失败(请运行脚本查看日志错误输出内容) !"
+		fi
+	fi
+}
+_STOP(){
+	_CHECK_PID
+	if [[ ${?} == 0 ]]; then
+		kill -9 "${PID}"
+		RETVAL=${?}
+		if [[ ${RETVAL} == 0 ]]; then
+			echo -e "${INFO} $NAME 停止成功 !"
+		else
+			echo -e "${ERROR} $NAME 停止失败 !"
+		fi
+	else
+		echo -e "${INFO} $NAME 未运行"
+		RETVAL=1
+	fi
+}
+_STATUS(){
+	_CHECK_PID
+	if [[ ${?} == 0 ]]; then
+		_CONFIG_READ
+		echo -e "${INFO} $NAME (PID ${PID}) 正在运行..."
+	else
+		echo -e "${INFO} $NAME 未运行 !"
+		RETVAL=1
+	fi
+}
+_RESTART(){
+	_STOP
+	_START
+}
+case "$1" in
+	start|stop|restart|status)
+	INDEX=$(echo ${1^^})
+	_${INDEX}
+	;;
+	*)
+	echo -e "使用方法: $0 { start | stop | restart | status }"
+	RETVAL=1
+	;;
+esac
+exit $RETVAL
