@@ -39,10 +39,10 @@ http 代理使用 `127.0.0.1`，端口默认使用 `8080`。
 ### Ubuntu/Debian/Centos一键安装脚本
 ```bash
 Ubuntu/Debian：
-wget -N --no-check-certificate https://raw.githubusercontent.com/byludy/unbloc163/main/unblock163.sh && chmod +x unblock163.sh && bash unblock163.sh
+wget -N --no-check-certificate https://raw.githubusercontent.com/UnblockNeteaseMusic/server/enhanced/unblock163.sh && chmod +x unblock163.sh && bash unblock163.sh
 
 Centos：
-wget -N --no-check-certificate https://raw.githubusercontent.com/byludy/unbloc163/main/unblock163.sh && chmod +x unblock163.sh && sh unblock163.sh
+wget -N --no-check-certificate https://raw.githubusercontent.com/UnblockNeteaseMusic/server/enhanced/unblock163.sh && chmod +x unblock163.sh && sh unblock163.sh
 ```
 #### 文件路径
 安装目录：/usr/local/UnblockNeteaseMusic
