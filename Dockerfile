@@ -1,18 +1,10 @@
-FROM node:lts-alpine AS builder
-
-COPY . /root/
-
-RUN set -ex && cd /root \
-&& yarn install && yarn build
-
-
 FROM node:lts-alpine
 
 RUN set -ex && mkdir /app
 
-COPY --from=builder /root/precompiled/* /app/
-COPY --from=builder /root/*.crt /app/
-COPY --from=builder /root/*.key /app/
+COPY ./precompiled/* /app/
+COPY ./*.crt /app/
+COPY ./*.key /app/
 
 ENV SIGN_CERT /app/server.crt
 ENV SIGN_KEY /app/server.key
