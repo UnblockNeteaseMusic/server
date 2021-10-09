@@ -11,6 +11,9 @@ on:
 jobs:
     run-prettier:
         runs-on: ubuntu-latest
+        permissions:
+            contents: write
+            pull-requests: write
 
         steps:
             - name: Checkout
@@ -31,8 +34,9 @@ jobs:
             - name: Create Pull Request
               uses: peter-evans/create-pull-request@v3
               with:
-                  token: ${{ secrets.PR_PAT }}
+                  token: ${{ github.token }}
                   commit-message: 'style: with prettier [skip ci]'
+                  author: 'github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>'
                   branch: ci/prettier
                   delete-branch: true
                   title: 'style: with prettier'
