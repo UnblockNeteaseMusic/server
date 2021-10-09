@@ -11,7 +11,7 @@ const commonConfig = {
 	output: {
 		dir: 'precompiled',
 		format: 'cjs',
-		banner: ['#!/usr/bin/node', ''].join('\n'),
+		banner: ['#!/usr/bin/env node', ''].join('\n'),
 	},
 	plugins: [
 		commonjs({
