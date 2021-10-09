@@ -20,6 +20,21 @@
 
 > macOS 因为签名问题，暂时不提供可运行文件。请先按照其他做法使用。
 
+### NPM 安裝
+
+#### 安裝成依賴
+
+```bash
+npm install @unblockneteasemusic/server
+yarn add @unblockneteasemusic/server # for Yarn users
+```
+
+#### 用 NPX 執行
+
+```bash
+npx -p @unblockneteasemusic/server unblockneteasemusic
+```
+
 ### 注册成 Windows 服务
 
 #### 安装服务
