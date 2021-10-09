@@ -10292,7 +10292,7 @@ hook$2.connect.before = ctx => {
   const url = parse$2('https://' + req.url);
 
   if ([url.hostname, req.headers.host].some(host => hook$2.target.host.has(host))) {
-    if (url.port === 80) {
+    if (parseInt(url.port) === 80) {
       req.url = `${commonjsGlobal.address || 'localhost'}:${commonjsGlobal.port[0]}`;
       req.local = true;
     } else if (commonjsGlobal.port[1]) {
