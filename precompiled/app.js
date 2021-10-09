@@ -73,7 +73,7 @@ var pkg = {
 };
 var repository$1 = {
 	type: "git",
-	url: "https://github.com/1715173329/UnblockNeteaseMusic.git"
+	url: "https://github.com/UnblockNeteaseMusic/server.git"
 };
 var author$1 = "nondanee, 1715173329, pan93412";
 var license$1 = "LGPL-3.0-only";
@@ -98,6 +98,9 @@ var devDependencies$1 = {
 	prettier: "^2.4.1",
 	rollup: "^2.58.0"
 };
+var publishConfig = {
+	access: "public"
+};
 var require$$0$1 = {
 	name: name$1,
 	version: version$6,
@@ -110,8 +113,8 @@ var require$$0$1 = {
 	author: author$1,
 	license: license$1,
 	dependencies: dependencies$1,
-	"private": true,
-	devDependencies: devDependencies$1
+	devDependencies: devDependencies$1,
+	publishConfig: publishConfig
 };
 
 const cli = {
