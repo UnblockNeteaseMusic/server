@@ -16,6 +16,7 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v2
 
+              # Setup .npmrc file to publish to npm
             - uses: actions/setup-node@v2
               with:
                   node-version: '16.x'
@@ -25,3 +26,24 @@ jobs:
             - run: yarn publish
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+    publish-to-github:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+        steps:
+            # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+            - name: Checkout
+              uses: actions/checkout@v2
+
+              # Setup .npmrc file to publish to npm
+            - uses: actions/setup-node@v2
+              with:
+                  node-version: '16.x'
+                  registry-url: 'https://npm.pkg.github.com'
+
+            - run: yarn
+            - run: yarn publish
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
