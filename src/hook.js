@@ -351,7 +351,7 @@ hook.connect.before = (ctx) => {
 			hook.target.host.has(host)
 		)
 	) {
-		if (url.port === 80) {
+		if (parseInt(url.port) === 80) {
 			req.url = `${global.address || 'localhost'}:${global.port[0]}`;
 			req.local = true;
 		} else if (global.port[1]) {
