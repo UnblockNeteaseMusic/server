@@ -47,7 +47,7 @@ var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof win
 var app = {};
 
 var name$1 = "@unblockneteasemusic/server";
-var version$6 = "v0.27.0-beta.6";
+var version$6 = "v0.27.0-beta.7";
 var description$1 = "Revive unavailable songs for Netease Cloud Music";
 var main$1 = "src/provider/match.js";
 var bin$1 = {
