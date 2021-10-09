@@ -50,6 +50,9 @@ jobs:
             - name: Install dependencies
               run: yarn
 
+            - name: Make bundle
+              run: yarn build
+
             - name: Building executable file for ${{ matrix.target }}
               run: |
                   npx pkg --compress Brotli -t node14-${{ matrix.target }} .
