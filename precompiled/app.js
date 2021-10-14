@@ -4,42 +4,42 @@
 
 var require$$0$2 = require('path');
 var require$$1$2 = require('net');
-var require$$0$9 = require('zlib');
+var require$$0$a = require('zlib');
 var require$$1$1 = require('http');
 var require$$2 = require('https');
 var require$$0$3 = require('events');
-var require$$0$8 = require('os');
+var require$$0$9 = require('os');
 var require$$0$4 = require('vm');
-var require$$0$5 = require('fs');
-var require$$3 = require('util');
-var require$$0$6 = require('tty');
-var require$$0$7 = require('stream');
+var require$$0$6 = require('fs');
+var require$$0$5 = require('util');
+var require$$0$7 = require('tty');
+var require$$0$8 = require('stream');
 var require$$1 = require('string_decoder');
 var require$$6 = require('url');
-var require$$0$a = require('crypto');
+var require$$0$b = require('crypto');
 var require$$2$1 = require('querystring');
-var require$$0$b = require('child_process');
+var require$$0$c = require('child_process');
 var require$$9 = require('dns');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
 var require$$0__default = /*#__PURE__*/_interopDefaultLegacy(require$$0$2);
 var require$$1__default$2 = /*#__PURE__*/_interopDefaultLegacy(require$$1$2);
-var require$$0__default$7 = /*#__PURE__*/_interopDefaultLegacy(require$$0$9);
+var require$$0__default$8 = /*#__PURE__*/_interopDefaultLegacy(require$$0$a);
 var require$$1__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$1$1);
 var require$$2__default = /*#__PURE__*/_interopDefaultLegacy(require$$2);
 var require$$0__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$0$3);
-var require$$0__default$6 = /*#__PURE__*/_interopDefaultLegacy(require$$0$8);
+var require$$0__default$7 = /*#__PURE__*/_interopDefaultLegacy(require$$0$9);
 var require$$0__default$2 = /*#__PURE__*/_interopDefaultLegacy(require$$0$4);
-var require$$0__default$3 = /*#__PURE__*/_interopDefaultLegacy(require$$0$5);
-var require$$3__default = /*#__PURE__*/_interopDefaultLegacy(require$$3);
 var require$$0__default$4 = /*#__PURE__*/_interopDefaultLegacy(require$$0$6);
+var require$$0__default$3 = /*#__PURE__*/_interopDefaultLegacy(require$$0$5);
 var require$$0__default$5 = /*#__PURE__*/_interopDefaultLegacy(require$$0$7);
+var require$$0__default$6 = /*#__PURE__*/_interopDefaultLegacy(require$$0$8);
 var require$$1__default = /*#__PURE__*/_interopDefaultLegacy(require$$1);
 var require$$6__default = /*#__PURE__*/_interopDefaultLegacy(require$$6);
-var require$$0__default$8 = /*#__PURE__*/_interopDefaultLegacy(require$$0$a);
-var require$$2__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$2$1);
 var require$$0__default$9 = /*#__PURE__*/_interopDefaultLegacy(require$$0$b);
+var require$$2__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$2$1);
+var require$$0__default$a = /*#__PURE__*/_interopDefaultLegacy(require$$0$c);
 var require$$9__default = /*#__PURE__*/_interopDefaultLegacy(require$$9);
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -92,8 +92,8 @@ var devDependencies$1 = {
 	"@types/pino": "^6.3.11",
 	"core-js": "3",
 	jest: "^27.2.5",
-	pino: "^6.13.3",
-	"pino-pretty": "^7.0.1",
+	pino: "~6.13.3",
+	"pino-pretty": "^7.1.0",
 	pkg: "^5.3.3",
 	prettier: "^2.4.1",
 	rollup: "^2.58.0"
@@ -1062,9 +1062,9 @@ const state = state_1;
 const rx$1 = rx$4;
 const validate$1 = validator$1();
 
-const noop$6 = o => o;
+const noop$7 = o => o;
 
-noop$6.restore = noop$6;
+noop$7.restore = noop$7;
 const DEFAULT_CENSOR = '[REDACTED]';
 fastRedact$1.rx = rx$1;
 fastRedact$1.validator = validator$1;
@@ -1082,7 +1082,7 @@ function fastRedact$1(opts = {}) {
   const censor = remove === true ? undefined : 'censor' in opts ? opts.censor : DEFAULT_CENSOR;
   const isCensorFct = typeof censor === 'function';
   const censorFctTakesPath = isCensorFct && censor.length > 1;
-  if (paths.length === 0) return serialize || noop$6;
+  if (paths.length === 0) return serialize || noop$7;
   validate$1({
     paths,
     serialize,
@@ -1387,9 +1387,9 @@ if (typeof SharedArrayBuffer !== 'undefined' && typeof Atomics !== 'undefined') 
   atomicSleep.exports = sleep;
 }
 
-const fs$3 = require$$0__default$3["default"];
+const fs$3 = require$$0__default$4["default"];
 const EventEmitter$3 = require$$0__default$1["default"];
-const inherits$1 = require$$3__default["default"].inherits;
+const inherits$3 = require$$0__default$3["default"].inherits;
 const BUSY_WRITE_TIMEOUT$1 = 100;
 const sleep$1 = atomicSleep.exports; // 16 MB - magic number
 // This constant ensures that SonicBoom only needs
@@ -1593,7 +1593,7 @@ function emitDrain$1(sonic) {
   sonic.emit('drain');
 }
 
-inherits$1(SonicBoom$3, EventEmitter$3);
+inherits$3(SonicBoom$3, EventEmitter$3);
 
 SonicBoom$3.prototype.write = function (data) {
   if (this.destroyed) {
@@ -1774,7 +1774,7 @@ var sonicBoom$1 = SonicBoom$3;
 
 const {
   format: format$9
-} = require$$3__default["default"];
+} = require$$0__default$3["default"];
 
 function build$1() {
   const codes = {};
@@ -2208,7 +2208,7 @@ var colorette = {};
 Object.defineProperty(colorette, '__esModule', {
   value: true
 });
-var tty = require$$0__default$4["default"];
+var tty = require$$0__default$5["default"];
 
 function _interopNamespace$1(e) {
   if (e && e.__esModule) return e;
@@ -2471,7 +2471,7 @@ function onceStrict(fn) {
 
 var once$1 = once$3.exports;
 
-var noop$5 = function () {};
+var noop$6 = function () {};
 
 var isRequest$1 = function (stream) {
   return stream.setHeader && typeof stream.abort === 'function';
@@ -2481,10 +2481,10 @@ var isChildProcess = function (stream) {
   return stream.stdio && Array.isArray(stream.stdio) && stream.stdio.length === 3;
 };
 
-var eos$1 = function (stream, opts, callback) {
-  if (typeof opts === 'function') return eos$1(stream, null, opts);
+var eos$2 = function (stream, opts, callback) {
+  if (typeof opts === 'function') return eos$2(stream, null, opts);
   if (!opts) opts = {};
-  callback = once$1(callback || noop$5);
+  callback = once$1(callback || noop$6);
   var ws = stream._writableState;
   var rs = stream._readableState;
   var readable = opts.readable || opts.readable !== false && stream.readable;
@@ -2558,13 +2558,13 @@ var eos$1 = function (stream, opts, callback) {
   };
 };
 
-var endOfStream = eos$1;
+var endOfStream = eos$2;
 
 var once = once$3.exports;
-var eos = endOfStream;
-var fs$2 = require$$0__default$3["default"]; // we only need fs to get the ReadStream and WriteStream prototypes
+var eos$1 = endOfStream;
+var fs$2 = require$$0__default$4["default"]; // we only need fs to get the ReadStream and WriteStream prototypes
 
-var noop$4 = function () {};
+var noop$5 = function () {};
 
 var ancient = /^v?\.0/.test(process.version);
 
@@ -2577,20 +2577,20 @@ var isFS = function (stream) {
 
   if (!fs$2) return false; // browser
 
-  return (stream instanceof (fs$2.ReadStream || noop$4) || stream instanceof (fs$2.WriteStream || noop$4)) && isFn(stream.close);
+  return (stream instanceof (fs$2.ReadStream || noop$5) || stream instanceof (fs$2.WriteStream || noop$5)) && isFn(stream.close);
 };
 
 var isRequest = function (stream) {
   return stream.setHeader && isFn(stream.abort);
 };
 
-var destroyer = function (stream, reading, writing, callback) {
+var destroyer$1 = function (stream, reading, writing, callback) {
   callback = once(callback);
   var closed = false;
   stream.on('close', function () {
     closed = true;
   });
-  eos(stream, {
+  eos$1(stream, {
     readable: reading,
     writable: writing
   }, function (err) {
@@ -2603,7 +2603,7 @@ var destroyer = function (stream, reading, writing, callback) {
     if (closed) return;
     if (destroyed) return;
     destroyed = true;
-    if (isFS(stream)) return stream.close(noop$4); // use close for fs streams to avoid fd leaks
+    if (isFS(stream)) return stream.close(noop$5); // use close for fs streams to avoid fd leaks
 
     if (isRequest(stream)) return stream.abort(); // request.destroy just do .end - .abort is what we want
 
@@ -2622,14 +2622,14 @@ var pipe = function (from, to) {
 
 var pump$1 = function () {
   var streams = Array.prototype.slice.call(arguments);
-  var callback = isFn(streams[streams.length - 1] || noop$4) && streams.pop() || noop$4;
+  var callback = isFn(streams[streams.length - 1] || noop$5) && streams.pop() || noop$5;
   if (Array.isArray(streams[0])) streams = streams[0];
   if (streams.length < 2) throw new Error('pump requires two streams per minimum');
   var error;
   var destroys = streams.map(function (stream, i) {
     var reading = i < streams.length - 1;
     var writing = i > 0;
-    return destroyer(stream, reading, writing, function (err) {
+    return destroyer$1(stream, reading, writing, function (err) {
       if (!error) error = err;
       if (err) destroys.forEach(call);
       if (reading) return;
@@ -2660,7 +2660,7 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 const {
   Transform: Transform$1
-} = require$$0__default$5["default"];
+} = require$$0__default$6["default"];
 const {
   StringDecoder
 } = require$$1__default["default"];
@@ -2720,14 +2720,14 @@ function push(self, val) {
   }
 }
 
-function noop$3(incoming) {
+function noop$4(incoming) {
   return incoming;
 }
 
 function split$2(matcher, mapper, options) {
   // Set defaults for any arguments not supplied.
   matcher = matcher || /\r?\n/;
-  mapper = mapper || noop$3;
+  mapper = mapper || noop$4;
   options = options || {}; // Test arguments explicitly.
 
   switch (arguments.length) {
@@ -2751,7 +2751,7 @@ function split$2(matcher, mapper, options) {
         matcher = /\r?\n/; // If matcher and options are arguments.
       } else if (typeof mapper === 'object') {
         options = mapper;
-        mapper = noop$3;
+        mapper = noop$4;
       }
 
   }
@@ -2773,8 +2773,319 @@ function split$2(matcher, mapper, options) {
 
 var split2 = split$2;
 
+var inherits$2 = {exports: {}};
+
+var inherits_browser = {exports: {}};
+
+if (typeof Object.create === 'function') {
+  // implementation from standard node.js 'util' module
+  inherits_browser.exports = function inherits(ctor, superCtor) {
+    if (superCtor) {
+      ctor.super_ = superCtor;
+      ctor.prototype = Object.create(superCtor.prototype, {
+        constructor: {
+          value: ctor,
+          enumerable: false,
+          writable: true,
+          configurable: true
+        }
+      });
+    }
+  };
+} else {
+  // old school shim for old browsers
+  inherits_browser.exports = function inherits(ctor, superCtor) {
+    if (superCtor) {
+      ctor.super_ = superCtor;
+
+      var TempCtor = function () {};
+
+      TempCtor.prototype = superCtor.prototype;
+      ctor.prototype = new TempCtor();
+      ctor.prototype.constructor = ctor;
+    }
+  };
+}
+
+try {
+  var util = require$$0__default$3["default"];
+  /* istanbul ignore next */
+
+  if (typeof util.inherits !== 'function') throw '';
+  inherits$2.exports = util.inherits;
+} catch (e) {
+  /* istanbul ignore next */
+  inherits$2.exports = inherits_browser.exports;
+}
+
+var streamShift = shift$1;
+
+function shift$1(stream) {
+  var rs = stream._readableState;
+  if (!rs) return null;
+  return rs.objectMode || typeof stream._duplexState === 'number' ? stream.read() : stream.read(getStateLength(rs));
+}
+
+function getStateLength(state) {
+  if (state.buffer.length) {
+    // Since node 6.3.0 state.buffer is a BufferList not an array
+    if (state.buffer.head) {
+      return state.buffer.head.data.length;
+    }
+
+    return state.buffer[0].length;
+  }
+
+  return state.length;
+}
+
+var stream = require$$0__default$6["default"];
+var eos = endOfStream;
+var inherits$1 = inherits$2.exports;
+var shift = streamShift;
+var SIGNAL_FLUSH = Buffer.from && Buffer.from !== Uint8Array.from ? Buffer.from([0]) : new Buffer([0]);
+
+var onuncork = function (self, fn) {
+  if (self._corked) self.once('uncork', fn);else fn();
+};
+
+var autoDestroy = function (self, err) {
+  if (self._autoDestroy) self.destroy(err);
+};
+
+var destroyer = function (self, end) {
+  return function (err) {
+    if (err) autoDestroy(self, err.message === 'premature close' ? null : err);else if (end && !self._ended) self.end();
+  };
+};
+
+var end = function (ws, fn) {
+  if (!ws) return fn();
+  if (ws._writableState && ws._writableState.finished) return fn();
+  if (ws._writableState) return ws.end(fn);
+  ws.end();
+  fn();
+};
+
+var noop$3 = function () {};
+
+var toStreams2 = function (rs) {
+  return new stream.Readable({
+    objectMode: true,
+    highWaterMark: 16
+  }).wrap(rs);
+};
+
+var Duplexify = function (writable, readable, opts) {
+  if (!(this instanceof Duplexify)) return new Duplexify(writable, readable, opts);
+  stream.Duplex.call(this, opts);
+  this._writable = null;
+  this._readable = null;
+  this._readable2 = null;
+  this._autoDestroy = !opts || opts.autoDestroy !== false;
+  this._forwardDestroy = !opts || opts.destroy !== false;
+  this._forwardEnd = !opts || opts.end !== false;
+  this._corked = 1; // start corked
+
+  this._ondrain = null;
+  this._drained = false;
+  this._forwarding = false;
+  this._unwrite = null;
+  this._unread = null;
+  this._ended = false;
+  this.destroyed = false;
+  if (writable) this.setWritable(writable);
+  if (readable) this.setReadable(readable);
+};
+
+inherits$1(Duplexify, stream.Duplex);
+
+Duplexify.obj = function (writable, readable, opts) {
+  if (!opts) opts = {};
+  opts.objectMode = true;
+  opts.highWaterMark = 16;
+  return new Duplexify(writable, readable, opts);
+};
+
+Duplexify.prototype.cork = function () {
+  if (++this._corked === 1) this.emit('cork');
+};
+
+Duplexify.prototype.uncork = function () {
+  if (this._corked && --this._corked === 0) this.emit('uncork');
+};
+
+Duplexify.prototype.setWritable = function (writable) {
+  if (this._unwrite) this._unwrite();
+
+  if (this.destroyed) {
+    if (writable && writable.destroy) writable.destroy();
+    return;
+  }
+
+  if (writable === null || writable === false) {
+    this.end();
+    return;
+  }
+
+  var self = this;
+  var unend = eos(writable, {
+    writable: true,
+    readable: false
+  }, destroyer(this, this._forwardEnd));
+
+  var ondrain = function () {
+    var ondrain = self._ondrain;
+    self._ondrain = null;
+    if (ondrain) ondrain();
+  };
+
+  var clear = function () {
+    self._writable.removeListener('drain', ondrain);
+
+    unend();
+  };
+
+  if (this._unwrite) process.nextTick(ondrain); // force a drain on stream reset to avoid livelocks
+
+  this._writable = writable;
+
+  this._writable.on('drain', ondrain);
+
+  this._unwrite = clear;
+  this.uncork(); // always uncork setWritable
+};
+
+Duplexify.prototype.setReadable = function (readable) {
+  if (this._unread) this._unread();
+
+  if (this.destroyed) {
+    if (readable && readable.destroy) readable.destroy();
+    return;
+  }
+
+  if (readable === null || readable === false) {
+    this.push(null);
+    this.resume();
+    return;
+  }
+
+  var self = this;
+  var unend = eos(readable, {
+    writable: false,
+    readable: true
+  }, destroyer(this));
+
+  var onreadable = function () {
+    self._forward();
+  };
+
+  var onend = function () {
+    self.push(null);
+  };
+
+  var clear = function () {
+    self._readable2.removeListener('readable', onreadable);
+
+    self._readable2.removeListener('end', onend);
+
+    unend();
+  };
+
+  this._drained = true;
+  this._readable = readable;
+  this._readable2 = readable._readableState ? readable : toStreams2(readable);
+
+  this._readable2.on('readable', onreadable);
+
+  this._readable2.on('end', onend);
+
+  this._unread = clear;
+
+  this._forward();
+};
+
+Duplexify.prototype._read = function () {
+  this._drained = true;
+
+  this._forward();
+};
+
+Duplexify.prototype._forward = function () {
+  if (this._forwarding || !this._readable2 || !this._drained) return;
+  this._forwarding = true;
+  var data;
+
+  while (this._drained && (data = shift(this._readable2)) !== null) {
+    if (this.destroyed) continue;
+    this._drained = this.push(data);
+  }
+
+  this._forwarding = false;
+};
+
+Duplexify.prototype.destroy = function (err, cb) {
+  if (!cb) cb = noop$3;
+  if (this.destroyed) return cb(null);
+  this.destroyed = true;
+  var self = this;
+  process.nextTick(function () {
+    self._destroy(err);
+
+    cb(null);
+  });
+};
+
+Duplexify.prototype._destroy = function (err) {
+  if (err) {
+    var ondrain = this._ondrain;
+    this._ondrain = null;
+    if (ondrain) ondrain(err);else this.emit('error', err);
+  }
+
+  if (this._forwardDestroy) {
+    if (this._readable && this._readable.destroy) this._readable.destroy();
+    if (this._writable && this._writable.destroy) this._writable.destroy();
+  }
+
+  this.emit('close');
+};
+
+Duplexify.prototype._write = function (data, enc, cb) {
+  if (this.destroyed) return;
+  if (this._corked) return onuncork(this, this._write.bind(this, data, enc, cb));
+  if (data === SIGNAL_FLUSH) return this._finish(cb);
+  if (!this._writable) return cb();
+  if (this._writable.write(data) === false) this._ondrain = cb;else if (!this.destroyed) cb();
+};
+
+Duplexify.prototype._finish = function (cb) {
+  var self = this;
+  this.emit('preend');
+  onuncork(this, function () {
+    end(self._forwardEnd && self._writable, function () {
+      // haxx to not emit prefinish twice
+      if (self._writableState.prefinished === false) self._writableState.prefinished = true;
+      self.emit('prefinish');
+      onuncork(self, cb);
+    });
+  });
+};
+
+Duplexify.prototype.end = function (data, enc, cb) {
+  if (typeof data === 'function') return this.end(null, null, data);
+  if (typeof enc === 'function') return this.end(data, null, enc);
+  this._ended = true;
+  if (data) this.write(data);
+  if (!this._writableState.ending && !this._writableState.destroyed) this.write(SIGNAL_FLUSH);
+  return stream.Writable.prototype.end.call(this, cb);
+};
+
+var duplexify$1 = Duplexify;
+
 const metadata = Symbol.for('pino.metadata');
 const split$1 = split2;
+const duplexify = duplexify$1;
 
 var pinoAbstractTransport = function build(fn, opts = {}) {
   const parseLines = opts.parse === 'lines';
@@ -2840,6 +3151,10 @@ var pinoAbstractTransport = function build(fn, opts = {}) {
     }); // set it to null to not retain a reference to the promise
 
     res = null;
+  } else if (opts.enablePipelining && res) {
+    return duplexify(stream, res, {
+      objectMode: true
+    });
   }
 
   return stream;
@@ -2849,9 +3164,9 @@ function defaultClose(err, cb) {
   process.nextTick(cb, err);
 }
 
-const fs$1 = require$$0__default$3["default"];
+const fs$1 = require$$0__default$4["default"];
 const EventEmitter$2 = require$$0__default$1["default"];
-const inherits = require$$3__default["default"].inherits;
+const inherits = require$$0__default$3["default"].inherits;
 const path$1 = require$$0__default["default"];
 const sleep = atomicSleep.exports;
 const BUSY_WRITE_TIMEOUT = 100; // 16 MB - magic number
@@ -3424,7 +3739,7 @@ var constants = {
 
 const {
   LEVELS: LEVELS$1,
-  LEVEL_NAMES
+  LEVEL_NAMES: LEVEL_NAMES$1
 } = constants;
 
 const nocolor = input => input;
@@ -3472,7 +3787,7 @@ function colorizeLevel(level, colorizer) {
     return Object.prototype.hasOwnProperty.call(LEVELS$1, level) ? colorizer[level](LEVELS$1[level]) : colorizer.default(LEVELS$1.default);
   }
 
-  const levelNum = LEVEL_NAMES[level.toLowerCase()] || 'default';
+  const levelNum = LEVEL_NAMES$1[level.toLowerCase()] || 'default';
   return colorizer[levelNum](LEVELS$1[levelNum]);
 }
 
@@ -4101,7 +4416,7 @@ const {
   DATE_FORMAT,
   ERROR_LIKE_KEYS: ERROR_LIKE_KEYS$1,
   MESSAGE_KEY: MESSAGE_KEY$1,
-  LEVEL_KEY,
+  LEVEL_KEY: LEVEL_KEY$1,
   LEVEL_LABEL,
   TIMESTAMP_KEY: TIMESTAMP_KEY$1,
   LOGGER_KEYS,
@@ -4313,13 +4628,13 @@ function prettifyErrorLog$1({
           errorLikeKeys,
           excludeLoggerKeys: false,
           eol,
-          ident
+          ident: ident + ident
         });
-        result = `${result}${key}: {${eol}${prettifiedObject}}${eol}`;
+        result = `${result}${ident}${key}: {${eol}${prettifiedObject}${ident}}${eol}`;
         continue;
       }
 
-      result = `${result}${key}: ${log[key]}${eol}`;
+      result = `${result}${ident}${key}: ${log[key]}${eol}`;
     }
   }
 
@@ -4344,7 +4659,7 @@ function prettifyErrorLog$1({
 function prettifyLevel$1({
   log,
   colorizer = defaultColorizer,
-  levelKey = LEVEL_KEY
+  levelKey = LEVEL_KEY$1
 }) {
   if (levelKey in log === false) return undefined;
   return colorizer(log[levelKey]);
@@ -4378,8 +4693,8 @@ function prettifyMessage$1({
   if (messageFormat && typeof messageFormat === 'string') {
     const message = String(messageFormat).replace(/{([^{}]+)}/g, function (match, p1) {
       // return log level as string instead of int
-      if (p1 === levelLabel && log[LEVEL_KEY]) {
-        return LEVELS[log[LEVEL_KEY]];
+      if (p1 === levelLabel && log[LEVEL_KEY$1]) {
+        return LEVELS[log[LEVEL_KEY$1]];
       } // Parse nested key access, e.g. `{keyA.subKeyB}`.
 
 
@@ -4635,6 +4950,8 @@ function prettifyError({
         const indentation = ' '.repeat(indentSize);
         const stackMessage = matches[2];
         result += matches[1] + eol + indentation + JSON.parse(stackMessage).replace(/\n/g, eol + indentation);
+      } else {
+        result += line;
       }
     } else {
       result += line;
@@ -4740,7 +5057,7 @@ const {
 const pump = pump_1;
 const {
   Transform
-} = require$$0__default$5["default"];
+} = require$$0__default$6["default"];
 const abstractTransport = pinoAbstractTransport;
 const sonic = sonicBoom;
 const sjs = secureJsonParse;
@@ -4748,7 +5065,9 @@ const colors = colors$1;
 const {
   ERROR_LIKE_KEYS,
   MESSAGE_KEY,
-  TIMESTAMP_KEY
+  TIMESTAMP_KEY,
+  LEVEL_KEY,
+  LEVEL_NAMES
 } = constants;
 const {
   isObject: isObject$6,
@@ -4799,6 +5118,7 @@ function prettyFactory(options) {
   const messageKey = opts.messageKey;
   const levelKey = opts.levelKey;
   const levelLabel = opts.levelLabel;
+  const minimumLevel = opts.minimumLevel;
   const messageFormat = opts.messageFormat;
   const timestampKey = opts.timestampKey;
   const errorLikeObjectKeys = opts.errorLikeObjectKeys;
@@ -4824,6 +5144,12 @@ function prettyFactory(options) {
       log = parsed.value;
     } else {
       log = inputData;
+    }
+
+    if (minimumLevel) {
+      const minimum = LEVEL_NAMES[minimumLevel] || Number(minimumLevel);
+      const level = log[levelKey === undefined ? LEVEL_KEY : levelKey];
+      if (level < minimum) return;
     }
 
     const prettifiedMessage = prettifyMessage({
@@ -4893,7 +5219,8 @@ function prettyFactory(options) {
 
     if (line.length > 0 && !singleLine) {
       line += EOL;
-    }
+    } // pino@7+ does not log this anymore
+
 
     if (log.type === 'Error' && log.stack) {
       const prettifiedErrorLog = prettifyErrorLog({
@@ -6046,7 +6373,7 @@ function flush() {
 /* eslint no-prototype-builtins: 0 */
 
 
-const os = require$$0__default$6["default"];
+const os = require$$0__default$7["default"];
 const stdSerializers = pinoStdSerializers;
 const redaction = redaction_1;
 const time = time$1;
@@ -6335,7 +6662,7 @@ var logger_1 = {
   logScope: logScope$8
 };
 
-const zlib = require$$0__default$7["default"];
+const zlib = require$$0__default$8["default"];
 const http = require$$1__default$1["default"];
 const https = require$$2__default["default"];
 const ON_CANCEL = cancel;
@@ -8887,7 +9214,7 @@ var kwDES = {
 
 (function (module) {
 
-  const crypto = require$$0__default$8["default"];
+  const crypto = require$$0__default$9["default"];
   const parse = require$$6__default["default"].parse;
   const bodyify = require$$2__default$1["default"].stringify;
   const eapiKey = 'e82ckenh8dichen8';
@@ -9460,7 +9787,7 @@ class ProcessExitNotSuccessfully$1 extends Error {
 
 var ProcessExitNotSuccessfully_1 = ProcessExitNotSuccessfully$1;
 
-const child_process = require$$0__default$9["default"];
+const child_process = require$$0__default$a["default"];
 const {
   logScope: logScope$5
 } = logger_1;
@@ -10563,7 +10890,7 @@ var sni$1 = data => {
   return null;
 };
 
-const fs = require$$0__default$3["default"];
+const fs = require$$0__default$4["default"];
 const net = require$$1__default$2["default"];
 const path = require$$0__default["default"];
 const parse$1 = require$$6__default["default"].parse;
