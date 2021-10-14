@@ -3,40 +3,44 @@
 'use strict';
 
 var require$$0$3 = require('events');
-var require$$0$6 = require('os');
+var require$$0$7 = require('os');
 var require$$0$1 = require('vm');
 var require$$0$2 = require('fs');
-var require$$3 = require('util');
-var require$$0$4 = require('tty');
-var require$$0$5 = require('stream');
-var require$$1 = require('string_decoder');
-var require$$3$1 = require('path');
+var require$$2 = require('util');
+var require$$2$1 = require('path');
+var require$$1 = require('worker_threads');
+var require$$0$4 = require('module');
 var require$$6 = require('url');
-var require$$0$7 = require('zlib');
-var require$$1$1 = require('http');
-var require$$2 = require('https');
-var require$$0$8 = require('crypto');
-var require$$2$1 = require('querystring');
-var require$$0$9 = require('child_process');
+var require$$0$5 = require('tty');
+var require$$0$6 = require('stream');
+var require$$1$1 = require('string_decoder');
+var require$$0$8 = require('zlib');
+var require$$1$2 = require('http');
+var require$$2$2 = require('https');
+var require$$0$9 = require('crypto');
+var require$$2$3 = require('querystring');
+var require$$0$a = require('child_process');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
 var require$$0__default$2 = /*#__PURE__*/_interopDefaultLegacy(require$$0$3);
-var require$$0__default$5 = /*#__PURE__*/_interopDefaultLegacy(require$$0$6);
+var require$$0__default$6 = /*#__PURE__*/_interopDefaultLegacy(require$$0$7);
 var require$$0__default = /*#__PURE__*/_interopDefaultLegacy(require$$0$1);
 var require$$0__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$0$2);
-var require$$3__default = /*#__PURE__*/_interopDefaultLegacy(require$$3);
-var require$$0__default$3 = /*#__PURE__*/_interopDefaultLegacy(require$$0$4);
-var require$$0__default$4 = /*#__PURE__*/_interopDefaultLegacy(require$$0$5);
-var require$$1__default = /*#__PURE__*/_interopDefaultLegacy(require$$1);
-var require$$3__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$3$1);
-var require$$6__default = /*#__PURE__*/_interopDefaultLegacy(require$$6);
-var require$$0__default$6 = /*#__PURE__*/_interopDefaultLegacy(require$$0$7);
-var require$$1__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$1$1);
 var require$$2__default = /*#__PURE__*/_interopDefaultLegacy(require$$2);
-var require$$0__default$7 = /*#__PURE__*/_interopDefaultLegacy(require$$0$8);
 var require$$2__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$2$1);
+var require$$1__default = /*#__PURE__*/_interopDefaultLegacy(require$$1);
+var require$$0__default$3 = /*#__PURE__*/_interopDefaultLegacy(require$$0$4);
+var require$$6__default = /*#__PURE__*/_interopDefaultLegacy(require$$6);
+var require$$0__default$4 = /*#__PURE__*/_interopDefaultLegacy(require$$0$5);
+var require$$0__default$5 = /*#__PURE__*/_interopDefaultLegacy(require$$0$6);
+var require$$1__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$1$1);
+var require$$0__default$7 = /*#__PURE__*/_interopDefaultLegacy(require$$0$8);
+var require$$1__default$2 = /*#__PURE__*/_interopDefaultLegacy(require$$1$2);
+var require$$2__default$2 = /*#__PURE__*/_interopDefaultLegacy(require$$2$2);
 var require$$0__default$8 = /*#__PURE__*/_interopDefaultLegacy(require$$0$9);
+var require$$2__default$3 = /*#__PURE__*/_interopDefaultLegacy(require$$2$3);
+var require$$0__default$9 = /*#__PURE__*/_interopDefaultLegacy(require$$0$a);
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -473,8 +477,8 @@ var inspectSource$3 = store$1.inspectSource;
 var global$4 = global$b;
 var isCallable$5 = isCallable$c;
 var inspectSource$2 = inspectSource$3;
-var WeakMap$1 = global$4.WeakMap;
-var nativeWeakMap = isCallable$5(WeakMap$1) && /native code/.test(inspectSource$2(WeakMap$1));
+var WeakMap$2 = global$4.WeakMap;
+var nativeWeakMap = isCallable$5(WeakMap$2) && /native code/.test(inspectSource$2(WeakMap$2));
 
 var shared$1 = shared$3.exports;
 var uid = uid$2;
@@ -495,7 +499,7 @@ var shared = sharedStore;
 var sharedKey = sharedKey$1;
 var hiddenKeys$2 = hiddenKeys$3;
 var OBJECT_ALREADY_INITIALIZED = 'Object already initialized';
-var WeakMap = global$3.WeakMap;
+var WeakMap$1 = global$3.WeakMap;
 var set, get$1, has$1;
 
 var enforce = function (it) {
@@ -515,7 +519,7 @@ var getterFor = function (TYPE) {
 };
 
 if (NATIVE_WEAK_MAP || shared.state) {
-  var store = shared.state || (shared.state = new WeakMap());
+  var store = shared.state || (shared.state = new WeakMap$1());
   var wmget = store.get;
   var wmhas = store.has;
   var wmset = store.set;
@@ -2219,6 +2223,37 @@ var pinoStdSerializers = {
   }
 };
 
+// which that function was called from. (Inspects the v8 stack trace)
+//
+// Inspired by http://stackoverflow.com/questions/13227489
+
+
+var getCallerFile = function getCallerFile(position) {
+  if (position === void 0) {
+    position = 2;
+  }
+
+  if (position >= Error.stackTraceLimit) {
+    throw new TypeError('getCallerFile(position) requires position be less then Error.stackTraceLimit but position was: `' + position + '` and Error.stackTraceLimit was: `' + Error.stackTraceLimit + '`');
+  }
+
+  var oldPrepareStackTrace = Error.prepareStackTrace;
+
+  Error.prepareStackTrace = function (_, stack) {
+    return stack;
+  };
+
+  var stack = new Error().stack;
+  Error.prepareStackTrace = oldPrepareStackTrace;
+
+  if (stack !== null && typeof stack === 'object') {
+    // stack[0] holds this file
+    // stack[1] holds where this function was called
+    // stack[2] holds the file we're interested in
+    return stack[position] ? stack[position].getFileName() : undefined;
+  }
+};
+
 const {
   createContext,
   runInContext
@@ -2717,9 +2752,9 @@ const state = state_1;
 const rx$1 = rx$4;
 const validate$1 = validator$1();
 
-const noop$6 = o => o;
+const noop$7 = o => o;
 
-noop$6.restore = noop$6;
+noop$7.restore = noop$7;
 const DEFAULT_CENSOR = '[REDACTED]';
 fastRedact$1.rx = rx$1;
 fastRedact$1.validator = validator$1;
@@ -2737,7 +2772,7 @@ function fastRedact$1(opts = {}) {
   const censor = remove === true ? undefined : 'censor' in opts ? opts.censor : DEFAULT_CENSOR;
   const isCensorFct = typeof censor === 'function';
   const censorFctTakesPath = isCensorFct && censor.length > 1;
-  if (paths.length === 0) return serialize || noop$6;
+  if (paths.length === 0) return serialize || noop$7;
   validate$1({
     paths,
     serialize,
@@ -2796,6 +2831,7 @@ const endSym$2 = Symbol('pino.end');
 const formatOptsSym$3 = Symbol('pino.formatOpts');
 const messageKeySym$2 = Symbol('pino.messageKey');
 const nestedKeySym$2 = Symbol('pino.nestedKey');
+const nestedKeyStrSym$2 = Symbol('pino.nestedKeyStr');
 const wildcardFirstSym$2 = Symbol('pino.wildcardFirst'); // public symbols, no need to use the same pino
 // version for these
 
@@ -2829,7 +2865,8 @@ var symbols$1 = {
   needsMetadataGsym: needsMetadataGsym$2,
   useOnlyCustomLevelsSym: useOnlyCustomLevelsSym$3,
   formattersSym: formattersSym$4,
-  hooksSym: hooksSym$2
+  hooksSym: hooksSym$2,
+  nestedKeyStrSym: nestedKeyStrSym$2
 };
 
 const fastRedact = fastRedact_1;
@@ -2988,514 +3025,6 @@ var time$1 = {
   isoTime
 };
 
-// but take a look at the commit history first,
-// this is a moving target so relying on the module
-// is the best way to make sure the optimization
-// method is kept up to date and compatible with
-// every Node version.
-
-
-function flatstr$2(s) {
-  return s;
-}
-
-var flatstr_1 = flatstr$2;
-
-var atomicSleep = {exports: {}};
-
-/* global SharedArrayBuffer, Atomics */
-
-
-if (typeof SharedArrayBuffer !== 'undefined' && typeof Atomics !== 'undefined') {
-  const nil = new Int32Array(new SharedArrayBuffer(4));
-
-  function sleep(ms) {
-    // also filters out NaN, non-number types, including empty strings, but allows bigints
-    const valid = ms > 0 && ms < Infinity;
-
-    if (valid === false) {
-      if (typeof ms !== 'number' && typeof ms !== 'bigint') {
-        throw TypeError('sleep: ms must be a number');
-      }
-
-      throw RangeError('sleep: ms must be a number that is greater than 0 but less than Infinity');
-    }
-
-    Atomics.wait(nil, 0, 0, Number(ms));
-  }
-
-  atomicSleep.exports = sleep;
-} else {
-  function sleep(ms) {
-    // also filters out NaN, non-number types, including empty strings, but allows bigints
-    const valid = ms > 0 && ms < Infinity;
-
-    if (valid === false) {
-      if (typeof ms !== 'number' && typeof ms !== 'bigint') {
-        throw TypeError('sleep: ms must be a number');
-      }
-
-      throw RangeError('sleep: ms must be a number that is greater than 0 but less than Infinity');
-    }
-  }
-
-  atomicSleep.exports = sleep;
-}
-
-const fs$2 = require$$0__default$1["default"];
-const EventEmitter$4 = require$$0__default$2["default"];
-const inherits$1 = require$$3__default["default"].inherits;
-const BUSY_WRITE_TIMEOUT$1 = 100;
-const sleep$1 = atomicSleep.exports; // 16 MB - magic number
-// This constant ensures that SonicBoom only needs
-// 32 MB of free memory to run. In case of having 1GB+
-// of data to write, this prevents an out of memory
-// condition.
-
-const MAX_WRITE$1 = 16 * 1024 * 1024;
-
-function openFile$1(file, sonic) {
-  sonic._opening = true;
-  sonic._writing = true;
-  sonic._asyncDrainScheduled = false; // NOTE: 'error' and 'ready' events emitted below only relevant when sonic.sync===false
-  // for sync mode, there is no way to add a listener that will receive these
-
-  function fileOpened(err, fd) {
-    if (err) {
-      sonic._reopening = false;
-      sonic._writing = false;
-      sonic._opening = false;
-
-      if (sonic.sync) {
-        process.nextTick(() => {
-          if (sonic.listenerCount('error') > 0) {
-            sonic.emit('error', err);
-          }
-        });
-      } else {
-        sonic.emit('error', err);
-      }
-
-      return;
-    }
-
-    sonic.fd = fd;
-    sonic.file = file;
-    sonic._reopening = false;
-    sonic._opening = false;
-    sonic._writing = false;
-
-    if (sonic.sync) {
-      process.nextTick(() => sonic.emit('ready'));
-    } else {
-      sonic.emit('ready');
-    }
-
-    if (sonic._reopening) {
-      return;
-    } // start
-
-
-    const len = sonic._buf.length;
-
-    if (len > 0 && len > sonic.minLength && !sonic.destroyed) {
-      actualWrite$1(sonic);
-    }
-  }
-
-  if (sonic.sync) {
-    try {
-      const fd = fs$2.openSync(file, 'a');
-      fileOpened(null, fd);
-    } catch (err) {
-      fileOpened(err);
-      throw err;
-    }
-  } else {
-    fs$2.open(file, 'a', fileOpened);
-  }
-}
-
-function SonicBoom$3(opts) {
-  if (!(this instanceof SonicBoom$3)) {
-    return new SonicBoom$3(opts);
-  }
-
-  let {
-    fd,
-    dest,
-    minLength,
-    sync
-  } = opts || {};
-  fd = fd || dest;
-  this._buf = '';
-  this.fd = -1;
-  this._writing = false;
-  this._writingBuf = '';
-  this._ending = false;
-  this._reopening = false;
-  this._asyncDrainScheduled = false;
-  this.file = null;
-  this.destroyed = false;
-  this.sync = sync || false;
-  this.minLength = minLength || 0;
-
-  if (typeof fd === 'number') {
-    this.fd = fd;
-    process.nextTick(() => this.emit('ready'));
-  } else if (typeof fd === 'string') {
-    openFile$1(fd, this);
-  } else {
-    throw new Error('SonicBoom supports only file descriptors and files');
-  }
-
-  this.release = (err, n) => {
-    if (err) {
-      if (err.code === 'EAGAIN') {
-        if (this.sync) {
-          // This error code should not happen in sync mode, because it is
-          // not using the underlining operating system asynchronous functions.
-          // However it happens, and so we handle it.
-          // Ref: https://github.com/pinojs/pino/issues/783
-          try {
-            sleep$1(BUSY_WRITE_TIMEOUT$1);
-            this.release(undefined, 0);
-          } catch (err) {
-            this.release(err);
-          }
-        } else {
-          // Let's give the destination some time to process the chunk.
-          setTimeout(() => {
-            fs$2.write(this.fd, this._writingBuf, 'utf8', this.release);
-          }, BUSY_WRITE_TIMEOUT$1);
-        }
-      } else {
-        // The error maybe recoverable later, so just put data back to this._buf
-        this._buf = this._writingBuf + this._buf;
-        this._writingBuf = '';
-        this._writing = false;
-        this.emit('error', err);
-      }
-
-      return;
-    }
-
-    if (this._writingBuf.length !== n) {
-      this._writingBuf = this._writingBuf.slice(n);
-
-      if (this.sync) {
-        try {
-          do {
-            n = fs$2.writeSync(this.fd, this._writingBuf, 'utf8');
-            this._writingBuf = this._writingBuf.slice(n);
-          } while (this._writingBuf.length !== 0);
-        } catch (err) {
-          this.release(err);
-          return;
-        }
-      } else {
-        fs$2.write(this.fd, this._writingBuf, 'utf8', this.release);
-        return;
-      }
-    }
-
-    this._writingBuf = '';
-
-    if (this.destroyed) {
-      return;
-    }
-
-    const len = this._buf.length;
-
-    if (this._reopening) {
-      this._writing = false;
-      this._reopening = false;
-      this.reopen();
-    } else if (len > 0 && len > this.minLength) {
-      actualWrite$1(this);
-    } else if (this._ending) {
-      if (len > 0) {
-        actualWrite$1(this);
-      } else {
-        this._writing = false;
-        actualClose$1(this);
-      }
-    } else {
-      this._writing = false;
-
-      if (this.sync) {
-        if (!this._asyncDrainScheduled) {
-          this._asyncDrainScheduled = true;
-          process.nextTick(emitDrain$1, this);
-        }
-      } else {
-        this.emit('drain');
-      }
-    }
-  };
-
-  this.on('newListener', function (name) {
-    if (name === 'drain') {
-      this._asyncDrainScheduled = false;
-    }
-  });
-}
-
-function emitDrain$1(sonic) {
-  const hasListeners = sonic.listenerCount('drain') > 0;
-  if (!hasListeners) return;
-  sonic._asyncDrainScheduled = false;
-  sonic.emit('drain');
-}
-
-inherits$1(SonicBoom$3, EventEmitter$4);
-
-SonicBoom$3.prototype.write = function (data) {
-  if (this.destroyed) {
-    throw new Error('SonicBoom destroyed');
-  }
-
-  this._buf += data;
-  const len = this._buf.length;
-
-  if (!this._writing && len > this.minLength) {
-    actualWrite$1(this);
-  }
-
-  return len < 16384;
-};
-
-SonicBoom$3.prototype.flush = function () {
-  if (this.destroyed) {
-    throw new Error('SonicBoom destroyed');
-  }
-
-  if (this._writing || this.minLength <= 0) {
-    return;
-  }
-
-  actualWrite$1(this);
-};
-
-SonicBoom$3.prototype.reopen = function (file) {
-  if (this.destroyed) {
-    throw new Error('SonicBoom destroyed');
-  }
-
-  if (this._opening) {
-    this.once('ready', () => {
-      this.reopen(file);
-    });
-    return;
-  }
-
-  if (this._ending) {
-    return;
-  }
-
-  if (!this.file) {
-    throw new Error('Unable to reopen a file descriptor, you must pass a file to SonicBoom');
-  }
-
-  this._reopening = true;
-
-  if (this._writing) {
-    return;
-  }
-
-  const fd = this.fd;
-  this.once('ready', () => {
-    if (fd !== this.fd) {
-      fs$2.close(fd, err => {
-        if (err) {
-          return this.emit('error', err);
-        }
-      });
-    }
-  });
-  openFile$1(file || this.file, this);
-};
-
-SonicBoom$3.prototype.end = function () {
-  if (this.destroyed) {
-    throw new Error('SonicBoom destroyed');
-  }
-
-  if (this._opening) {
-    this.once('ready', () => {
-      this.end();
-    });
-    return;
-  }
-
-  if (this._ending) {
-    return;
-  }
-
-  this._ending = true;
-
-  if (!this._writing && this._buf.length > 0 && this.fd >= 0) {
-    actualWrite$1(this);
-    return;
-  }
-
-  if (this._writing) {
-    return;
-  }
-
-  actualClose$1(this);
-};
-
-SonicBoom$3.prototype.flushSync = function () {
-  if (this.destroyed) {
-    throw new Error('SonicBoom destroyed');
-  }
-
-  if (this.fd < 0) {
-    throw new Error('sonic boom is not ready yet');
-  }
-
-  while (this._buf.length > 0) {
-    try {
-      fs$2.writeSync(this.fd, this._buf, 'utf8');
-      this._buf = '';
-    } catch (err) {
-      if (err.code !== 'EAGAIN') {
-        throw err;
-      }
-
-      sleep$1(BUSY_WRITE_TIMEOUT$1);
-    }
-  }
-};
-
-SonicBoom$3.prototype.destroy = function () {
-  if (this.destroyed) {
-    return;
-  }
-
-  actualClose$1(this);
-};
-
-function actualWrite$1(sonic) {
-  sonic._writing = true;
-  let buf = sonic._buf;
-  const release = sonic.release;
-
-  if (buf.length > MAX_WRITE$1) {
-    buf = buf.slice(0, MAX_WRITE$1);
-    sonic._buf = sonic._buf.slice(MAX_WRITE$1);
-  } else {
-    sonic._buf = '';
-  }
-  sonic._writingBuf = buf;
-
-  if (sonic.sync) {
-    try {
-      const written = fs$2.writeSync(sonic.fd, buf, 'utf8');
-      release(null, written);
-    } catch (err) {
-      release(err);
-    }
-  } else {
-    fs$2.write(sonic.fd, buf, 'utf8', release);
-  }
-}
-
-function actualClose$1(sonic) {
-  if (sonic.fd === -1) {
-    sonic.once('ready', actualClose$1.bind(null, sonic));
-    return;
-  } // TODO write a test to check if we are not leaking fds
-
-
-  fs$2.close(sonic.fd, err => {
-    if (err) {
-      sonic.emit('error', err);
-      return;
-    }
-
-    if (sonic._ending && !sonic._writing) {
-      sonic.emit('finish');
-    }
-
-    sonic.emit('close');
-  });
-  sonic.destroyed = true;
-  sonic._buf = '';
-}
-
-var sonicBoom$1 = SonicBoom$3;
-
-const {
-  format: format$9
-} = require$$3__default["default"];
-
-function build$1() {
-  const codes = {};
-  const emitted = new Map();
-
-  function create(name, code, message) {
-    if (!name) throw new Error('Fastify warning name must not be empty');
-    if (!code) throw new Error('Fastify warning code must not be empty');
-    if (!message) throw new Error('Fastify warning message must not be empty');
-    code = code.toUpperCase();
-
-    if (codes[code] !== undefined) {
-      throw new Error(`The code '${code}' already exist`);
-    }
-
-    function buildWarnOpts(a, b, c) {
-      // more performant than spread (...) operator
-      let formatted;
-
-      if (a && b && c) {
-        formatted = format$9(message, a, b, c);
-      } else if (a && b) {
-        formatted = format$9(message, a, b);
-      } else if (a) {
-        formatted = format$9(message, a);
-      } else {
-        formatted = message;
-      }
-
-      return {
-        code,
-        name,
-        message: formatted
-      };
-    }
-
-    emitted.set(code, false);
-    codes[code] = buildWarnOpts;
-    return codes[code];
-  }
-
-  function emit(code, a, b, c) {
-    if (codes[code] === undefined) throw new Error(`The code '${code}' does not exist`);
-    if (emitted.get(code) === true) return;
-    emitted.set(code, true);
-    const warning = codes[code](a, b, c);
-    process.emitWarning(warning.message, warning.name, warning.code);
-  }
-
-  return {
-    create,
-    emit,
-    emitted
-  };
-}
-
-var fastifyWarning = build$1;
-
-const warning$1 = fastifyWarning();
-var deprecations = warning$1;
-const warnName = 'PinoWarning';
-warning$1.create(warnName, 'PINODEP004', 'bindings.serializers is deprecated, use options.serializers option instead');
-warning$1.create(warnName, 'PINODEP005', 'bindings.formatters is deprecated, use options.formatters option instead');
-warning$1.create(warnName, 'PINODEP006', 'bindings.customLevels is deprecated, use options.customLevels option instead');
-warning$1.create(warnName, 'PINODEP007', 'bindings.level is deprecated, use options.level option instead');
-
 function tryStringify(o) {
   try {
     return JSON.stringify(o);
@@ -3504,9 +3033,9 @@ function tryStringify(o) {
   }
 }
 
-var quickFormatUnescaped = format$8;
+var quickFormatUnescaped = format$9;
 
-function format$8(f, args, opts) {
+function format$9(f, args, opts) {
   var ss = opts && opts.stringify || tryStringify;
   var offset = 1;
 
@@ -3622,239 +3151,1247 @@ function format$8(f, args, opts) {
   return str;
 }
 
-var fastSafeStringify = stringify$3;
-stringify$3.default = stringify$3;
-stringify$3.stable = deterministicStringify;
-stringify$3.stableStringify = deterministicStringify;
-var LIMIT_REPLACE_NODE = '[...]';
-var CIRCULAR_REPLACE_NODE = '[Circular]';
-var arr = [];
-var replacerStack = [];
+var atomicSleep = {exports: {}};
 
-function defaultOptions$2() {
-  return {
-    depthLimit: Number.MAX_SAFE_INTEGER,
-    edgesLimit: Number.MAX_SAFE_INTEGER
-  };
-} // Regular stringify
+/* global SharedArrayBuffer, Atomics */
 
 
-function stringify$3(obj, replacer, spacer, options) {
-  if (typeof options === 'undefined') {
-    options = defaultOptions$2();
-  }
+if (typeof SharedArrayBuffer !== 'undefined' && typeof Atomics !== 'undefined') {
+  const nil = new Int32Array(new SharedArrayBuffer(4));
 
-  decirc(obj, '', 0, [], undefined, 0, options);
-  var res;
+  function sleep(ms) {
+    // also filters out NaN, non-number types, including empty strings, but allows bigints
+    const valid = ms > 0 && ms < Infinity;
 
-  try {
-    if (replacerStack.length === 0) {
-      res = JSON.stringify(obj, replacer, spacer);
-    } else {
-      res = JSON.stringify(obj, replaceGetterValues(replacer), spacer);
-    }
-  } catch (_) {
-    return JSON.stringify('[unable to serialize, circular reference is too complex to analyze]');
-  } finally {
-    while (arr.length !== 0) {
-      var part = arr.pop();
-
-      if (part.length === 4) {
-        Object.defineProperty(part[0], part[1], part[3]);
-      } else {
-        part[0][part[1]] = part[2];
+    if (valid === false) {
+      if (typeof ms !== 'number' && typeof ms !== 'bigint') {
+        throw TypeError('sleep: ms must be a number');
       }
+
+      throw RangeError('sleep: ms must be a number that is greater than 0 but less than Infinity');
+    }
+
+    Atomics.wait(nil, 0, 0, Number(ms));
+  }
+
+  atomicSleep.exports = sleep;
+} else {
+  function sleep(ms) {
+    // also filters out NaN, non-number types, including empty strings, but allows bigints
+    const valid = ms > 0 && ms < Infinity;
+
+    if (valid === false) {
+      if (typeof ms !== 'number' && typeof ms !== 'bigint') {
+        throw TypeError('sleep: ms must be a number');
+      }
+
+      throw RangeError('sleep: ms must be a number that is greater than 0 but less than Infinity');
     }
   }
 
-  return res;
+  atomicSleep.exports = sleep;
 }
 
-function setReplace(replace, val, k, parent) {
-  var propertyDescriptor = Object.getOwnPropertyDescriptor(parent, k);
+const fs$1 = require$$0__default$1["default"];
+const EventEmitter$4 = require$$0__default$2["default"];
+const inherits = require$$2__default["default"].inherits;
+const path = require$$2__default$1["default"];
+const sleep = atomicSleep.exports;
+const BUSY_WRITE_TIMEOUT = 100; // 16 MB - magic number
+// This constant ensures that SonicBoom only needs
+// 32 MB of free memory to run. In case of having 1GB+
+// of data to write, this prevents an out of memory
+// condition.
 
-  if (propertyDescriptor.get !== undefined) {
-    if (propertyDescriptor.configurable) {
-      Object.defineProperty(parent, k, {
-        value: replace
+const MAX_WRITE = 16 * 1024 * 1024;
+
+function openFile(file, sonic) {
+  sonic._opening = true;
+  sonic._writing = true;
+  sonic._asyncDrainScheduled = false; // NOTE: 'error' and 'ready' events emitted below only relevant when sonic.sync===false
+  // for sync mode, there is no way to add a listener that will receive these
+
+  function fileOpened(err, fd) {
+    if (err) {
+      sonic._reopening = false;
+      sonic._writing = false;
+      sonic._opening = false;
+
+      if (sonic.sync) {
+        process.nextTick(() => {
+          if (sonic.listenerCount('error') > 0) {
+            sonic.emit('error', err);
+          }
+        });
+      } else {
+        sonic.emit('error', err);
+      }
+
+      return;
+    }
+
+    sonic.fd = fd;
+    sonic.file = file;
+    sonic._reopening = false;
+    sonic._opening = false;
+    sonic._writing = false;
+
+    if (sonic.sync) {
+      process.nextTick(() => sonic.emit('ready'));
+    } else {
+      sonic.emit('ready');
+    }
+
+    if (sonic._reopening) {
+      return;
+    } // start
+
+
+    if (!sonic._writing && sonic._len > sonic.minLength && !sonic.destroyed) {
+      actualWrite(sonic);
+    }
+  }
+
+  const mode = sonic.append ? 'a' : 'w';
+
+  if (sonic.sync) {
+    try {
+      if (sonic.mkdir) fs$1.mkdirSync(path.dirname(file), {
+        recursive: true
       });
-      arr.push([parent, k, val, propertyDescriptor]);
-    } else {
-      replacerStack.push([val, k, replace]);
+      const fd = fs$1.openSync(file, mode);
+      fileOpened(null, fd);
+    } catch (err) {
+      fileOpened(err);
+      throw err;
     }
+  } else if (sonic.mkdir) {
+    fs$1.mkdir(path.dirname(file), {
+      recursive: true
+    }, err => {
+      if (err) return fileOpened(err);
+      fs$1.open(file, mode, fileOpened);
+    });
   } else {
-    parent[k] = replace;
-    arr.push([parent, k, val]);
+    fs$1.open(file, mode, fileOpened);
   }
 }
 
-function decirc(val, k, edgeIndex, stack, parent, depth, options) {
-  depth += 1;
-  var i;
-
-  if (typeof val === 'object' && val !== null) {
-    for (i = 0; i < stack.length; i++) {
-      if (stack[i] === val) {
-        setReplace(CIRCULAR_REPLACE_NODE, val, k, parent);
-        return;
-      }
-    }
-
-    if (typeof options.depthLimit !== 'undefined' && depth > options.depthLimit) {
-      setReplace(LIMIT_REPLACE_NODE, val, k, parent);
-      return;
-    }
-
-    if (typeof options.edgesLimit !== 'undefined' && edgeIndex + 1 > options.edgesLimit) {
-      setReplace(LIMIT_REPLACE_NODE, val, k, parent);
-      return;
-    }
-
-    stack.push(val); // Optimize for Arrays. Big arrays could kill the performance otherwise!
-
-    if (Array.isArray(val)) {
-      for (i = 0; i < val.length; i++) {
-        decirc(val[i], i, i, stack, val, depth, options);
-      }
-    } else {
-      var keys = Object.keys(val);
-
-      for (i = 0; i < keys.length; i++) {
-        var key = keys[i];
-        decirc(val[key], key, i, stack, val, depth, options);
-      }
-    }
-
-    stack.pop();
-  }
-} // Stable-stringify
-
-
-function compareFunction(a, b) {
-  if (a < b) {
-    return -1;
+function SonicBoom$1(opts) {
+  if (!(this instanceof SonicBoom$1)) {
+    return new SonicBoom$1(opts);
   }
 
-  if (a > b) {
-    return 1;
+  let {
+    fd,
+    dest,
+    minLength,
+    sync,
+    append = true,
+    mkdir,
+    retryEAGAIN
+  } = opts || {};
+  fd = fd || dest;
+  this._bufs = [];
+  this._len = 0;
+  this.fd = -1;
+  this._writing = false;
+  this._writingBuf = '';
+  this._ending = false;
+  this._reopening = false;
+  this._asyncDrainScheduled = false;
+  this._hwm = Math.max(minLength || 0, 16387);
+  this.file = null;
+  this.destroyed = false;
+  this.minLength = minLength || 0;
+  this.sync = sync || false;
+  this.append = append || false;
+
+  this.retryEAGAIN = retryEAGAIN || (() => true);
+
+  this.mkdir = mkdir || false;
+
+  if (typeof fd === 'number') {
+    this.fd = fd;
+    process.nextTick(() => this.emit('ready'));
+  } else if (typeof fd === 'string') {
+    openFile(fd, this);
+  } else {
+    throw new Error('SonicBoom supports only file descriptors and files');
   }
 
-  return 0;
-}
-
-function deterministicStringify(obj, replacer, spacer, options) {
-  if (typeof options === 'undefined') {
-    options = defaultOptions$2();
+  if (this.minLength >= MAX_WRITE) {
+    throw new Error(`minLength should be smaller than MAX_WRITE (${MAX_WRITE})`);
   }
 
-  var tmp = deterministicDecirc(obj, '', 0, [], undefined, 0, options) || obj;
-  var res;
-
-  try {
-    if (replacerStack.length === 0) {
-      res = JSON.stringify(tmp, replacer, spacer);
-    } else {
-      res = JSON.stringify(tmp, replaceGetterValues(replacer), spacer);
-    }
-  } catch (_) {
-    return JSON.stringify('[unable to serialize, circular reference is too complex to analyze]');
-  } finally {
-    // Ensure that we restore the object as it was.
-    while (arr.length !== 0) {
-      var part = arr.pop();
-
-      if (part.length === 4) {
-        Object.defineProperty(part[0], part[1], part[3]);
+  this.release = (err, n) => {
+    if (err) {
+      if (err.code === 'EAGAIN' && this.retryEAGAIN(err, this._writingBuf.length, this._len - this._writingBuf.length)) {
+        if (this.sync) {
+          // This error code should not happen in sync mode, because it is
+          // not using the underlining operating system asynchronous functions.
+          // However it happens, and so we handle it.
+          // Ref: https://github.com/pinojs/pino/issues/783
+          try {
+            sleep(BUSY_WRITE_TIMEOUT);
+            this.release(undefined, 0);
+          } catch (err) {
+            this.release(err);
+          }
+        } else {
+          // Let's give the destination some time to process the chunk.
+          setTimeout(() => {
+            fs$1.write(this.fd, this._writingBuf, 'utf8', this.release);
+          }, BUSY_WRITE_TIMEOUT);
+        }
       } else {
-        part[0][part[1]] = part[2];
+        this._writing = false;
+        this.emit('error', err);
       }
+
+      return;
     }
-  }
 
-  return res;
-}
+    this._len -= n;
+    this._writingBuf = this._writingBuf.slice(n);
 
-function deterministicDecirc(val, k, edgeIndex, stack, parent, depth, options) {
-  depth += 1;
-  var i;
+    if (this._writingBuf.length) {
+      if (!this.sync) {
+        fs$1.write(this.fd, this._writingBuf, 'utf8', this.release);
+        return;
+      }
 
-  if (typeof val === 'object' && val !== null) {
-    for (i = 0; i < stack.length; i++) {
-      if (stack[i] === val) {
-        setReplace(CIRCULAR_REPLACE_NODE, val, k, parent);
+      try {
+        do {
+          const n = fs$1.writeSync(this.fd, this._writingBuf, 'utf8');
+          this._len -= n;
+          this._writingBuf = this._writingBuf.slice(n);
+        } while (this._writingBuf);
+      } catch (err) {
+        this.release(err);
         return;
       }
     }
+
+    const len = this._len;
+
+    if (this._reopening) {
+      this._writing = false;
+      this._reopening = false;
+      this.reopen();
+    } else if (len > this.minLength) {
+      actualWrite(this);
+    } else if (this._ending) {
+      if (len > 0) {
+        actualWrite(this);
+      } else {
+        this._writing = false;
+        actualClose(this);
+      }
+    } else {
+      this._writing = false;
+
+      if (this.sync) {
+        if (!this._asyncDrainScheduled) {
+          this._asyncDrainScheduled = true;
+          process.nextTick(emitDrain, this);
+        }
+      } else {
+        this.emit('drain');
+      }
+    }
+  };
+
+  this.on('newListener', function (name) {
+    if (name === 'drain') {
+      this._asyncDrainScheduled = false;
+    }
+  });
+}
+
+function emitDrain(sonic) {
+  const hasListeners = sonic.listenerCount('drain') > 0;
+  if (!hasListeners) return;
+  sonic._asyncDrainScheduled = false;
+  sonic.emit('drain');
+}
+
+inherits(SonicBoom$1, EventEmitter$4);
+
+SonicBoom$1.prototype.write = function (data) {
+  if (this.destroyed) {
+    throw new Error('SonicBoom destroyed');
+  }
+
+  const len = this._len + data.length;
+  const bufs = this._bufs;
+
+  if (!this._writing && len > MAX_WRITE) {
+    bufs.push(data);
+  } else if (bufs.length === 0) {
+    bufs[0] = '' + data;
+  } else {
+    bufs[bufs.length - 1] += data;
+  }
+
+  this._len = len;
+
+  if (!this._writing && this._len >= this.minLength) {
+    actualWrite(this);
+  }
+
+  return this._len < this._hwm;
+};
+
+SonicBoom$1.prototype.flush = function () {
+  if (this.destroyed) {
+    throw new Error('SonicBoom destroyed');
+  }
+
+  if (this._writing || this.minLength <= 0) {
+    return;
+  }
+
+  if (this._bufs.length === 0) {
+    this._bufs.push('');
+  }
+
+  actualWrite(this);
+};
+
+SonicBoom$1.prototype.reopen = function (file) {
+  if (this.destroyed) {
+    throw new Error('SonicBoom destroyed');
+  }
+
+  if (this._opening) {
+    this.once('ready', () => {
+      this.reopen(file);
+    });
+    return;
+  }
+
+  if (this._ending) {
+    return;
+  }
+
+  if (!this.file) {
+    throw new Error('Unable to reopen a file descriptor, you must pass a file to SonicBoom');
+  }
+
+  this._reopening = true;
+
+  if (this._writing) {
+    return;
+  }
+
+  const fd = this.fd;
+  this.once('ready', () => {
+    if (fd !== this.fd) {
+      fs$1.close(fd, err => {
+        if (err) {
+          return this.emit('error', err);
+        }
+      });
+    }
+  });
+  openFile(file || this.file, this);
+};
+
+SonicBoom$1.prototype.end = function () {
+  if (this.destroyed) {
+    throw new Error('SonicBoom destroyed');
+  }
+
+  if (this._opening) {
+    this.once('ready', () => {
+      this.end();
+    });
+    return;
+  }
+
+  if (this._ending) {
+    return;
+  }
+
+  this._ending = true;
+
+  if (this._writing) {
+    return;
+  }
+
+  if (this._len > 0 && this.fd >= 0) {
+    actualWrite(this);
+  } else {
+    actualClose(this);
+  }
+};
+
+SonicBoom$1.prototype.flushSync = function () {
+  if (this.destroyed) {
+    throw new Error('SonicBoom destroyed');
+  }
+
+  if (this.fd < 0) {
+    throw new Error('sonic boom is not ready yet');
+  }
+
+  if (!this._writing && this._writingBuf.length > 0) {
+    this._bufs.unshift(this._writingBuf);
+
+    this._writingBuf = '';
+  }
+
+  while (this._bufs.length) {
+    const buf = this._bufs[0];
 
     try {
-      if (typeof val.toJSON === 'function') {
-        return;
-      }
-    } catch (_) {
-      return;
-    }
+      this._len -= fs$1.writeSync(this.fd, buf, 'utf8');
 
-    if (typeof options.depthLimit !== 'undefined' && depth > options.depthLimit) {
-      setReplace(LIMIT_REPLACE_NODE, val, k, parent);
-      return;
-    }
-
-    if (typeof options.edgesLimit !== 'undefined' && edgeIndex + 1 > options.edgesLimit) {
-      setReplace(LIMIT_REPLACE_NODE, val, k, parent);
-      return;
-    }
-
-    stack.push(val); // Optimize for Arrays. Big arrays could kill the performance otherwise!
-
-    if (Array.isArray(val)) {
-      for (i = 0; i < val.length; i++) {
-        deterministicDecirc(val[i], i, i, stack, val, depth, options);
-      }
-    } else {
-      // Create a temporary object in the required way
-      var tmp = {};
-      var keys = Object.keys(val).sort(compareFunction);
-
-      for (i = 0; i < keys.length; i++) {
-        var key = keys[i];
-        deterministicDecirc(val[key], key, i, stack, val, depth, options);
-        tmp[key] = val[key];
+      this._bufs.shift();
+    } catch (err) {
+      if (err.code !== 'EAGAIN' || !this.retryEAGAIN(err, buf.length, this._len - buf.length)) {
+        throw err;
       }
 
-      if (typeof parent !== 'undefined') {
-        arr.push([parent, k, val]);
-        parent[k] = tmp;
-      } else {
-        return tmp;
-      }
+      sleep(BUSY_WRITE_TIMEOUT);
     }
-
-    stack.pop();
   }
-} // wraps replacer function to handle values we couldn't replace
-// and mark them as replaced value
+};
+
+SonicBoom$1.prototype.destroy = function () {
+  if (this.destroyed) {
+    return;
+  }
+
+  actualClose(this);
+};
+
+function actualWrite(sonic) {
+  const release = sonic.release;
+  sonic._writing = true;
+  sonic._writingBuf = sonic._writingBuf || sonic._bufs.shift();
+
+  if (sonic.sync) {
+    try {
+      const written = fs$1.writeSync(sonic.fd, sonic._writingBuf, 'utf8');
+      release(null, written);
+    } catch (err) {
+      release(err);
+    }
+  } else {
+    fs$1.write(sonic.fd, sonic._writingBuf, 'utf8', release);
+  }
+}
+
+function actualClose(sonic) {
+  if (sonic.fd === -1) {
+    sonic.once('ready', actualClose.bind(null, sonic));
+    return;
+  } // TODO write a test to check if we are not leaking fds
 
 
-function replaceGetterValues(replacer) {
-  replacer = typeof replacer !== 'undefined' ? replacer : function (k, v) {
-    return v;
-  };
-  return function (key, val) {
-    if (replacerStack.length > 0) {
-      for (var i = 0; i < replacerStack.length; i++) {
-        var part = replacerStack[i];
-
-        if (part[1] === key && part[0] === val) {
-          val = part[2];
-          replacerStack.splice(i, 1);
-          break;
-        }
-      }
+  fs$1.close(sonic.fd, err => {
+    if (err) {
+      sonic.emit('error', err);
+      return;
     }
 
-    return replacer.call(this, key, val);
+    if (sonic._ending && !sonic._writing) {
+      sonic.emit('finish');
+    }
+
+    sonic.emit('close');
+  });
+  sonic.destroyed = true;
+  sonic._bufs = [];
+}
+/**
+ * These export configurations enable JS and TS developers
+ * to consumer SonicBoom in whatever way best suits their needs.
+ * Some examples of supported import syntax includes:
+ * - `const SonicBoom = require('SonicBoom')`
+ * - `const { SonicBoom } = require('SonicBoom')`
+ * - `import * as SonicBoom from 'SonicBoom'`
+ * - `import { SonicBoom } from 'SonicBoom'`
+ * - `import SonicBoom from 'SonicBoom'`
+ */
+
+
+SonicBoom$1.SonicBoom = SonicBoom$1;
+SonicBoom$1.default = SonicBoom$1;
+var sonicBoom = SonicBoom$1;
+
+var stringify$4 = {exports: {}};
+
+(function (module, exports) {
+  exports = module.exports = stringify;
+  exports.getSerialize = serializer;
+
+  function stringify(obj, replacer, spaces, cycleReplacer) {
+    return JSON.stringify(obj, serializer(replacer, cycleReplacer), spaces);
+  }
+
+  function serializer(replacer, cycleReplacer) {
+    var stack = [],
+        keys = [];
+    if (cycleReplacer == null) cycleReplacer = function (key, value) {
+      if (stack[0] === value) return "[Circular ~]";
+      return "[Circular ~." + keys.slice(0, stack.indexOf(value)).join(".") + "]";
+    };
+    return function (key, value) {
+      if (stack.length > 0) {
+        var thisPos = stack.indexOf(this);
+        ~thisPos ? stack.splice(thisPos + 1) : stack.push(this);
+        ~thisPos ? keys.splice(thisPos, Infinity, key) : keys.push(key);
+        if (~stack.indexOf(value)) value = cycleReplacer.call(this, key, value);
+      } else stack.push(value);
+
+      return replacer == null ? value : replacer.call(this, key, value);
+    };
+  }
+})(stringify$4, stringify$4.exports);
+
+const {
+  format: format$8
+} = require$$2__default["default"];
+
+function build$1() {
+  const codes = {};
+  const emitted = new Map();
+
+  function create(name, code, message) {
+    if (!name) throw new Error('Fastify warning name must not be empty');
+    if (!code) throw new Error('Fastify warning code must not be empty');
+    if (!message) throw new Error('Fastify warning message must not be empty');
+    code = code.toUpperCase();
+
+    if (codes[code] !== undefined) {
+      throw new Error(`The code '${code}' already exist`);
+    }
+
+    function buildWarnOpts(a, b, c) {
+      // more performant than spread (...) operator
+      let formatted;
+
+      if (a && b && c) {
+        formatted = format$8(message, a, b, c);
+      } else if (a && b) {
+        formatted = format$8(message, a, b);
+      } else if (a) {
+        formatted = format$8(message, a);
+      } else {
+        formatted = message;
+      }
+
+      return {
+        code,
+        name,
+        message: formatted
+      };
+    }
+
+    emitted.set(code, false);
+    codes[code] = buildWarnOpts;
+    return codes[code];
+  }
+
+  function emit(code, a, b, c) {
+    if (codes[code] === undefined) throw new Error(`The code '${code}' does not exist`);
+    if (emitted.get(code) === true) return;
+    emitted.set(code, true);
+    const warning = codes[code](a, b, c);
+    process.emitWarning(warning.message, warning.name, warning.code);
+  }
+
+  return {
+    create,
+    emit,
+    emitted
   };
 }
+
+var fastifyWarning = build$1;
+
+const warning$1 = fastifyWarning();
+var deprecations = warning$1;
+const warnName = 'PinoWarning';
+warning$1.create(warnName, 'PINODEP008', 'prettyPrint is deprecated, use the pino-pretty transport instead');
+
+const MAX_TIMEOUT = 1000;
+
+function wait$1(state, index, expected, timeout, done) {
+  const max = Date.now() + timeout;
+  let current = Atomics.load(state, index);
+
+  if (current === expected) {
+    done(null, 'ok');
+    return;
+  }
+
+  let prior = current;
+
+  const check = backoff => {
+    if (Date.now() > max) {
+      done(null, 'timed-out');
+    } else {
+      setTimeout(() => {
+        prior = current;
+        current = Atomics.load(state, index);
+
+        if (current === prior) {
+          check(backoff >= MAX_TIMEOUT ? MAX_TIMEOUT : backoff * 2);
+        } else {
+          if (current === expected) done(null, 'ok');else done(null, 'not-equal');
+        }
+      }, backoff);
+    }
+  };
+
+  check(1);
+} // let waitDiffCount = 0
+
+
+function waitDiff(state, index, expected, timeout, done) {
+  // const id = waitDiffCount++
+  // process._rawDebug(`>>> waitDiff ${id}`)
+  const max = Date.now() + timeout;
+  let current = Atomics.load(state, index);
+
+  if (current !== expected) {
+    done(null, 'ok');
+    return;
+  }
+
+  const check = backoff => {
+    // process._rawDebug(`${id} ${index} current ${current} expected ${expected}`)
+    // process._rawDebug('' + backoff)
+    if (Date.now() > max) {
+      done(null, 'timed-out');
+    } else {
+      setTimeout(() => {
+        current = Atomics.load(state, index);
+
+        if (current !== expected) {
+          done(null, 'ok');
+        } else {
+          check(backoff >= MAX_TIMEOUT ? MAX_TIMEOUT : backoff * 2);
+        }
+      }, backoff);
+    }
+  };
+
+  check(1);
+}
+
+var wait_1 = {
+  wait: wait$1,
+  waitDiff
+};
+
+const WRITE_INDEX$1 = 4;
+const READ_INDEX$1 = 8;
+var indexes = {
+  WRITE_INDEX: WRITE_INDEX$1,
+  READ_INDEX: READ_INDEX$1
+};
+
+const {
+  EventEmitter: EventEmitter$3
+} = require$$0__default$2["default"];
+const {
+  Worker
+} = require$$1__default["default"];
+const {
+  join: join$1
+} = require$$2__default$1["default"];
+const {
+  pathToFileURL
+} = require$$6__default["default"];
+const {
+  wait
+} = wait_1;
+const {
+  WRITE_INDEX,
+  READ_INDEX
+} = indexes;
+
+class FakeWeakRef {
+  constructor(value) {
+    this._value = value;
+  }
+
+  deref() {
+    return this._value;
+  }
+
+}
+
+const FinalizationRegistry$1 = commonjsGlobal.FinalizationRegistry || class FakeFinalizationRegistry {
+  register() {}
+
+  unregister() {}
+
+};
+const WeakRef$1 = commonjsGlobal.WeakRef || FakeWeakRef;
+const registry$1 = new FinalizationRegistry$1(worker => {
+  worker.terminate();
+});
+
+function createWorker(stream, opts) {
+  const {
+    filename,
+    workerData
+  } = opts;
+  const toExecute = join$1(__dirname, 'lib', 'worker.js');
+  const worker = new Worker(toExecute, { ...opts.workerOpts,
+    workerData: {
+      filename: filename.indexOf('file://') === 0 ? filename : pathToFileURL(filename).href,
+      dataBuf: stream._dataBuf,
+      stateBuf: stream._stateBuf,
+      workerData
+    }
+  }); // We keep a strong reference for now,
+  // we need to start writing first
+
+  worker.stream = new FakeWeakRef(stream);
+  worker.on('message', onWorkerMessage);
+  worker.on('exit', onWorkerExit);
+  registry$1.register(stream, worker);
+  return worker;
+}
+
+function drain(stream) {
+  stream.needDrain = false;
+  stream.emit('drain');
+}
+
+function nextFlush(stream) {
+  const writeIndex = Atomics.load(stream._state, WRITE_INDEX);
+  let leftover = stream._data.length - writeIndex;
+
+  if (leftover > 0) {
+    if (stream.buf.length === 0) {
+      stream.flushing = false;
+
+      if (!stream.needDrain) {
+        // process._rawDebug('emitting drain')
+        stream.needDrain = true;
+        process.nextTick(drain, stream);
+      }
+
+      return;
+    }
+
+    let toWrite = stream.buf.slice(0, leftover);
+    let toWriteBytes = Buffer.byteLength(toWrite);
+
+    if (toWriteBytes <= leftover) {
+      stream.buf = stream.buf.slice(leftover); // process._rawDebug('writing ' + toWrite.length)
+
+      stream._write(toWrite, nextFlush.bind(null, stream));
+    } else {
+      // multi-byte utf-8
+      stream.flush(() => {
+        Atomics.store(stream._state, READ_INDEX, 0);
+        Atomics.store(stream._state, WRITE_INDEX, 0); // Find a toWrite length that fits the buffer
+        // it must exists as the buffer is at least 4 bytes length
+        // and the max utf-8 length for a char is 4 bytes.
+
+        while (toWriteBytes > stream.buf.length) {
+          leftover = leftover / 2;
+          toWrite = stream.buf.slice(0, leftover);
+          toWriteBytes = Buffer.byteLength(toWrite);
+        }
+
+        stream.buf = stream.buf.slice(leftover);
+
+        stream._write(toWrite, nextFlush.bind(null, stream));
+      });
+    }
+  } else if (leftover === 0) {
+    if (writeIndex === 0 && stream.buf.length === 0) {
+      // we had a flushSync in the meanwhile
+      return;
+    }
+
+    stream.flush(() => {
+      Atomics.store(stream._state, READ_INDEX, 0);
+      Atomics.store(stream._state, WRITE_INDEX, 0);
+      nextFlush(stream);
+    });
+  } else {
+    // This should never happen
+    throw new Error('overwritten');
+  }
+}
+
+function onWorkerMessage(msg) {
+  const stream = this.stream.deref();
+
+  if (stream === undefined) {
+    // Terminate the worker.
+    this.terminate();
+    return;
+  }
+
+  switch (msg.code) {
+    case 'READY':
+      // Replace the FakeWeakRef with a
+      // proper one.
+      this.stream = new WeakRef$1(stream);
+
+      if (stream._sync) {
+        stream.ready = true;
+        stream.flushSync();
+        stream.emit('ready');
+      } else {
+        stream.once('drain', function () {
+          stream.flush(() => {
+            stream.ready = true;
+            stream.emit('ready');
+          });
+        });
+        nextFlush(stream);
+      }
+
+      break;
+
+    case 'ERROR':
+      stream.closed = true; // TODO only remove our own
+
+      stream.worker.removeAllListeners('exit');
+      stream.worker.terminate().then(null, () => {});
+      process.nextTick(() => {
+        stream.emit('error', msg.err);
+      });
+      break;
+
+    default:
+      throw new Error('this should not happen: ' + msg.code);
+  }
+}
+
+function onWorkerExit(code) {
+  const stream = this.stream.deref();
+
+  if (stream === undefined) {
+    // Nothing to do, the worker already exit
+    return;
+  }
+
+  registry$1.unregister(stream);
+  stream.closed = true;
+  setImmediate(function () {
+    if (code !== 0) {
+      stream.emit('error', new Error('The worker thread exited'));
+    }
+
+    stream.emit('close');
+  });
+}
+
+class ThreadStream$1 extends EventEmitter$3 {
+  constructor(opts = {}) {
+    super();
+
+    if (opts.bufferSize < 4) {
+      throw new Error('bufferSize must at least fit a 4-byte utf-8 char');
+    }
+
+    this._stateBuf = new SharedArrayBuffer(128);
+    this._state = new Int32Array(this._stateBuf);
+    this._dataBuf = new SharedArrayBuffer(opts.bufferSize || 4 * 1024 * 1024);
+    this._data = Buffer.from(this._dataBuf);
+    this._sync = opts.sync || false;
+    this.worker = createWorker(this, opts);
+    this.ready = false;
+    this.ending = false;
+    this.needDrain = false;
+    this.closed = false;
+    this.buf = '';
+  }
+
+  _write(data, cb) {
+    // data is smaller than the shared buffer length
+    const current = Atomics.load(this._state, WRITE_INDEX);
+    const length = Buffer.byteLength(data);
+
+    this._data.write(data, current);
+
+    Atomics.store(this._state, WRITE_INDEX, current + length);
+    Atomics.notify(this._state, WRITE_INDEX);
+    cb();
+    return true;
+  }
+
+  _hasSpace() {
+    const current = Atomics.load(this._state, WRITE_INDEX);
+    return this._data.length - this.buf.length - current > 0;
+  }
+
+  write(data) {
+    if (this.closed) {
+      throw new Error('the worker has exited');
+    }
+
+    if (!this.ready || this.flushing) {
+      this.buf += data;
+      return this._hasSpace();
+    }
+
+    if (this._sync) {
+      this.buf += data;
+
+      this._writeSync();
+
+      return true;
+    }
+
+    this.buf = data;
+    this.flushing = true;
+    setImmediate(nextFlush, this);
+    return this._hasSpace();
+  }
+
+  end() {
+    if (this.closed) {
+      throw new Error('the worker has exited');
+    }
+
+    if (!this.ready) {
+      this.once('ready', this.end.bind(this));
+      return;
+    }
+
+    if (this.flushing) {
+      this.once('drain', this.end.bind(this));
+      return;
+    }
+
+    if (this.ending) {
+      return;
+    }
+
+    this.ending = true;
+    this.flushSync();
+    let read = Atomics.load(this._state, READ_INDEX); // process._rawDebug('writing index')
+
+    Atomics.store(this._state, WRITE_INDEX, -1); // process._rawDebug(`(end) readIndex (${Atomics.load(this._state, READ_INDEX)}) writeIndex (${Atomics.load(this._state, WRITE_INDEX)})`)
+
+    Atomics.notify(this._state, WRITE_INDEX); // Wait for the process to complete
+
+    let spins = 0;
+
+    while (read !== -1) {
+      // process._rawDebug(`read = ${read}`)
+      Atomics.wait(this._state, READ_INDEX, read, 1000);
+      read = Atomics.load(this._state, READ_INDEX);
+
+      if (++spins === 10) {
+        throw new Error('end() took too long (10s)');
+      }
+    }
+
+    process.nextTick(() => {
+      this.emit('finish');
+    }); // process._rawDebug('end finished...')
+  }
+
+  flush(cb) {
+    if (this.closed) {
+      throw new Error('the worker has exited');
+    } // TODO write all .buf
+
+
+    const writeIndex = Atomics.load(this._state, WRITE_INDEX); // process._rawDebug(`(flush) readIndex (${Atomics.load(this._state, READ_INDEX)}) writeIndex (${Atomics.load(this._state, WRITE_INDEX)})`)
+
+    wait(this._state, READ_INDEX, writeIndex, Infinity, (err, res) => {
+      if (err) {
+        this.emit('error', err);
+        cb(err);
+        return;
+      }
+
+      if (res === 'not-equal') {
+        // TODO handle deadlock
+        this.flush(cb);
+        return;
+      }
+
+      cb();
+    });
+  }
+
+  _writeSync() {
+    const cb = () => {
+      if (!this.needDrain) {
+        // process._rawDebug('emitting drain')
+        this.needDrain = true;
+        process.nextTick(drain, this);
+      }
+    };
+
+    this.flushing = false;
+
+    while (this.buf.length !== 0) {
+      const writeIndex = Atomics.load(this._state, WRITE_INDEX);
+      let leftover = this._data.length - writeIndex;
+
+      if (leftover === 0) {
+        this._flushSync();
+
+        Atomics.store(this._state, READ_INDEX, 0);
+        Atomics.store(this._state, WRITE_INDEX, 0);
+        continue;
+      } else if (leftover < 0) {
+        // This should never happen
+        throw new Error('overwritten');
+      }
+
+      let toWrite = this.buf.slice(0, leftover);
+      let toWriteBytes = Buffer.byteLength(toWrite);
+
+      if (toWriteBytes <= leftover) {
+        this.buf = this.buf.slice(leftover); // process._rawDebug('writing ' + toWrite.length)
+
+        this._write(toWrite, cb);
+      } else {
+        // multi-byte utf-8
+        this._flushSync();
+
+        Atomics.store(this._state, READ_INDEX, 0);
+        Atomics.store(this._state, WRITE_INDEX, 0); // Find a toWrite length that fits the buffer
+        // it must exists as the buffer is at least 4 bytes length
+        // and the max utf-8 length for a char is 4 bytes.
+
+        while (toWriteBytes > this.buf.length) {
+          leftover = leftover / 2;
+          toWrite = this.buf.slice(0, leftover);
+          toWriteBytes = Buffer.byteLength(toWrite);
+        }
+
+        this.buf = this.buf.slice(leftover);
+
+        this._write(toWrite, cb);
+      }
+    }
+  }
+
+  flushSync() {
+    if (this.closed) {
+      throw new Error('the worker has exited');
+    }
+
+    this._writeSync();
+
+    this._flushSync();
+  }
+
+  _flushSync() {
+    if (this.flushing) {
+      throw new Error('unable to flush while flushing');
+    } // process._rawDebug('flushSync started')
+
+
+    const writeIndex = Atomics.load(this._state, WRITE_INDEX);
+    let spins = 0; // TODO handle deadlock
+
+    while (true) {
+      const readIndex = Atomics.load(this._state, READ_INDEX); // process._rawDebug(`(flushSync) readIndex (${readIndex}) writeIndex (${writeIndex})`)
+
+      if (readIndex !== writeIndex) {
+        // TODO this timeouts for some reason.
+        Atomics.wait(this._state, READ_INDEX, readIndex, 1000);
+      } else {
+        break;
+      }
+
+      if (++spins === 10) {
+        throw new Error('_flushSync took too long (10s)');
+      }
+    } // process._rawDebug('flushSync finished')
+
+  }
+
+  unref() {
+    this.worker.unref();
+  }
+
+  ref() {
+    this.worker.ref();
+  }
+
+  get writable() {
+    return !this.closed;
+  }
+
+}
+
+var threadStream = ThreadStream$1;
+
+function genWrap(wraps, ref, fn, event) {
+  function wrap() {
+    const obj = ref.deref(); // This should alway happen, however GC is
+    // undeterministic so it might happen.
+
+    /* istanbul ignore else */
+
+    if (obj !== undefined) {
+      fn(obj, event);
+    }
+  }
+
+  wraps[event] = wrap;
+  process.once(event, wrap);
+}
+
+const registry = new FinalizationRegistry(clear);
+const map = new WeakMap();
+
+function clear(wraps) {
+  process.removeListener('exit', wraps.exit);
+  process.removeListener('beforeExit', wraps.beforeExit);
+}
+
+function register(obj, fn) {
+  if (obj === undefined) {
+    throw new Error('the object can\'t be undefined');
+  }
+
+  const ref = new WeakRef(obj);
+  const wraps = {};
+  map.set(obj, wraps);
+  registry.register(obj, wraps);
+  genWrap(wraps, ref, fn, 'exit');
+  genWrap(wraps, ref, fn, 'beforeExit');
+}
+
+function unregister(obj) {
+  const wraps = map.get(obj);
+  map.delete(obj);
+
+  if (wraps) {
+    clear(wraps);
+  }
+
+  registry.unregister(obj);
+}
+
+var onExitLeakFree = {
+  register,
+  unregister
+};
+
+const {
+  createRequire
+} = require$$0__default$3["default"];
+const getCaller = getCallerFile;
+const {
+  join,
+  isAbsolute
+} = require$$2__default$1["default"];
+const ThreadStream = threadStream;
+
+function setupOnExit$1(stream) {
+  /* istanbul ignore next */
+  if (commonjsGlobal.WeakRef && commonjsGlobal.WeakMap && commonjsGlobal.FinalizationRegistry) {
+    // This is leak free, it does not leave event handlers
+    const onExit = onExitLeakFree;
+    onExit.register(stream, autoEnd$1);
+    stream.on('close', function () {
+      onExit.unregister(stream);
+    });
+  } else {
+    const fn = autoEnd$1.bind(null, stream);
+    process.once('beforeExit', fn);
+    process.once('exit', fn);
+    stream.on('close', function () {
+      process.removeListener('beforeExit', fn);
+      process.removeListener('exit', fn);
+    });
+  }
+}
+
+function buildStream(filename, workerData, workerOpts) {
+  const stream = new ThreadStream({
+    filename,
+    workerData,
+    workerOpts
+  });
+  stream.on('ready', function () {
+    stream.unref();
+
+    if (workerOpts.autoEnd !== false) {
+      setupOnExit$1(stream);
+    }
+  });
+  return stream;
+}
+
+function autoEnd$1(stream) {
+  stream.ref();
+  stream.end();
+  stream.once('close', function () {
+    stream.unref();
+  });
+}
+
+function transport$1(fullOptions) {
+  const {
+    pipeline,
+    targets,
+    options = {},
+    worker = {},
+    caller = getCaller()
+  } = fullOptions; // This function call MUST stay in the top-level function of this module
+
+  const callerRequire = createRequire(caller);
+  let target = fullOptions.target;
+
+  if (target && targets) {
+    throw new Error('only one of target or targets can be specified');
+  }
+
+  if (targets) {
+    target = join(__dirname, 'worker.js');
+    options.targets = targets.map(dest => {
+      return { ...dest,
+        target: fixTarget(dest.target)
+      };
+    });
+  } else if (fullOptions.pipeline) {
+    target = join(__dirname, 'worker-pipeline.js');
+    options.targets = pipeline.map(dest => {
+      return { ...dest,
+        target: fixTarget(dest.target)
+      };
+    });
+  }
+
+  return buildStream(fixTarget(target), options, worker);
+
+  function fixTarget(origin) {
+    if (isAbsolute(origin) || origin.indexOf('file://') === 0) {
+      return origin;
+    }
+
+    switch (origin) {
+      // This hack should not be needed, however it would not work otherwise
+      // when testing it from this module and in examples.
+      case 'pino/file':
+        return join(__dirname, '..', 'file.js');
+
+      /* istanbul ignore next */
+
+      default:
+        // TODO we cannot test this on Windows.. might not work.
+        return callerRequire.resolve(origin);
+    }
+  }
+}
+
+var transport_1 = transport$1;
 
 var pinoPretty = {exports: {}};
 
@@ -3863,7 +4400,7 @@ var colorette = {};
 Object.defineProperty(colorette, '__esModule', {
   value: true
 });
-var tty = require$$0__default$3["default"];
+var tty = require$$0__default$4["default"];
 
 function _interopNamespace$1(e) {
   if (e && e.__esModule) return e;
@@ -4126,7 +4663,7 @@ function onceStrict(fn) {
 
 var once$1 = once$3.exports;
 
-var noop$5 = function () {};
+var noop$6 = function () {};
 
 var isRequest$1 = function (stream) {
   return stream.setHeader && typeof stream.abort === 'function';
@@ -4139,7 +4676,7 @@ var isChildProcess = function (stream) {
 var eos$1 = function (stream, opts, callback) {
   if (typeof opts === 'function') return eos$1(stream, null, opts);
   if (!opts) opts = {};
-  callback = once$1(callback || noop$5);
+  callback = once$1(callback || noop$6);
   var ws = stream._writableState;
   var rs = stream._readableState;
   var readable = opts.readable || opts.readable !== false && stream.readable;
@@ -4217,9 +4754,9 @@ var endOfStream = eos$1;
 
 var once = once$3.exports;
 var eos = endOfStream;
-var fs$1 = require$$0__default$1["default"]; // we only need fs to get the ReadStream and WriteStream prototypes
+var fs = require$$0__default$1["default"]; // we only need fs to get the ReadStream and WriteStream prototypes
 
-var noop$4 = function () {};
+var noop$5 = function () {};
 
 var ancient = /^v?\.0/.test(process.version);
 
@@ -4230,9 +4767,9 @@ var isFn = function (fn) {
 var isFS = function (stream) {
   if (!ancient) return false; // newer node version do not need to care about fs is a special way
 
-  if (!fs$1) return false; // browser
+  if (!fs) return false; // browser
 
-  return (stream instanceof (fs$1.ReadStream || noop$4) || stream instanceof (fs$1.WriteStream || noop$4)) && isFn(stream.close);
+  return (stream instanceof (fs.ReadStream || noop$5) || stream instanceof (fs.WriteStream || noop$5)) && isFn(stream.close);
 };
 
 var isRequest = function (stream) {
@@ -4258,7 +4795,7 @@ var destroyer = function (stream, reading, writing, callback) {
     if (closed) return;
     if (destroyed) return;
     destroyed = true;
-    if (isFS(stream)) return stream.close(noop$4); // use close for fs streams to avoid fd leaks
+    if (isFS(stream)) return stream.close(noop$5); // use close for fs streams to avoid fd leaks
 
     if (isRequest(stream)) return stream.abort(); // request.destroy just do .end - .abort is what we want
 
@@ -4277,7 +4814,7 @@ var pipe = function (from, to) {
 
 var pump$1 = function () {
   var streams = Array.prototype.slice.call(arguments);
-  var callback = isFn(streams[streams.length - 1] || noop$4) && streams.pop() || noop$4;
+  var callback = isFn(streams[streams.length - 1] || noop$5) && streams.pop() || noop$5;
   if (Array.isArray(streams[0])) streams = streams[0];
   if (streams.length < 2) throw new Error('pump requires two streams per minimum');
   var error;
@@ -4315,10 +4852,10 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 const {
   Transform: Transform$1
-} = require$$0__default$4["default"];
+} = require$$0__default$5["default"];
 const {
   StringDecoder
-} = require$$1__default["default"];
+} = require$$1__default$1["default"];
 const kLast = Symbol('last');
 const kDecoder = Symbol('decoder');
 
@@ -4375,14 +4912,14 @@ function push(self, val) {
   }
 }
 
-function noop$3(incoming) {
+function noop$4(incoming) {
   return incoming;
 }
 
 function split$1(matcher, mapper, options) {
   // Set defaults for any arguments not supplied.
   matcher = matcher || /\r?\n/;
-  mapper = mapper || noop$3;
+  mapper = mapper || noop$4;
   options = options || {}; // Test arguments explicitly.
 
   switch (arguments.length) {
@@ -4406,7 +4943,7 @@ function split$1(matcher, mapper, options) {
         matcher = /\r?\n/; // If matcher and options are arguments.
       } else if (typeof mapper === 'object') {
         options = mapper;
-        mapper = noop$3;
+        mapper = noop$4;
       }
 
   }
@@ -4428,7 +4965,7 @@ function split$1(matcher, mapper, options) {
 
 var split2 = split$1;
 
-const metadata = Symbol.for('pino.metadata');
+const metadata$1 = Symbol.for('pino.metadata');
 const split = split2;
 
 var pinoAbstractTransport = function build(fn, opts = {}) {
@@ -4457,7 +4994,7 @@ var pinoAbstractTransport = function build(fn, opts = {}) {
       };
     }
 
-    if (stream[metadata]) {
+    if (stream[metadata$1]) {
       stream.lastTime = value.time;
       stream.lastLevel = value.level;
       stream.lastObj = value;
@@ -4481,7 +5018,7 @@ var pinoAbstractTransport = function build(fn, opts = {}) {
   };
 
   if (opts.metadata !== false) {
-    stream[metadata] = true;
+    stream[metadata$1] = true;
     stream.lastTime = 0;
     stream.lastLevel = 0;
     stream.lastObj = null;
@@ -4503,436 +5040,6 @@ var pinoAbstractTransport = function build(fn, opts = {}) {
 function defaultClose(err, cb) {
   process.nextTick(cb, err);
 }
-
-const fs = require$$0__default$1["default"];
-const EventEmitter$3 = require$$0__default$2["default"];
-const inherits = require$$3__default["default"].inherits;
-const path = require$$3__default$1["default"];
-const sleep = atomicSleep.exports;
-const BUSY_WRITE_TIMEOUT = 100; // 16 MB - magic number
-// This constant ensures that SonicBoom only needs
-// 32 MB of free memory to run. In case of having 1GB+
-// of data to write, this prevents an out of memory
-// condition.
-
-const MAX_WRITE = 16 * 1024 * 1024;
-
-function openFile(file, sonic) {
-  sonic._opening = true;
-  sonic._writing = true;
-  sonic._asyncDrainScheduled = false; // NOTE: 'error' and 'ready' events emitted below only relevant when sonic.sync===false
-  // for sync mode, there is no way to add a listener that will receive these
-
-  function fileOpened(err, fd) {
-    if (err) {
-      sonic._reopening = false;
-      sonic._writing = false;
-      sonic._opening = false;
-
-      if (sonic.sync) {
-        process.nextTick(() => {
-          if (sonic.listenerCount('error') > 0) {
-            sonic.emit('error', err);
-          }
-        });
-      } else {
-        sonic.emit('error', err);
-      }
-
-      return;
-    }
-
-    sonic.fd = fd;
-    sonic.file = file;
-    sonic._reopening = false;
-    sonic._opening = false;
-    sonic._writing = false;
-
-    if (sonic.sync) {
-      process.nextTick(() => sonic.emit('ready'));
-    } else {
-      sonic.emit('ready');
-    }
-
-    if (sonic._reopening) {
-      return;
-    } // start
-
-
-    if (!sonic._writing && sonic._len > sonic.minLength && !sonic.destroyed) {
-      actualWrite(sonic);
-    }
-  }
-
-  const mode = sonic.append ? 'a' : 'w';
-
-  if (sonic.sync) {
-    try {
-      if (sonic.mkdir) fs.mkdirSync(path.dirname(file), {
-        recursive: true
-      });
-      const fd = fs.openSync(file, mode);
-      fileOpened(null, fd);
-    } catch (err) {
-      fileOpened(err);
-      throw err;
-    }
-  } else if (sonic.mkdir) {
-    fs.mkdir(path.dirname(file), {
-      recursive: true
-    }, err => {
-      if (err) return fileOpened(err);
-      fs.open(file, mode, fileOpened);
-    });
-  } else {
-    fs.open(file, mode, fileOpened);
-  }
-}
-
-function SonicBoom$2(opts) {
-  if (!(this instanceof SonicBoom$2)) {
-    return new SonicBoom$2(opts);
-  }
-
-  let {
-    fd,
-    dest,
-    minLength,
-    sync,
-    append = true,
-    mkdir,
-    retryEAGAIN
-  } = opts || {};
-  fd = fd || dest;
-  this._bufs = [];
-  this._len = 0;
-  this.fd = -1;
-  this._writing = false;
-  this._writingBuf = '';
-  this._ending = false;
-  this._reopening = false;
-  this._asyncDrainScheduled = false;
-  this._hwm = Math.max(minLength || 0, 16387);
-  this.file = null;
-  this.destroyed = false;
-  this.minLength = minLength || 0;
-  this.sync = sync || false;
-  this.append = append || false;
-
-  this.retryEAGAIN = retryEAGAIN || (() => true);
-
-  this.mkdir = mkdir || false;
-
-  if (typeof fd === 'number') {
-    this.fd = fd;
-    process.nextTick(() => this.emit('ready'));
-  } else if (typeof fd === 'string') {
-    openFile(fd, this);
-  } else {
-    throw new Error('SonicBoom supports only file descriptors and files');
-  }
-
-  if (this.minLength >= MAX_WRITE) {
-    throw new Error(`minLength should be smaller than MAX_WRITE (${MAX_WRITE})`);
-  }
-
-  this.release = (err, n) => {
-    if (err) {
-      if (err.code === 'EAGAIN' && this.retryEAGAIN(err, this._writingBuf.length, this._len - this._writingBuf.length)) {
-        if (this.sync) {
-          // This error code should not happen in sync mode, because it is
-          // not using the underlining operating system asynchronous functions.
-          // However it happens, and so we handle it.
-          // Ref: https://github.com/pinojs/pino/issues/783
-          try {
-            sleep(BUSY_WRITE_TIMEOUT);
-            this.release(undefined, 0);
-          } catch (err) {
-            this.release(err);
-          }
-        } else {
-          // Let's give the destination some time to process the chunk.
-          setTimeout(() => {
-            fs.write(this.fd, this._writingBuf, 'utf8', this.release);
-          }, BUSY_WRITE_TIMEOUT);
-        }
-      } else {
-        this._writing = false;
-        this.emit('error', err);
-      }
-
-      return;
-    }
-
-    this._len -= n;
-    this._writingBuf = this._writingBuf.slice(n);
-
-    if (this._writingBuf.length) {
-      if (!this.sync) {
-        fs.write(this.fd, this._writingBuf, 'utf8', this.release);
-        return;
-      }
-
-      try {
-        do {
-          const n = fs.writeSync(this.fd, this._writingBuf, 'utf8');
-          this._len -= n;
-          this._writingBuf = this._writingBuf.slice(n);
-        } while (this._writingBuf);
-      } catch (err) {
-        this.release(err);
-        return;
-      }
-    }
-
-    const len = this._len;
-
-    if (this._reopening) {
-      this._writing = false;
-      this._reopening = false;
-      this.reopen();
-    } else if (len > this.minLength) {
-      actualWrite(this);
-    } else if (this._ending) {
-      if (len > 0) {
-        actualWrite(this);
-      } else {
-        this._writing = false;
-        actualClose(this);
-      }
-    } else {
-      this._writing = false;
-
-      if (this.sync) {
-        if (!this._asyncDrainScheduled) {
-          this._asyncDrainScheduled = true;
-          process.nextTick(emitDrain, this);
-        }
-      } else {
-        this.emit('drain');
-      }
-    }
-  };
-
-  this.on('newListener', function (name) {
-    if (name === 'drain') {
-      this._asyncDrainScheduled = false;
-    }
-  });
-}
-
-function emitDrain(sonic) {
-  const hasListeners = sonic.listenerCount('drain') > 0;
-  if (!hasListeners) return;
-  sonic._asyncDrainScheduled = false;
-  sonic.emit('drain');
-}
-
-inherits(SonicBoom$2, EventEmitter$3);
-
-SonicBoom$2.prototype.write = function (data) {
-  if (this.destroyed) {
-    throw new Error('SonicBoom destroyed');
-  }
-
-  const len = this._len + data.length;
-  const bufs = this._bufs;
-
-  if (!this._writing && len > MAX_WRITE) {
-    bufs.push(data);
-  } else if (bufs.length === 0) {
-    bufs[0] = '' + data;
-  } else {
-    bufs[bufs.length - 1] += data;
-  }
-
-  this._len = len;
-
-  if (!this._writing && this._len >= this.minLength) {
-    actualWrite(this);
-  }
-
-  return this._len < this._hwm;
-};
-
-SonicBoom$2.prototype.flush = function () {
-  if (this.destroyed) {
-    throw new Error('SonicBoom destroyed');
-  }
-
-  if (this._writing || this.minLength <= 0) {
-    return;
-  }
-
-  if (this._bufs.length === 0) {
-    this._bufs.push('');
-  }
-
-  actualWrite(this);
-};
-
-SonicBoom$2.prototype.reopen = function (file) {
-  if (this.destroyed) {
-    throw new Error('SonicBoom destroyed');
-  }
-
-  if (this._opening) {
-    this.once('ready', () => {
-      this.reopen(file);
-    });
-    return;
-  }
-
-  if (this._ending) {
-    return;
-  }
-
-  if (!this.file) {
-    throw new Error('Unable to reopen a file descriptor, you must pass a file to SonicBoom');
-  }
-
-  this._reopening = true;
-
-  if (this._writing) {
-    return;
-  }
-
-  const fd = this.fd;
-  this.once('ready', () => {
-    if (fd !== this.fd) {
-      fs.close(fd, err => {
-        if (err) {
-          return this.emit('error', err);
-        }
-      });
-    }
-  });
-  openFile(file || this.file, this);
-};
-
-SonicBoom$2.prototype.end = function () {
-  if (this.destroyed) {
-    throw new Error('SonicBoom destroyed');
-  }
-
-  if (this._opening) {
-    this.once('ready', () => {
-      this.end();
-    });
-    return;
-  }
-
-  if (this._ending) {
-    return;
-  }
-
-  this._ending = true;
-
-  if (this._writing) {
-    return;
-  }
-
-  if (this._len > 0 && this.fd >= 0) {
-    actualWrite(this);
-  } else {
-    actualClose(this);
-  }
-};
-
-SonicBoom$2.prototype.flushSync = function () {
-  if (this.destroyed) {
-    throw new Error('SonicBoom destroyed');
-  }
-
-  if (this.fd < 0) {
-    throw new Error('sonic boom is not ready yet');
-  }
-
-  if (!this._writing && this._writingBuf.length > 0) {
-    this._bufs.unshift(this._writingBuf);
-
-    this._writingBuf = '';
-  }
-
-  while (this._bufs.length) {
-    const buf = this._bufs[0];
-
-    try {
-      this._len -= fs.writeSync(this.fd, buf, 'utf8');
-
-      this._bufs.shift();
-    } catch (err) {
-      if (err.code !== 'EAGAIN' || !this.retryEAGAIN(err, buf.length, this._len - buf.length)) {
-        throw err;
-      }
-
-      sleep(BUSY_WRITE_TIMEOUT);
-    }
-  }
-};
-
-SonicBoom$2.prototype.destroy = function () {
-  if (this.destroyed) {
-    return;
-  }
-
-  actualClose(this);
-};
-
-function actualWrite(sonic) {
-  const release = sonic.release;
-  sonic._writing = true;
-  sonic._writingBuf = sonic._writingBuf || sonic._bufs.shift();
-
-  if (sonic.sync) {
-    try {
-      const written = fs.writeSync(sonic.fd, sonic._writingBuf, 'utf8');
-      release(null, written);
-    } catch (err) {
-      release(err);
-    }
-  } else {
-    fs.write(sonic.fd, sonic._writingBuf, 'utf8', release);
-  }
-}
-
-function actualClose(sonic) {
-  if (sonic.fd === -1) {
-    sonic.once('ready', actualClose.bind(null, sonic));
-    return;
-  } // TODO write a test to check if we are not leaking fds
-
-
-  fs.close(sonic.fd, err => {
-    if (err) {
-      sonic.emit('error', err);
-      return;
-    }
-
-    if (sonic._ending && !sonic._writing) {
-      sonic.emit('finish');
-    }
-
-    sonic.emit('close');
-  });
-  sonic.destroyed = true;
-  sonic._bufs = [];
-}
-/**
- * These export configurations enable JS and TS developers
- * to consumer SonicBoom in whatever way best suits their needs.
- * Some examples of supported import syntax includes:
- * - `const SonicBoom = require('SonicBoom')`
- * - `const { SonicBoom } = require('SonicBoom')`
- * - `import * as SonicBoom from 'SonicBoom'`
- * - `import { SonicBoom } from 'SonicBoom'`
- * - `import SonicBoom from 'SonicBoom'`
- */
-
-
-SonicBoom$2.SonicBoom = SonicBoom$2;
-SonicBoom$2.default = SonicBoom$2;
-var sonicBoom = SonicBoom$2;
 
 const hasBuffer = typeof Buffer !== 'undefined';
 const suspectProtoRx = /"(?:_|\\u005[Ff])(?:_|\\u005[Ff])(?:p|\\u0070)(?:r|\\u0072)(?:o|\\u006[Ff])(?:t|\\u0074)(?:o|\\u006[Ff])(?:_|\\u005[Ff])(?:_|\\u005[Ff])"\s*:/;
@@ -5746,6 +5853,240 @@ var dateformat$1 = {exports: {}};
   })(void 0);
 })(dateformat$1, dateformat$1.exports);
 
+var fastSafeStringify = stringify$3;
+stringify$3.default = stringify$3;
+stringify$3.stable = deterministicStringify;
+stringify$3.stableStringify = deterministicStringify;
+var LIMIT_REPLACE_NODE = '[...]';
+var CIRCULAR_REPLACE_NODE = '[Circular]';
+var arr = [];
+var replacerStack = [];
+
+function defaultOptions$2() {
+  return {
+    depthLimit: Number.MAX_SAFE_INTEGER,
+    edgesLimit: Number.MAX_SAFE_INTEGER
+  };
+} // Regular stringify
+
+
+function stringify$3(obj, replacer, spacer, options) {
+  if (typeof options === 'undefined') {
+    options = defaultOptions$2();
+  }
+
+  decirc(obj, '', 0, [], undefined, 0, options);
+  var res;
+
+  try {
+    if (replacerStack.length === 0) {
+      res = JSON.stringify(obj, replacer, spacer);
+    } else {
+      res = JSON.stringify(obj, replaceGetterValues(replacer), spacer);
+    }
+  } catch (_) {
+    return JSON.stringify('[unable to serialize, circular reference is too complex to analyze]');
+  } finally {
+    while (arr.length !== 0) {
+      var part = arr.pop();
+
+      if (part.length === 4) {
+        Object.defineProperty(part[0], part[1], part[3]);
+      } else {
+        part[0][part[1]] = part[2];
+      }
+    }
+  }
+
+  return res;
+}
+
+function setReplace(replace, val, k, parent) {
+  var propertyDescriptor = Object.getOwnPropertyDescriptor(parent, k);
+
+  if (propertyDescriptor.get !== undefined) {
+    if (propertyDescriptor.configurable) {
+      Object.defineProperty(parent, k, {
+        value: replace
+      });
+      arr.push([parent, k, val, propertyDescriptor]);
+    } else {
+      replacerStack.push([val, k, replace]);
+    }
+  } else {
+    parent[k] = replace;
+    arr.push([parent, k, val]);
+  }
+}
+
+function decirc(val, k, edgeIndex, stack, parent, depth, options) {
+  depth += 1;
+  var i;
+
+  if (typeof val === 'object' && val !== null) {
+    for (i = 0; i < stack.length; i++) {
+      if (stack[i] === val) {
+        setReplace(CIRCULAR_REPLACE_NODE, val, k, parent);
+        return;
+      }
+    }
+
+    if (typeof options.depthLimit !== 'undefined' && depth > options.depthLimit) {
+      setReplace(LIMIT_REPLACE_NODE, val, k, parent);
+      return;
+    }
+
+    if (typeof options.edgesLimit !== 'undefined' && edgeIndex + 1 > options.edgesLimit) {
+      setReplace(LIMIT_REPLACE_NODE, val, k, parent);
+      return;
+    }
+
+    stack.push(val); // Optimize for Arrays. Big arrays could kill the performance otherwise!
+
+    if (Array.isArray(val)) {
+      for (i = 0; i < val.length; i++) {
+        decirc(val[i], i, i, stack, val, depth, options);
+      }
+    } else {
+      var keys = Object.keys(val);
+
+      for (i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        decirc(val[key], key, i, stack, val, depth, options);
+      }
+    }
+
+    stack.pop();
+  }
+} // Stable-stringify
+
+
+function compareFunction(a, b) {
+  if (a < b) {
+    return -1;
+  }
+
+  if (a > b) {
+    return 1;
+  }
+
+  return 0;
+}
+
+function deterministicStringify(obj, replacer, spacer, options) {
+  if (typeof options === 'undefined') {
+    options = defaultOptions$2();
+  }
+
+  var tmp = deterministicDecirc(obj, '', 0, [], undefined, 0, options) || obj;
+  var res;
+
+  try {
+    if (replacerStack.length === 0) {
+      res = JSON.stringify(tmp, replacer, spacer);
+    } else {
+      res = JSON.stringify(tmp, replaceGetterValues(replacer), spacer);
+    }
+  } catch (_) {
+    return JSON.stringify('[unable to serialize, circular reference is too complex to analyze]');
+  } finally {
+    // Ensure that we restore the object as it was.
+    while (arr.length !== 0) {
+      var part = arr.pop();
+
+      if (part.length === 4) {
+        Object.defineProperty(part[0], part[1], part[3]);
+      } else {
+        part[0][part[1]] = part[2];
+      }
+    }
+  }
+
+  return res;
+}
+
+function deterministicDecirc(val, k, edgeIndex, stack, parent, depth, options) {
+  depth += 1;
+  var i;
+
+  if (typeof val === 'object' && val !== null) {
+    for (i = 0; i < stack.length; i++) {
+      if (stack[i] === val) {
+        setReplace(CIRCULAR_REPLACE_NODE, val, k, parent);
+        return;
+      }
+    }
+
+    try {
+      if (typeof val.toJSON === 'function') {
+        return;
+      }
+    } catch (_) {
+      return;
+    }
+
+    if (typeof options.depthLimit !== 'undefined' && depth > options.depthLimit) {
+      setReplace(LIMIT_REPLACE_NODE, val, k, parent);
+      return;
+    }
+
+    if (typeof options.edgesLimit !== 'undefined' && edgeIndex + 1 > options.edgesLimit) {
+      setReplace(LIMIT_REPLACE_NODE, val, k, parent);
+      return;
+    }
+
+    stack.push(val); // Optimize for Arrays. Big arrays could kill the performance otherwise!
+
+    if (Array.isArray(val)) {
+      for (i = 0; i < val.length; i++) {
+        deterministicDecirc(val[i], i, i, stack, val, depth, options);
+      }
+    } else {
+      // Create a temporary object in the required way
+      var tmp = {};
+      var keys = Object.keys(val).sort(compareFunction);
+
+      for (i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        deterministicDecirc(val[key], key, i, stack, val, depth, options);
+        tmp[key] = val[key];
+      }
+
+      if (typeof parent !== 'undefined') {
+        arr.push([parent, k, val]);
+        parent[k] = tmp;
+      } else {
+        return tmp;
+      }
+    }
+
+    stack.pop();
+  }
+} // wraps replacer function to handle values we couldn't replace
+// and mark them as replaced value
+
+
+function replaceGetterValues(replacer) {
+  replacer = typeof replacer !== 'undefined' ? replacer : function (k, v) {
+    return v;
+  };
+  return function (key, val) {
+    if (replacerStack.length > 0) {
+      for (var i = 0; i < replacerStack.length; i++) {
+        var part = replacerStack[i];
+
+        if (part[1] === key && part[0] === val) {
+          val = part[2];
+          replacerStack.splice(i, 1);
+          break;
+        }
+      }
+    }
+
+    return replacer.call(this, key, val);
+  };
+}
+
 const clone = rfdc_1({
   circles: true
 });
@@ -6395,7 +6736,7 @@ const {
 const pump = pump_1;
 const {
   Transform
-} = require$$0__default$4["default"];
+} = require$$0__default$5["default"];
 const abstractTransport = pinoAbstractTransport;
 const sonic = sonicBoom;
 const sjs = secureJsonParse;
@@ -6632,8 +6973,9 @@ const {
   mapHttpRequest,
   mapHttpResponse
 } = pinoStdSerializers;
-const SonicBoom$1 = sonicBoom$1;
-const stringifySafe = fastSafeStringify;
+const SonicBoom = sonicBoom;
+const stringifySafe = stringify$4.exports;
+const warning = deprecations;
 const {
   lsCacheSym: lsCacheSym$2,
   chindingsSym: chindingsSym$2,
@@ -6650,10 +6992,15 @@ const {
   streamSym: streamSym$3,
   nestedKeySym: nestedKeySym$1,
   formattersSym: formattersSym$3,
-  messageKeySym: messageKeySym$1
+  messageKeySym: messageKeySym$1,
+  nestedKeyStrSym: nestedKeyStrSym$1
 } = symbols$1;
+const {
+  isMainThread
+} = require$$1__default["default"];
+const transport = transport_1;
 
-function noop$2() {}
+function noop$3() {}
 
 function genLog$1(level, hook) {
   if (!hook) return LOG;
@@ -6673,9 +7020,6 @@ function genLog$1(level, hook) {
         }
       }
 
-      if (this[nestedKeySym$1]) o = {
-        [this[nestedKeySym$1]]: o
-      };
       let formatParams;
 
       if (msg === null && n.length === 0) {
@@ -6746,11 +7090,8 @@ function asJson$1(obj, msg, num, time) {
     obj = formatters.log(obj);
   }
 
-  if (msg !== undefined) {
-    obj[messageKey] = msg;
-  }
-
   const wildcardStringifier = stringifiers[wildcardFirstSym];
+  let propStr = '';
 
   for (const key in obj) {
     value = obj[key];
@@ -6785,11 +7126,51 @@ function asJson$1(obj, msg, num, time) {
       }
 
       if (value === undefined) continue;
-      data += ',"' + key + '":' + value;
+      propStr += ',"' + key + '":' + value;
     }
   }
 
-  return data + end;
+  let msgStr = '';
+
+  if (msg !== undefined) {
+    value = serializers[messageKey] ? serializers[messageKey](msg) : msg;
+    const stringifier = stringifiers[messageKey] || wildcardStringifier;
+
+    switch (typeof value) {
+      case 'function':
+        break;
+
+      case 'number':
+        /* eslint no-fallthrough: "off" */
+        if (Number.isFinite(value) === false) {
+          value = null;
+        }
+
+      // this case explicitly falls through to the next one
+
+      case 'boolean':
+        if (stringifier) value = stringifier(value);
+        msgStr = ',"' + messageKey + '":' + value;
+        break;
+
+      case 'string':
+        value = (stringifier || asString)(value);
+        msgStr = ',"' + messageKey + '":' + value;
+        break;
+
+      default:
+        value = (stringifier || stringify)(value);
+        msgStr = ',"' + messageKey + '":' + value;
+    }
+  }
+
+  if (this[nestedKeySym$1]) {
+    // place all the obj properties under the specified key
+    // the nested key is already formatted from the constructor
+    return data + this[nestedKeyStrSym$1] + propStr.slice(1) + '}' + msgStr + end;
+  } else {
+    return data + propStr + msgStr + end;
+  }
 }
 
 function asChindings$2(instance, bindings) {
@@ -6824,7 +7205,7 @@ function getPrettyStream(opts, prettifier, dest, instance) {
   }
 
   try {
-    const prettyFactory = pinoPretty.exports.prettyFactory || pinoPretty.exports;
+    const prettyFactory = pinoPretty.exports.prettyFactory;
     prettyFactory.asMetaWrapper = prettifierMetaWrapper;
     return prettifierMetaWrapper(prettyFactory(opts), dest, opts);
   } catch (e) {
@@ -6885,8 +7266,9 @@ function prettifierMetaWrapper(pretty, dest, opts) {
       const lastLogger = this.lastLogger;
       const chindings = this.chindings();
       let time = this.lastTime;
+      /* istanbul ignore next */
 
-      if (time.match(/^\d+/)) {
+      if (typeof time === 'number') ; else if (time.match(/^\d+/)) {
         time = parseInt(time);
       } else {
         time = time.slice(1, -1);
@@ -6940,8 +7322,13 @@ function hasBeenTampered(stream) {
 }
 
 function buildSafeSonicBoom$1(opts) {
-  const stream = new SonicBoom$1(opts);
-  stream.on('error', filterBrokenPipe);
+  const stream = new SonicBoom(opts);
+  stream.on('error', filterBrokenPipe); // if we are sync: false, we must flush on exit
+
+  if (!opts.sync && isMainThread) {
+    setupOnExit(stream);
+  }
+
   return stream;
 
   function filterBrokenPipe(err) {
@@ -6950,10 +7337,10 @@ function buildSafeSonicBoom$1(opts) {
       // If we get EPIPE, we should stop logging here
       // however we have no control to the consumer of
       // SonicBoom, so we just overwrite the write method
-      stream.write = noop$2;
-      stream.end = noop$2;
-      stream.flushSync = noop$2;
-      stream.destroy = noop$2;
+      stream.write = noop$3;
+      stream.end = noop$3;
+      stream.flushSync = noop$3;
+      stream.destroy = noop$3;
       return;
     }
 
@@ -6962,8 +7349,40 @@ function buildSafeSonicBoom$1(opts) {
   }
 }
 
+function setupOnExit(stream) {
+  /* istanbul ignore next */
+  if (commonjsGlobal.WeakRef && commonjsGlobal.WeakMap && commonjsGlobal.FinalizationRegistry) {
+    // This is leak free, it does not leave event handlers
+    const onExit = onExitLeakFree;
+    onExit.register(stream, autoEnd);
+    stream.on('close', function () {
+      onExit.unregister(stream);
+    });
+  }
+}
+
+function autoEnd(stream, eventName) {
+  // This check is needed only on some platforms
+
+  /* istanbul ignore next */
+  if (stream.destroyed) {
+    return;
+  }
+
+  if (eventName === 'beforeExit') {
+    // We still have an event loop, let's use it
+    stream.flush();
+    stream.on('drain', function () {
+      stream.end();
+    });
+  } else {
+    // We do not have an event loop, so flush synchronously
+    stream.flushSync();
+  }
+}
+
 function createArgsNormalizer$1(defaultOptions) {
-  return function normalizeArgs(instance, opts = {}, stream) {
+  return function normalizeArgs(instance, caller, opts = {}, stream) {
     // support stream as a string
     if (typeof opts === 'string') {
       stream = buildSafeSonicBoom$1({
@@ -6972,20 +7391,27 @@ function createArgsNormalizer$1(defaultOptions) {
       });
       opts = {};
     } else if (typeof stream === 'string') {
+      if (opts && opts.transport) {
+        throw Error('only one of option.transport or stream can be specified');
+      }
+
       stream = buildSafeSonicBoom$1({
         dest: stream,
         sync: true
       });
-    } else if (opts instanceof SonicBoom$1 || opts.writable || opts._writableState) {
+    } else if (opts instanceof SonicBoom || opts.writable || opts._writableState) {
       stream = opts;
+      opts = null;
+    } else if (opts.transport) {
+      stream = transport({
+        caller,
+        ...opts.transport
+      });
       opts = null;
     }
 
     opts = Object.assign({}, defaultOptions, opts);
-
-    if ('extreme' in opts) {
-      throw Error('The extreme option has been removed, use pino.destination({ sync: false }) instead');
-    }
+    opts.serializers = Object.assign({}, defaultOptions.serializers, opts.serializers);
 
     if ('onTerminated' in opts) {
       throw Error('The onTerminated option has been removed, use pino.final instead');
@@ -7016,6 +7442,7 @@ function createArgsNormalizer$1(defaultOptions) {
     }
 
     if (prettyPrint) {
+      warning.emit('PINODEP008');
       const prettyOpts = Object.assign({
         messageKey
       }, prettyPrint);
@@ -7060,6 +7487,14 @@ function final$1(logger, handler) {
   });
 
   if (!hasHandler) {
+    try {
+      stream.flushSync();
+    } catch {// it's too late to wait for the stream to be ready
+      // because this is a final tick scenario.
+      // in practice there shouldn't be a situation where it isn't
+      // however, swallow the error just in case (and for easier testing)
+    }
+
     return finalLogger;
   }
 
@@ -7080,7 +7515,11 @@ function stringify$2(obj) {
   try {
     return JSON.stringify(obj);
   } catch (_) {
-    return stringifySafe(obj);
+    try {
+      return stringifySafe(obj);
+    } catch (_) {
+      return '"[unable to serialize, circular reference is too complex to analyze]"';
+    }
   }
 }
 
@@ -7103,7 +7542,7 @@ function setMetadataProps(dest, that) {
 }
 
 var tools = {
-  noop: noop$2,
+  noop: noop$3,
   buildSafeSonicBoom: buildSafeSonicBoom$1,
   getPrettyStream,
   asChindings: asChindings$2,
@@ -7118,7 +7557,6 @@ var tools = {
 /* eslint no-prototype-builtins: 0 */
 
 
-const flatstr$1 = flatstr_1;
 const {
   lsCacheSym: lsCacheSym$1,
   levelValSym: levelValSym$1,
@@ -7128,10 +7566,10 @@ const {
   hooksSym: hooksSym$1
 } = symbols$1;
 const {
-  noop: noop$1,
+  noop: noop$2,
   genLog
 } = tools;
-const levels = {
+const levels$1 = {
   trace: 10,
   debug: 20,
   info: 30,
@@ -7141,7 +7579,7 @@ const levels = {
 };
 const levelMethods = {
   fatal: hook => {
-    const logFatal = genLog(levels.fatal, hook);
+    const logFatal = genLog(levels$1.fatal, hook);
     return function (...args) {
       const stream = this[streamSym$2];
       logFatal.call(this, ...args);
@@ -7154,18 +7592,18 @@ const levelMethods = {
       }
     };
   },
-  error: hook => genLog(levels.error, hook),
-  warn: hook => genLog(levels.warn, hook),
-  info: hook => genLog(levels.info, hook),
-  debug: hook => genLog(levels.debug, hook),
-  trace: hook => genLog(levels.trace, hook)
+  error: hook => genLog(levels$1.error, hook),
+  warn: hook => genLog(levels$1.warn, hook),
+  info: hook => genLog(levels$1.info, hook),
+  debug: hook => genLog(levels$1.debug, hook),
+  trace: hook => genLog(levels$1.trace, hook)
 };
-const nums = Object.keys(levels).reduce((o, k) => {
-  o[levels[k]] = k;
+const nums = Object.keys(levels$1).reduce((o, k) => {
+  o[levels$1[k]] = k;
   return o;
 }, {});
 const initialLsCache$1 = Object.keys(nums).reduce((o, k) => {
-  o[k] = flatstr$1('{"level":' + Number(k));
+  o[k] = '{"level":' + Number(k);
   return o;
 }, {});
 
@@ -7223,7 +7661,7 @@ function setLevel$1(level) {
 
   for (const key in values) {
     if (levelVal > values[key]) {
-      this[key] = noop$1;
+      this[key] = noop$2;
       continue;
     }
 
@@ -7268,7 +7706,7 @@ function mappings$2(customLevels = null, useOnlyCustomLevels = false) {
     silent: {
       value: Infinity
     }
-  }), useOnlyCustomLevels ? null : levels, customLevels);
+  }), useOnlyCustomLevels ? null : levels$1, customLevels);
   return {
     labels,
     values
@@ -7290,7 +7728,7 @@ function assertDefaultLevelFound$1(defaultLevel, customLevels, useOnlyCustomLeve
     silent: {
       value: Infinity
     }
-  }), useOnlyCustomLevels ? null : levels, customLevels);
+  }), useOnlyCustomLevels ? null : levels$1, customLevels);
 
   if (!(defaultLevel in labels)) {
     throw Error(`default level:${defaultLevel} must be included in custom levels`);
@@ -7322,17 +7760,22 @@ var levels_1 = {
   setLevel: setLevel$1,
   isLevelEnabled: isLevelEnabled$1,
   mappings: mappings$2,
+  levels: levels$1,
   assertNoLevelCollisions: assertNoLevelCollisions$1,
   assertDefaultLevelFound: assertDefaultLevelFound$1
 };
 
 var name = "pino";
-var version$3 = "6.13.3";
+var version$3 = "7.0.1";
 var description = "super fast, all natural json logger";
 var main = "pino.js";
+var type = "commonjs";
+var types = "pino.d.ts";
 var browser = "./browser.js";
 var files = [
 	"pino.js",
+	"file.js",
+	"pino.d.ts",
 	"bin.js",
 	"browser.js",
 	"pretty.js",
@@ -7346,8 +7789,11 @@ var scripts = {
 	docs: "docsify serve",
 	"browser-test": "airtap --local 8080 test/browser*test.js",
 	lint: "eslint .",
-	test: "npm run lint && tap --100 test/*test.js test/*/*test.js",
-	"test-ci": "npm run lint && tap test/*test.js test/*/*test.js --coverage-report=lcovonly",
+	test: "npm run lint && tap test/*test.js test/*/*test.js && npm run test-types",
+	"test-ci": "npm run lint && tap --no-check-coverage test/*test.js test/*/*test.js --coverage-report=lcovonly && npm run test-types",
+	"test-ci-pnpm": "pnpm run lint && tap --no-coverage --no-check-coverage test/*test.js test/*/*test.js && pnpm run test-types",
+	"test-ci-yarn-pnp": "yarn run lint && tap --no-check-coverage test/*test.js test/*/*test.js --coverage-report=lcovonly",
+	"test-types": "tsc && tsd && ts-node test/types/pino.ts",
 	"cov-ui": "tap --coverage-report=html test/*test.js test/*/*test.js",
 	bench: "node benchmarks/utils/runbench all",
 	"bench-basic": "node benchmarks/utils/runbench basic",
@@ -7387,13 +7833,14 @@ var bugs = {
 };
 var homepage = "http://getpino.io";
 var devDependencies = {
+	"@types/node": "^16.9.4",
 	airtap: "4.0.3",
 	benchmark: "^2.1.4",
 	bole: "^4.0.0",
 	bunyan: "^1.8.14",
 	"docsify-cli": "^4.4.1",
 	eslint: "^7.17.0",
-	"eslint-config-standard": "^16.0.2",
+	"eslint-config-standard": "^16.0.3",
 	"eslint-plugin-import": "^2.22.1",
 	"eslint-plugin-node": "^11.1.0",
 	"eslint-plugin-promise": "^5.1.0",
@@ -7403,7 +7850,7 @@ var devDependencies = {
 	"import-fresh": "^3.2.1",
 	log: "^6.0.0",
 	loglevel: "^1.6.7",
-	"pino-pretty": "^5.0.0",
+	"pino-pretty": "^v7.0.1",
 	"pre-commit": "^1.2.2",
 	proxyquire: "^2.1.3",
 	pump: "^3.0.0",
@@ -7414,22 +7861,33 @@ var devDependencies = {
 	tap: "^15.0.1",
 	tape: "^5.0.0",
 	through2: "^4.0.0",
+	"ts-node": "^10.2.1",
+	tsd: "^0.18.0",
+	typescript: "^4.4.2",
 	winston: "^3.3.3"
 };
 var dependencies = {
 	"fast-redact": "^3.0.0",
-	"fast-safe-stringify": "^2.0.8",
 	"fastify-warning": "^0.2.0",
-	flatstr: "^1.0.12",
-	"pino-std-serializers": "^3.1.0",
+	"get-caller-file": "^2.0.5",
+	"json-stringify-safe": "^5.0.1",
+	"on-exit-leak-free": "^0.2.0",
+	"pino-abstract-transport": "v0.4.0",
+	"pino-std-serializers": "^4.0.0",
 	"quick-format-unescaped": "^4.0.3",
-	"sonic-boom": "^1.0.2"
+	"sonic-boom": "^2.2.1",
+	"thread-stream": "^0.11.1"
+};
+var tsd = {
+	directory: "test/types"
 };
 var require$$0 = {
 	name: name,
 	version: version$3,
 	description: description,
 	main: main,
+	type: type,
+	types: types,
 	browser: browser,
 	files: files,
 	scripts: scripts,
@@ -7443,7 +7901,8 @@ var require$$0 = {
 	bugs: bugs,
 	homepage: homepage,
 	devDependencies: devDependencies,
-	dependencies: dependencies
+	dependencies: dependencies,
+	tsd: tsd
 };
 
 const {
@@ -7459,9 +7918,6 @@ var meta = {
 const {
   EventEmitter: EventEmitter$2
 } = require$$0__default$2["default"];
-const SonicBoom = sonicBoom$1;
-const flatstr = flatstr_1;
-const warning = deprecations;
 const {
   lsCacheSym,
   levelValSym,
@@ -7556,26 +8012,6 @@ function child(bindings, options) {
   const formatters = this[formattersSym$1];
   const instance = Object.create(this);
 
-  if (bindings.hasOwnProperty('serializers') === true) {
-    warning.emit('PINODEP004');
-    options.serializers = bindings.serializers;
-  }
-
-  if (bindings.hasOwnProperty('formatters') === true) {
-    warning.emit('PINODEP005');
-    options.formatters = bindings.formatters;
-  }
-
-  if (bindings.hasOwnProperty('customLevels') === true) {
-    warning.emit('PINODEP006');
-    options.customLevels = bindings.customLevels;
-  }
-
-  if (bindings.hasOwnProperty('level') === true) {
-    warning.emit('PINODEP007');
-    options.level = bindings.level;
-  }
-
   if (options.hasOwnProperty('serializers') === true) {
     instance[serializersSym$1] = Object.create(null);
 
@@ -7658,24 +8094,23 @@ function setBindings(newBindings) {
 function write(_obj, msg, num) {
   const t = this[timeSym$1]();
   const mixin = this[mixinSym$1];
-  const objError = _obj instanceof Error;
   let obj;
 
   if (_obj === undefined || _obj === null) {
     obj = mixin ? mixin({}) : {};
-  } else {
-    obj = Object.assign(mixin ? mixin(_obj) : {}, _obj);
+  } else if (_obj instanceof Error) {
+    obj = Object.assign(mixin ? mixin({}) : {}, {
+      err: _obj
+    });
 
-    if (!msg && objError) {
+    if (msg === undefined) {
       msg = _obj.message;
     }
+  } else {
+    obj = Object.assign(mixin ? mixin({}) : {}, _obj);
 
-    if (objError) {
-      obj.stack = _obj.stack;
-
-      if (!obj.type) {
-        obj.type = 'Error';
-      }
+    if (msg === undefined && _obj.err) {
+      msg = _obj.err.message;
     }
   }
 
@@ -7690,19 +8125,189 @@ function write(_obj, msg, num) {
     stream.lastLogger = this; // for child loggers
   }
 
-  if (stream instanceof SonicBoom) stream.write(s);else stream.write(flatstr(s));
+  stream.write(s);
 }
+
+function noop$1() {}
 
 function flush() {
   const stream = this[streamSym$1];
-  if ('flush' in stream) stream.flush();
+  if ('flush' in stream) stream.flush(noop$1);
 }
+
+const metadata = Symbol.for('pino.metadata');
+const {
+  levels
+} = levels_1;
+const defaultLevels = Object.create(levels);
+defaultLevels.silent = Infinity;
+
+function multistream(streamsArray, opts) {
+  let counter = 0;
+  streamsArray = streamsArray || [];
+  opts = opts || {
+    dedupe: false
+  };
+  let levels = defaultLevels;
+
+  if (opts.levels && typeof opts.levels === 'object') {
+    levels = opts.levels;
+  }
+
+  const res = {
+    write,
+    add,
+    flushSync,
+    end,
+    minLevel: 0,
+    streams: [],
+    clone,
+    [metadata]: true
+  };
+
+  if (Array.isArray(streamsArray)) {
+    streamsArray.forEach(add, res);
+  } else {
+    add.call(res, streamsArray);
+  } // clean this object up
+  // or it will stay allocated forever
+  // as it is closed on the following closures
+
+
+  streamsArray = null;
+  return res; // we can exit early because the streams are ordered by level
+
+  function write(data) {
+    let dest;
+    const level = this.lastLevel;
+    const {
+      streams
+    } = this;
+    let stream;
+
+    for (let i = 0; i < streams.length; i++) {
+      dest = streams[i];
+
+      if (dest.level <= level) {
+        stream = dest.stream;
+
+        if (stream[metadata]) {
+          const {
+            lastTime,
+            lastMsg,
+            lastObj,
+            lastLogger
+          } = this;
+          stream.lastLevel = level;
+          stream.lastTime = lastTime;
+          stream.lastMsg = lastMsg;
+          stream.lastObj = lastObj;
+          stream.lastLogger = lastLogger;
+        }
+
+        if (!opts.dedupe) {
+          stream.write(data);
+        }
+      } else {
+        break;
+      }
+    }
+
+    if (opts.dedupe && stream) {
+      stream.write(data);
+    }
+  }
+
+  function flushSync() {
+    for (const {
+      stream
+    } of this.streams) {
+      if (typeof stream.flushSync === 'function') {
+        stream.flushSync();
+      }
+    }
+  }
+
+  function add(dest) {
+    const {
+      streams
+    } = this;
+
+    if (typeof dest.write === 'function') {
+      return add.call(this, {
+        stream: dest
+      });
+    } else if (typeof dest.levelVal === 'number') {
+      return add.call(this, Object.assign({}, dest, {
+        level: dest.levelVal,
+        levelVal: undefined
+      }));
+    } else if (typeof dest.level === 'string') {
+      return add.call(this, Object.assign({}, dest, {
+        level: levels[dest.level]
+      }));
+    } else if (typeof dest.level !== 'number') {
+      // we default level to 'info'
+      dest = Object.assign({}, dest, {
+        level: 30
+      });
+    } else {
+      dest = Object.assign({}, dest);
+    }
+
+    dest.id = counter++;
+    streams.unshift(dest);
+    streams.sort(compareByLevel);
+    this.minLevel = streams[0].level;
+    return res;
+  }
+
+  function end() {
+    for (const {
+      stream
+    } of this.streams) {
+      if (typeof stream.flushSync === 'function') {
+        stream.flushSync();
+      }
+
+      stream.end();
+    }
+  }
+
+  function clone(level) {
+    const streams = new Array(this.streams.length);
+
+    for (let i = 0; i < streams.length; i++) {
+      streams[i] = {
+        level: level,
+        stream: this.streams[i].stream
+      };
+    }
+
+    return {
+      write,
+      add,
+      minLevel: level,
+      streams,
+      clone,
+      flushSync,
+      [metadata]: true
+    };
+  }
+}
+
+function compareByLevel(a, b) {
+  return a.level - b.level;
+}
+
+var multistream_1 = multistream;
 
 /* eslint no-prototype-builtins: 0 */
 
 
-const os = require$$0__default$5["default"];
+const os = require$$0__default$6["default"];
 const stdSerializers = pinoStdSerializers;
+const caller = getCallerFile;
 const redaction = redaction_1;
 const time = time$1;
 const proto = proto$1;
@@ -7741,7 +8346,8 @@ const {
   mixinSym,
   useOnlyCustomLevelsSym,
   formattersSym,
-  hooksSym
+  hooksSym,
+  nestedKeyStrSym
 } = symbols;
 const {
   epochTime,
@@ -7784,7 +8390,6 @@ const defaultOptions = {
   name: undefined,
   redact: null,
   customLevels: null,
-  levelKey: undefined,
   useOnlyCustomLevels: false
 };
 const normalize = createArgsNormalizer(defaultOptions);
@@ -7795,7 +8400,7 @@ function pino$1(...args) {
   const {
     opts,
     stream
-  } = normalize(instance, ...args);
+  } = normalize(instance, caller(), ...args);
   const {
     redact,
     crlf,
@@ -7807,32 +8412,12 @@ function pino$1(...args) {
     name,
     level,
     customLevels,
-    useLevelLabels,
-    changeLevelName,
-    levelKey,
     mixin,
     useOnlyCustomLevels,
     formatters,
     hooks
   } = opts;
   const allFormatters = buildFormatters(formatters.level, formatters.bindings, formatters.log);
-
-  if (useLevelLabels && !(changeLevelName || levelKey)) {
-    process.emitWarning('useLevelLabels is deprecated, use the formatters.level option instead', 'Warning', 'PINODEP001');
-    allFormatters.level = labelsFormatter;
-  } else if ((changeLevelName || levelKey) && !useLevelLabels) {
-    process.emitWarning('changeLevelName and levelKey are deprecated, use the formatters.level option instead', 'Warning', 'PINODEP002');
-    allFormatters.level = levelNameFormatter(changeLevelName || levelKey);
-  } else if ((changeLevelName || levelKey) && useLevelLabels) {
-    process.emitWarning('useLevelLabels is deprecated, use the formatters.level option instead', 'Warning', 'PINODEP001');
-    process.emitWarning('changeLevelName and levelKey are deprecated, use the formatters.level option instead', 'Warning', 'PINODEP002');
-    allFormatters.level = levelNameLabelFormatter(changeLevelName || levelKey);
-  }
-
-  if (serializers[Symbol.for('pino.*')]) {
-    process.emitWarning('The pino.* serializer is deprecated, use the formatters.log options instead', 'Warning', 'PINODEP003');
-    allFormatters.log = serializers[Symbol.for('pino.*')];
-  }
 
   if (!allFormatters.bindings) {
     allFormatters.bindings = defaultOptions.formatters.bindings;
@@ -7886,6 +8471,8 @@ function pino$1(...args) {
     [formatOptsSym]: formatOpts,
     [messageKeySym]: messageKey,
     [nestedKeySym]: nestedKey,
+    // protect against injection
+    [nestedKeyStrSym]: nestedKey ? `,${JSON.stringify(nestedKey)}:{` : '',
     [serializersSym]: serializers,
     [mixinSym]: mixin,
     [chindingsSym]: chindings,
@@ -7899,40 +8486,7 @@ function pino$1(...args) {
   return instance;
 }
 
-function labelsFormatter(label, number) {
-  return {
-    level: label
-  };
-}
-
-function levelNameFormatter(name) {
-  return function (label, number) {
-    return {
-      [name]: number
-    };
-  };
-}
-
-function levelNameLabelFormatter(name) {
-  return function (label, number) {
-    return {
-      [name]: label
-    };
-  };
-}
-
 pino$2.exports = pino$1;
-
-pino$2.exports.extreme = (dest = process.stdout.fd) => {
-  process.emitWarning('The pino.extreme() option is deprecated and will be removed in v7. Use pino.destination({ sync: false }) instead.', {
-    code: 'extreme_deprecation'
-  });
-  return buildSafeSonicBoom({
-    dest,
-    minLength: 4096,
-    sync: false
-  });
-};
 
 pino$2.exports.destination = (dest = process.stdout.fd) => {
   if (typeof dest === 'object') {
@@ -7947,6 +8501,8 @@ pino$2.exports.destination = (dest = process.stdout.fd) => {
   }
 };
 
+pino$2.exports.transport = transport_1;
+pino$2.exports.multistream = multistream_1;
 pino$2.exports.final = final;
 pino$2.exports.levels = mappings();
 pino$2.exports.stdSerializers = serializers;
@@ -8224,9 +8780,9 @@ class RequestCancelled$1 extends Error {
 
 var RequestCancelled_1 = RequestCancelled$1;
 
-const zlib = require$$0__default$6["default"];
-const http = require$$1__default$1["default"];
-const https = require$$2__default["default"];
+const zlib = require$$0__default$7["default"];
+const http = require$$1__default$2["default"];
+const https = require$$2__default$2["default"];
 const ON_CANCEL = cancel;
 const RequestCancelled = RequestCancelled_1;
 const {
@@ -8658,9 +9214,9 @@ var kwDES = {
 
 (function (module) {
 
-  const crypto = require$$0__default$7["default"];
+  const crypto = require$$0__default$8["default"];
   const parse = require$$6__default["default"].parse;
-  const bodyify = require$$2__default$1["default"].stringify;
+  const bodyify = require$$2__default$3["default"].stringify;
   const eapiKey = 'e82ckenh8dichen8';
   const linuxapiKey = 'rFgB&h#%2?^eDg:Q';
 
@@ -9231,7 +9787,7 @@ class ProcessExitNotSuccessfully$1 extends Error {
 
 var ProcessExitNotSuccessfully_1 = ProcessExitNotSuccessfully$1;
 
-const child_process = require$$0__default$8["default"];
+const child_process = require$$0__default$9["default"];
 const {
   logScope: logScope$1
 } = logger_1;
@@ -9494,6 +10050,6 @@ const csgInstance = CacheStorageGroup.getInstance();
 setInterval(() => {
   csgInstance.cleanup();
 }, 15 * 60 * 1000);
-require$$1__default$1["default"].createServer().listen(parseInt(process.argv[2]) || 9000).on('request', (req, res) => distribute(parse(req.url), router).then(data => res.write(data)).catch(() => res.writeHead(404)).then(() => res.end()));
+require$$1__default$2["default"].createServer().listen(parseInt(process.argv[2]) || 9000).on('request', (req, res) => distribute(parse(req.url), router).then(data => res.write(data)).catch(() => res.writeHead(404)).then(() => res.end()));
 
 module.exports = bridge;
