@@ -22,14 +22,14 @@ const transport = pino.transport({
 			...targetCommonOptions,
 		},
 		(destFile || jsonLog === 'true') && {
-			target: '#pino/file',
+			target: 'pino/file',
 			options: { destination: destFile || 1 },
 			...targetCommonOptions,
 		},
 	].filter((v) => v),
 });
 
-const logger = pino(transport);
+const logger = pino(targetCommonOptions, transport);
 
 /**
  * Add the scope of this log message.
