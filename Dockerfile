@@ -13,4 +13,4 @@ ENV SOURCE bilibili kugou kuwo
 
 WORKDIR /app
 
-ENTRYPOINT ["node", "app.js", "-o", "${SOURCE}"]
+ENTRYPOINT node app.js -o $SOURCE
