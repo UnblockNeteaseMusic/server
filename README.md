@@ -66,7 +66,7 @@ http 代理使用 `127.0.0.1`，端口默认使用 `8080`。
 docker run pan93412/unblock-netease-music-enhanced
 ```
 
-若要更新 UnblockNeteaseMusic，请运行以下命令后重新  `run`：
+若要更新 UnblockNeteaseMusic，请运行以下命令后重新 `run`：
 
 ```
 docker pull pan93412/unblock-netease-music-enhanced
