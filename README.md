@@ -1,3 +1,5 @@
+<!-- Thanks to https://zhconvert.org's Chinese (China) converter ! -->
+
 <img src="https://user-images.githubusercontent.com/26399680/47980314-0e3f1700-e102-11e8-8857-e3436ecc8beb.png" alt="logo" width="140" height="140" align="right">
 
 # UnblockNeteaseMusic
@@ -20,16 +22,16 @@
 
 > macOS 因为签名问题，暂时不提供可运行文件。请先按照其他做法使用。
 
-### NPM 安裝
+### NPM 安装
 
-#### 安裝成依賴
+#### 安装成依赖
 
 ```bash
 npm install @unblockneteasemusic/server
 yarn add @unblockneteasemusic/server # for Yarn users
 ```
 
-#### 用 NPX 執行
+#### 用 NPX 运行
 
 ```bash
 npx -p @unblockneteasemusic/server unblockneteasemusic
@@ -57,6 +59,18 @@ http 代理使用 `127.0.0.1`，端口默认使用 `8080`。
 
 见 [pan93412/unblock-netease-music-enhanced](https://hub.docker.com/repository/docker/pan93412/unblock-netease-music-enhanced)
 。`latest` 是从 `enhanced` 组建的最新版本；`release` 是最新 tag 的版本。
+
+直接运行 `pan93412/unblock-netease-music-enhanced` 的命令如下：
+
+```bash
+docker run pan93412/unblock-netease-music-enhanced
+```
+
+若要指定环境变量，您可以往 `docker run` 传入 `-e`，就像这样：
+
+```bash
+docker run -e JSON_LOG=true -e LOG_LEVEL=debug pan93412/unblock-netease-music-enhanced
+```
 
 #### 自行编译
 
@@ -124,7 +138,7 @@ optional arguments:
 | 变量名称         | 类型 | 描述                                                                                              | 示例                                                             |
 | ---------------- | ---- | ------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | ENABLE_FLAC      | bool | 激活无损音质获取                                                                                  | `ENABLE_FLAC=true`                                               |
-| ENABLE_LOCAL_VIP | bool | 启用本地黑胶 VIP                                                                                  | `ENABLE_LOCAL_VIP=true`                                          |
+| ENABLE_LOCAL_VIP | bool | 激活本地黑胶 VIP                                                                                  | `ENABLE_LOCAL_VIP=true`                                          |
 | ENABLE_HTTPDNS   | bool | 激活故障的 Netease HTTPDNS 查询（不建议）                                                         | `ENABLE_HTTPDNS=true`                                            |
 | DEVELOPMENT      | bool | 激活开发模式。需要自己用 `yarn` 安装依赖 (dependencies)                                           | `DEVELOPMENT=true`                                               |
 | JSON_LOG         | bool | 输出机器可读的 JSON 记录格式                                                                      | `JSON_LOG=true`                                                  |
