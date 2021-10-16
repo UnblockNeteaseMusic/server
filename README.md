@@ -66,6 +66,12 @@ http 代理使用 `127.0.0.1`，端口默认使用 `8080`。
 docker run pan93412/unblock-netease-music-enhanced
 ```
 
+若要更新 UnblockNeteaseMusic，请运行以下命令后重新  `run`：
+
+```
+docker pull pan93412/unblock-netease-music-enhanced
+```
+
 若要指定环境变量，您可以往 `docker run` 传入 `-e`，就像这样：
 
 ```bash
@@ -86,6 +92,12 @@ docker-compose up
 git clone https://github.com/UnblockNeteaseMusic/server.git UnblockNeteaseMusic
 cd UnblockNeteaseMusic
 node app.js # 建议使用 screen / tmux 把 app.js 挂后台
+```
+
+更新：
+
+```
+git pull
 ```
 
 #### 编译最新的 package
