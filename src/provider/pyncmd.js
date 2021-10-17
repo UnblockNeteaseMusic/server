@@ -23,7 +23,7 @@ const track = (info) => {
 				return Promise.reject();
 
 			const matched = jsonBody.data.find((song) => song.id === info.id);
-			if (matched) return matched.url;
+			if (matched && matched.url) return matched.url;
 
 			return Promise.reject();
 		});
