@@ -9988,7 +9988,7 @@ const track = info => {
   return request$4('GET', url).then(response => response.json()).then(jsonBody => {
     if (jsonBody && typeof jsonBody === 'object' && 'code' in jsonBody && jsonBody.code !== 200) return Promise.reject();
     const matched = jsonBody.data.find(song => song.id === info.id);
-    if (matched) return matched.url;
+    if (matched && matched.url) return matched.url;
     return Promise.reject();
   });
 };
