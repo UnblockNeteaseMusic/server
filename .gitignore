@@ -78,3 +78,6 @@ server.csr
 
 # Windows daemon
 daemon/
+
+# parcel's cache
+.parcel-cache/
