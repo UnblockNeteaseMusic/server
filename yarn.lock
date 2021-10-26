@@ -5723,9 +5723,9 @@ pkg-fetch@3.2.3:
     yargs "^16.2.0"
 
 pkg@^5.3.3:
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/pkg/-/pkg-5.3.3.tgz#5ad1dadfc4e55169f0e1046626e669e0428d4cd7"
-  integrity sha512-48qPxwyPvKfUuXxeK+kS3mBvfWWTX2khAdceDThbWCc8OUz3RFyO1Ft8SVkq2gQfPU2DtiPtWaf2SKH0Dlx59g==
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/pkg/-/pkg-5.4.0.tgz#131a2e6d457a09df94efd8c036a04f235bd92569"
+  integrity sha512-OPLjbZ0NUwv7qlutITd9/2VI/4rtCdY5YeLsecj3qDz5hdL/pW55pnUWRCVcI04ZIXSC8YMVGN5+KJP+yKDwjQ==
   dependencies:
     "@babel/parser" "7.13.13"
     "@babel/types" "7.13.12"
