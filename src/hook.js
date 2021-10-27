@@ -37,6 +37,7 @@ hook.target.host = new Set([
 	'interface3.music.163.com',
 	'apm.music.163.com',
 	'apm3.music.163.com',
+	'musicupload.netease.com', // support uploading
 	// 'mam.netease.com',
 	// 'api.iplay.163.com', // look living
 	// 'ac.dun.163yun.com',
