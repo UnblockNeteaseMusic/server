@@ -13746,7 +13746,8 @@ $53dee90c5364eef4$var$hook.target.host = new Set([
     'interface.music.163.com',
     'interface3.music.163.com',
     'apm.music.163.com',
-    'apm3.music.163.com' // 'mam.netease.com',
+    'apm3.music.163.com',
+    'musicupload.netease.com' // support uploading
 ]);
 $53dee90c5364eef4$var$hook.target.path = new Set([
     '/api/v3/playlist/detail',
