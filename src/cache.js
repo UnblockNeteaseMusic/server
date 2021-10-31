@@ -60,6 +60,7 @@ class CacheStorage extends EventEmitter {
 	 *
 	 * @param {Record<string, string>?} customContext The additional context.
 	 * @return {Record<string, string>}
+	 * @private
 	 */
 	getLoggerContext(customContext = {}) {
 		return {
@@ -108,24 +109,23 @@ class CacheStorage extends EventEmitter {
 		// we show "Something" instead.
 		const logKey = typeof key === 'object' ? 'Something' : key;
 
+		// Get the logger context with getLoggerContext
+		const logCtx = this.getLoggerContext({
+			logKey,
+		});
+
 		if (cachedData) {
-			logger.debug(
-				this.getLoggerContext({
-					logKey,
-				}),
-				`${logKey} hit!`
-			);
+			logger.debug(logCtx, `${logKey} hit!`);
 			return cachedData.data;
 		}
 
 		// Cache the response of action() and
 		// register into our cache map.
 		logger.debug(
-			this.getLoggerContext({
-				logKey: key,
-			}),
+			logCtx,
 			`${logKey} did not hit. Storing the execution result...`
 		);
+
 		const sourceResponse = await action();
 		this.cacheMap.set(key, {
 			data: sourceResponse,
