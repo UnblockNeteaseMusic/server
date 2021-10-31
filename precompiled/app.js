@@ -8855,6 +8855,7 @@ const $8c61b03f08df35f0$var$CacheStorageEvents = {
    *
    * @param {Record<string, string>?} customContext The additional context.
    * @return {Record<string, string>}
+   * @private
    */ getLoggerContext(customContext = {
     }) {
         return {
@@ -8887,17 +8888,16 @@ const $8c61b03f08df35f0$var$CacheStorageEvents = {
         // If true, we return the cached value.
         const cachedData = this.cacheMap.get(key); // Object.toString() can't bring any useful information,
         // we show "Something" instead.
-        const logKey = typeof key === 'object' ? 'Something' : key;
+        const logKey = typeof key === 'object' ? 'Something' : key; // Get the logger context with getLoggerContext
+        const logCtx = this.getLoggerContext({
+            logKey: logKey
+        });
         if (cachedData) {
-            $8c61b03f08df35f0$var$logger.debug(this.getLoggerContext({
-                logKey: logKey
-            }), `${logKey} hit!`);
+            $8c61b03f08df35f0$var$logger.debug(logCtx, `${logKey} hit!`);
             return cachedData.data;
         } // Cache the response of action() and
         // register into our cache map.
-        $8c61b03f08df35f0$var$logger.debug(this.getLoggerContext({
-            logKey: key
-        }), `${logKey} did not hit. Storing the execution result...`);
+        $8c61b03f08df35f0$var$logger.debug(logCtx, `${logKey} did not hit. Storing the execution result...`);
         const sourceResponse = await action();
         this.cacheMap.set(key, {
             data: sourceResponse,
