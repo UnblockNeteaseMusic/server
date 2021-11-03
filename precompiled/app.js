@@ -60,7 +60,7 @@ if (parcelRequire == null) {
   $parcel$global["parcelRequire307b"] = parcelRequire;
 }
 var $b6b33101f84990b7$exports = {};
-$b6b33101f84990b7$exports = JSON.parse("{\"name\":\"@unblockneteasemusic/server\",\"version\":\"v0.27.0-beta.8\",\"description\":\"Revive unavailable songs for Netease Cloud Music\",\"main\":\"src/provider/match.js\",\"bin\":{\"unblockneteasemusic\":\"./precompiled/app.js\"},\"targets\":{\"app\":{\"source\":\"./src/app.js\",\"distDir\":\"./precompiled\",\"includeNodeModules\":true,\"optimize\":false,\"sourceMap\":false,\"context\":\"node\"},\"bridge\":{\"source\":\"./src/bridge.js\",\"distDir\":\"./precompiled\",\"includeNodeModules\":true,\"optimize\":false,\"sourceMap\":false,\"context\":\"node\"}},\"engines\":{\"node\":\">= 12\"},\"scripts\":{\"build\":\"parcel build\",\"pkg\":\"pkg . --out-path=dist/\",\"test\":\"jest\"},\"pkg\":{\"assets\":[\"server.key\",\"server.crt\"],\"targets\":[\"node16-linux-arm64\",\"node16-win-arm64\",\"node16-linux-x64\",\"node16-win-x64\"],\"outputPath\":\"dist\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/UnblockNeteaseMusic/server.git\"},\"author\":\"nondanee, 1715173329, pan93412\",\"license\":\"LGPL-3.0-only\",\"dependencies\":{\"node-windows\":\"^1.0.0-beta.6\"},\"devDependencies\":{\"@babel/preset-env\":\"^7.15.8\",\"@parcel/babel-preset-env\":\"^2.0.0\",\"@types/node\":\"^16.10.3\",\"@types/pino\":\"^6.3.11\",\"jest\":\"^27.2.5\",\"parcel\":\"^2.0.0\",\"pino\":\"~6.13.3\",\"pino-pretty\":\"^7.1.0\",\"pkg\":\"^5.3.3\",\"prettier\":\"^2.4.1\"},\"publishConfig\":{\"access\":\"public\"}}");
+$b6b33101f84990b7$exports = JSON.parse("{\"name\":\"@unblockneteasemusic/server\",\"version\":\"v0.27.0-beta.9\",\"description\":\"Revive unavailable songs for Netease Cloud Music\",\"main\":\"src/provider/match.js\",\"bin\":{\"unblockneteasemusic\":\"./precompiled/app.js\"},\"targets\":{\"app\":{\"source\":\"./src/app.js\",\"distDir\":\"./precompiled\",\"includeNodeModules\":true,\"optimize\":false,\"sourceMap\":false,\"context\":\"node\"},\"bridge\":{\"source\":\"./src/bridge.js\",\"distDir\":\"./precompiled\",\"includeNodeModules\":true,\"optimize\":false,\"sourceMap\":false,\"context\":\"node\"}},\"engines\":{\"node\":\">= 12\"},\"scripts\":{\"build\":\"parcel build\",\"pkg\":\"pkg . --out-path=dist/\",\"test\":\"jest\"},\"pkg\":{\"assets\":[\"server.key\",\"server.crt\"],\"targets\":[\"node16-linux-arm64\",\"node16-win-arm64\",\"node16-linux-x64\",\"node16-win-x64\"],\"outputPath\":\"dist\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/UnblockNeteaseMusic/server.git\"},\"author\":\"nondanee, 1715173329, pan93412\",\"license\":\"LGPL-3.0-only\",\"dependencies\":{\"node-windows\":\"^1.0.0-beta.6\"},\"devDependencies\":{\"@parcel/babel-preset-env\":\"^2.0.0\",\"@types/node\":\"^16.10.3\",\"@types/pino\":\"^6.3.11\",\"jest\":\"^27.2.5\",\"parcel\":\"^2.0.0\",\"pino\":\"~6.13.3\",\"pino-pretty\":\"^7.1.0\",\"pkg\":\"^5.4.1\",\"prettier\":\"^2.4.1\"},\"publishConfig\":{\"access\":\"public\"}}");
 
 
 parcelRequire.register("lB4fA", function(module, exports) {
@@ -9494,7 +9494,7 @@ var $8YgOL = parcelRequire("8YgOL");
     return $8YgOL[key] || ($8YgOL[key] = value !== undefined ? value : {
     });
 })('versions', []).push({
-    version: '3.19.0',
+    version: '3.19.1',
     mode: $3rWI8 ? 'pure' : 'global',
     copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
 });
@@ -13232,6 +13232,326 @@ parcelRequire("jMWlp");
 parcelRequire("3h7Oe");
 parcelRequire("d04jn");
 parcelRequire("cM4xA");
+'use strict';
+
+var $auFIE = parcelRequire("auFIE");
+
+var $djwvx = parcelRequire("djwvx");
+
+var $52hRu = parcelRequire("52hRu");
+var $56f5eaf83241359d$exports = {};
+
+var $djwvx = parcelRequire("djwvx");
+
+var $fffd1 = parcelRequire("fffd1");
+
+var $23QgK = parcelRequire("23QgK");
+
+var $189D5 = parcelRequire("189D5");
+
+var $k9bBk = parcelRequire("k9bBk");
+var $f4e213174b6b6c91$exports = {};
+
+var $MpnOo = parcelRequire("MpnOo");
+$f4e213174b6b6c91$exports = !$MpnOo(function() {
+    function F() {
+    }
+    F.prototype.constructor = null;
+    // eslint-disable-next-line es/no-object-getprototypeof -- required for testing
+    return Object.getPrototypeOf(new F()) !== F.prototype;
+});
+
+
+var $56f5eaf83241359d$var$IE_PROTO = $k9bBk('IE_PROTO');
+var $56f5eaf83241359d$var$Object = $djwvx.Object;
+var $56f5eaf83241359d$var$ObjectPrototype = $56f5eaf83241359d$var$Object.prototype;
+// `Object.getPrototypeOf` method
+// https://tc39.es/ecma262/#sec-object.getprototypeof
+$56f5eaf83241359d$exports = $f4e213174b6b6c91$exports ? $56f5eaf83241359d$var$Object.getPrototypeOf : function(O) {
+    var object = $189D5(O);
+    if ($fffd1(object, $56f5eaf83241359d$var$IE_PROTO)) return object[$56f5eaf83241359d$var$IE_PROTO];
+    var constructor = object.constructor;
+    if ($23QgK(constructor) && object instanceof constructor) return constructor.prototype;
+    return object instanceof $56f5eaf83241359d$var$Object ? $56f5eaf83241359d$var$ObjectPrototype : null;
+};
+
+
+var $d7d97b7d41a8307e$exports = {};
+
+var $gGlLJ = parcelRequire("gGlLJ");
+
+var $h6BfE = parcelRequire("h6BfE");
+var $92317b81564e7e5d$exports = {};
+
+var $djwvx = parcelRequire("djwvx");
+
+var $23QgK = parcelRequire("23QgK");
+var $92317b81564e7e5d$var$String = $djwvx.String;
+var $92317b81564e7e5d$var$TypeError = $djwvx.TypeError;
+$92317b81564e7e5d$exports = function(argument) {
+    if (typeof argument == 'object' || $23QgK(argument)) return argument;
+    throw $92317b81564e7e5d$var$TypeError("Can't set " + $92317b81564e7e5d$var$String(argument) + ' as a prototype');
+};
+
+
+// `Object.setPrototypeOf` method
+// https://tc39.es/ecma262/#sec-object.setprototypeof
+// Works with __proto__ only. Old v8 can't work with null proto objects.
+// eslint-disable-next-line es/no-object-setprototypeof -- safe
+$d7d97b7d41a8307e$exports = Object.setPrototypeOf || ('__proto__' in {
+} ? (function() {
+    var CORRECT_SETTER = false;
+    var test = {
+    };
+    var setter;
+    try {
+        // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+        setter = $gGlLJ(Object.getOwnPropertyDescriptor(Object.prototype, '__proto__').set);
+        setter(test, []);
+        CORRECT_SETTER = test instanceof Array;
+    } catch (error) {
+    }
+    return function setPrototypeOf(O, proto) {
+        $h6BfE(O);
+        $92317b81564e7e5d$exports(proto);
+        if (CORRECT_SETTER) setter(O, proto);
+        else O.__proto__ = proto;
+        return O;
+    };
+})() : undefined);
+
+
+
+var $aiVAO = parcelRequire("aiVAO");
+var $47fa722f77e5cd25$exports = {};
+
+var $h6BfE = parcelRequire("h6BfE");
+var $faf85fc32b3ab881$exports = {};
+
+var $5T7yg = parcelRequire("5T7yg");
+
+var $iY8z4 = parcelRequire("iY8z4");
+
+var $h6BfE = parcelRequire("h6BfE");
+
+var $6yVQl = parcelRequire("6yVQl");
+var $0f782faa23f3d896$exports = {};
+
+var $9UHFw = parcelRequire("9UHFw");
+
+var $cm9du = parcelRequire("cm9du");
+// `Object.keys` method
+// https://tc39.es/ecma262/#sec-object.keys
+// eslint-disable-next-line es/no-object-keys -- safe
+$0f782faa23f3d896$exports = Object.keys || function keys(O) {
+    return $9UHFw(O, $cm9du);
+};
+
+
+// `Object.defineProperties` method
+// https://tc39.es/ecma262/#sec-object.defineproperties
+// eslint-disable-next-line es/no-object-defineproperties -- safe
+$faf85fc32b3ab881$exports = $5T7yg ? Object.defineProperties : function defineProperties(O, Properties) {
+    $h6BfE(O);
+    var props = $6yVQl(Properties);
+    var keys = $0f782faa23f3d896$exports(Properties);
+    var length = keys.length;
+    var index = 0;
+    var key;
+    while(length > index)$iY8z4.f(O, key = keys[index++], props[key]);
+    return O;
+};
+
+
+
+var $cm9du = parcelRequire("cm9du");
+
+var $1Dyx9 = parcelRequire("1Dyx9");
+var $6fe7a9e197b7ab75$exports = {};
+
+var $75I8k = parcelRequire("75I8k");
+$6fe7a9e197b7ab75$exports = $75I8k('document', 'documentElement');
+
+
+
+var $6lCna = parcelRequire("6lCna");
+
+var $k9bBk = parcelRequire("k9bBk");
+var $47fa722f77e5cd25$var$GT = '>';
+var $47fa722f77e5cd25$var$LT = '<';
+var $47fa722f77e5cd25$var$PROTOTYPE = 'prototype';
+var $47fa722f77e5cd25$var$SCRIPT = 'script';
+var $47fa722f77e5cd25$var$IE_PROTO = $k9bBk('IE_PROTO');
+var $47fa722f77e5cd25$var$EmptyConstructor = function() {
+};
+var $47fa722f77e5cd25$var$scriptTag = function(content) {
+    return $47fa722f77e5cd25$var$LT + $47fa722f77e5cd25$var$SCRIPT + $47fa722f77e5cd25$var$GT + content + $47fa722f77e5cd25$var$LT + '/' + $47fa722f77e5cd25$var$SCRIPT + $47fa722f77e5cd25$var$GT;
+};
+// Create object with fake `null` prototype: use ActiveX Object with cleared prototype
+var $47fa722f77e5cd25$var$NullProtoObjectViaActiveX = function(activeXDocument) {
+    activeXDocument.write($47fa722f77e5cd25$var$scriptTag(''));
+    activeXDocument.close();
+    var temp = activeXDocument.parentWindow.Object;
+    activeXDocument = null; // avoid memory leak
+    return temp;
+};
+// Create object with fake `null` prototype: use iframe Object with cleared prototype
+var $47fa722f77e5cd25$var$NullProtoObjectViaIFrame = function() {
+    // Thrash, waste and sodomy: IE GC bug
+    var iframe = $6lCna('iframe');
+    var JS = 'java' + $47fa722f77e5cd25$var$SCRIPT + ':';
+    var iframeDocument;
+    iframe.style.display = 'none';
+    $6fe7a9e197b7ab75$exports.appendChild(iframe);
+    // https://github.com/zloirock/core-js/issues/475
+    iframe.src = String(JS);
+    iframeDocument = iframe.contentWindow.document;
+    iframeDocument.open();
+    iframeDocument.write($47fa722f77e5cd25$var$scriptTag('document.F=Object'));
+    iframeDocument.close();
+    return iframeDocument.F;
+};
+// Check for document.domain and active x support
+// No need to use active x approach when document.domain is not set
+// see https://github.com/es-shims/es5-shim/issues/150
+// variation of https://github.com/kitcambridge/es5-shim/commit/4f738ac066346
+// avoid IE GC bug
+var $47fa722f77e5cd25$var$activeXDocument;
+var $47fa722f77e5cd25$var$NullProtoObject = function() {
+    try {
+        $47fa722f77e5cd25$var$activeXDocument = new ActiveXObject('htmlfile');
+    } catch (error) {
+    }
+    $47fa722f77e5cd25$var$NullProtoObject = typeof document != 'undefined' ? document.domain && $47fa722f77e5cd25$var$activeXDocument ? $47fa722f77e5cd25$var$NullProtoObjectViaActiveX($47fa722f77e5cd25$var$activeXDocument) // old IE
+     : $47fa722f77e5cd25$var$NullProtoObjectViaIFrame() : $47fa722f77e5cd25$var$NullProtoObjectViaActiveX($47fa722f77e5cd25$var$activeXDocument); // WSH
+    var length = $cm9du.length;
+    while(length--)delete $47fa722f77e5cd25$var$NullProtoObject[$47fa722f77e5cd25$var$PROTOTYPE][$cm9du[length]];
+    return $47fa722f77e5cd25$var$NullProtoObject();
+};
+$1Dyx9[$47fa722f77e5cd25$var$IE_PROTO] = true;
+// `Object.create` method
+// https://tc39.es/ecma262/#sec-object.create
+$47fa722f77e5cd25$exports = Object.create || function create(O, Properties) {
+    var result;
+    if (O !== null) {
+        $47fa722f77e5cd25$var$EmptyConstructor[$47fa722f77e5cd25$var$PROTOTYPE] = $h6BfE(O);
+        result = new $47fa722f77e5cd25$var$EmptyConstructor();
+        $47fa722f77e5cd25$var$EmptyConstructor[$47fa722f77e5cd25$var$PROTOTYPE] = null;
+        // add "__proto__" for Object.getPrototypeOf polyfill
+        result[$47fa722f77e5cd25$var$IE_PROTO] = O;
+    } else result = $47fa722f77e5cd25$var$NullProtoObject();
+    return Properties === undefined ? result : $faf85fc32b3ab881$exports(result, Properties);
+};
+
+
+
+var $aQYyS = parcelRequire("aQYyS");
+
+var $4x4wy = parcelRequire("4x4wy");
+var $f358edcd708776ce$exports = {};
+
+var $gGlLJ = parcelRequire("gGlLJ");
+var $9bbfdd206a3c32f6$exports = {};
+
+var $gGlLJ = parcelRequire("gGlLJ");
+$9bbfdd206a3c32f6$exports = $gGlLJ([].slice);
+
+
+var $f358edcd708776ce$var$replace = $gGlLJ(''.replace);
+var $f358edcd708776ce$var$split = $gGlLJ(''.split);
+var $f358edcd708776ce$var$join = $gGlLJ([].join);
+var $f358edcd708776ce$var$TEST = function(arg) {
+    return String(Error(arg).stack);
+}('zxcasd');
+var $f358edcd708776ce$var$V8_OR_CHAKRA_STACK_ENTRY = /\n\s*at [^:]*:[^\n]*/;
+var $f358edcd708776ce$var$IS_V8_OR_CHAKRA_STACK = $f358edcd708776ce$var$V8_OR_CHAKRA_STACK_ENTRY.test($f358edcd708776ce$var$TEST);
+var $f358edcd708776ce$var$IS_FIREFOX_OR_SAFARI_STACK = /@[^\n]*\n/.test($f358edcd708776ce$var$TEST) && !/zxcasd/.test($f358edcd708776ce$var$TEST);
+$f358edcd708776ce$exports = function(stack, dropEntries) {
+    if (typeof stack != 'string') return stack;
+    if ($f358edcd708776ce$var$IS_V8_OR_CHAKRA_STACK) while(dropEntries--)stack = $f358edcd708776ce$var$replace(stack, $f358edcd708776ce$var$V8_OR_CHAKRA_STACK_ENTRY, '');
+    else if ($f358edcd708776ce$var$IS_FIREFOX_OR_SAFARI_STACK) return $f358edcd708776ce$var$join($9bbfdd206a3c32f6$exports($f358edcd708776ce$var$split(stack, '\n'), dropEntries), '\n');
+    return stack;
+};
+
+
+var $e000e9ba14121522$exports = {};
+
+var $i1b83 = parcelRequire("i1b83");
+
+var $aQYyS = parcelRequire("aQYyS");
+// `InstallErrorCause` abstract operation
+// https://tc39.es/proposal-error-cause/#sec-errorobjects-install-error-cause
+$e000e9ba14121522$exports = function(O, options) {
+    if ($i1b83(options) && 'cause' in options) $aQYyS(O, 'cause', options.cause);
+};
+
+
+
+var $cU9tE = parcelRequire("cU9tE");
+var $520d4c17f722cc77$exports = {};
+
+var $4yPWd = parcelRequire("4yPWd");
+$520d4c17f722cc77$exports = function(argument, $default) {
+    return argument === undefined ? arguments.length < 2 ? '' : $default : $4yPWd(argument);
+};
+
+
+
+var $9QvA9 = parcelRequire("9QvA9");
+var $b239438e1ef86f5d$exports = {};
+
+var $MpnOo = parcelRequire("MpnOo");
+
+var $4x4wy = parcelRequire("4x4wy");
+$b239438e1ef86f5d$exports = !$MpnOo(function() {
+    var error = Error('a');
+    if (!('stack' in error)) return true;
+    // eslint-disable-next-line es/no-object-defineproperty -- safe
+    Object.defineProperty(error, 'stack', $4x4wy(1, 7));
+    return error.stack !== 7;
+});
+
+
+var $926b5305c47a8295$var$TO_STRING_TAG = $9QvA9('toStringTag');
+var $926b5305c47a8295$var$Error = $djwvx.Error;
+var $926b5305c47a8295$var$push = [].push;
+var $926b5305c47a8295$var$$AggregateError = function AggregateError(errors, message /* , options */ ) {
+    var options = arguments.length > 2 ? arguments[2] : undefined;
+    var isInstance = $52hRu($926b5305c47a8295$var$AggregateErrorPrototype, this);
+    var that;
+    if ($d7d97b7d41a8307e$exports) that = $d7d97b7d41a8307e$exports(new $926b5305c47a8295$var$Error(undefined), isInstance ? $56f5eaf83241359d$exports(this) : $926b5305c47a8295$var$AggregateErrorPrototype);
+    else {
+        that = isInstance ? this : $47fa722f77e5cd25$exports($926b5305c47a8295$var$AggregateErrorPrototype);
+        $aQYyS(that, $926b5305c47a8295$var$TO_STRING_TAG, 'Error');
+    }
+    $aQYyS(that, 'message', $520d4c17f722cc77$exports(message, ''));
+    if ($b239438e1ef86f5d$exports) $aQYyS(that, 'stack', $f358edcd708776ce$exports(that.stack, 1));
+    $e000e9ba14121522$exports(that, options);
+    var errorsArray = [];
+    $cU9tE(errors, $926b5305c47a8295$var$push, {
+        that: errorsArray
+    });
+    $aQYyS(that, 'errors', errorsArray);
+    return that;
+};
+if ($d7d97b7d41a8307e$exports) $d7d97b7d41a8307e$exports($926b5305c47a8295$var$$AggregateError, $926b5305c47a8295$var$Error);
+else $aiVAO($926b5305c47a8295$var$$AggregateError, $926b5305c47a8295$var$Error);
+var $926b5305c47a8295$var$AggregateErrorPrototype = $926b5305c47a8295$var$$AggregateError.prototype = $47fa722f77e5cd25$exports($926b5305c47a8295$var$Error.prototype, {
+    constructor: $4x4wy(1, $926b5305c47a8295$var$$AggregateError),
+    message: $4x4wy(1, ''),
+    name: $4x4wy(1, 'AggregateError')
+});
+// `AggregateError` constructor
+// https://tc39.es/ecma262/#sec-aggregate-error-constructor
+$auFIE({
+    global: true
+}, {
+    AggregateError: $926b5305c47a8295$var$$AggregateError
+});
+
+
+
+
 'use strict';
 
 var $auFIE = parcelRequire("auFIE");
