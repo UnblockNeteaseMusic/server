@@ -370,7 +370,7 @@ $6880f8f64f48df35$exports = $6880f8f64f48df35$var$store;
     return $6880f8f64f48df35$exports[key] || ($6880f8f64f48df35$exports[key] = value !== undefined ? value : {
     });
 })('versions', []).push({
-    version: '3.19.0',
+    version: '3.19.1',
     mode: $28316f789f0de744$exports ? 'pure' : 'global',
     copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
 });
