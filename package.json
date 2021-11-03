@@ -55,7 +55,6 @@
 		"node-windows": "^1.0.0-beta.6"
 	},
 	"devDependencies": {
-		"@babel/preset-env": "^7.15.8",
 		"@parcel/babel-preset-env": "^2.0.0",
 		"@types/node": "^16.10.3",
 		"@types/pino": "^6.3.11",
@@ -63,7 +62,7 @@
 		"parcel": "^2.0.0",
 		"pino": "~6.13.3",
 		"pino-pretty": "^7.1.0",
-		"pkg": "^5.3.3",
+		"pkg": "^5.4.1",
 		"prettier": "^2.4.1"
 	},
 	"publishConfig": {
