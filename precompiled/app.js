@@ -3471,8 +3471,12 @@ function $210793f872389031$var$build(opts = {
                 cb(null, line);
             }
         });
-        const destination = $69d51({
+        let destination;
+        if (typeof opts.destination === 'object' && typeof opts.destination.write === 'function') destination = opts.destination;
+        else destination = $69d51({
             dest: opts.destination || 1,
+            append: opts.append,
+            mkdir: opts.mkdir,
             sync: false
         });
         /* istanbul ignore else */ if (destination.fd === 1) // We cannot close the output
@@ -6862,7 +6866,7 @@ parcelRequire.register("3mY9x", function(module, exports) {
 'use strict';
 const $274216482025c783$var$metadata = Symbol.for('pino.metadata');
 
-var $bcW9h = parcelRequire("bcW9h");
+var $5hvZQ = parcelRequire("5hvZQ");
 
 var $eRvhR = parcelRequire("eRvhR");
 module.exports = function build(fn, opts = {
@@ -6870,7 +6874,7 @@ module.exports = function build(fn, opts = {
     const parseLines = opts.parse === 'lines';
     const parseLine = typeof opts.parseLine === 'function' ? opts.parseLine : JSON.parse;
     const close = opts.close || $274216482025c783$var$defaultClose;
-    const stream = $bcW9h(function(line) {
+    const stream = $5hvZQ(function(line) {
         let value;
         try {
             value = parseLine(line);
@@ -6923,9 +6927,9 @@ function $274216482025c783$var$defaultClose(err, cb) {
 }
 
 });
-parcelRequire.register("bcW9h", function(module, exports) {
+parcelRequire.register("5hvZQ", function(module, exports) {
 /*
-Copyright (c) 2014-2018, Matteo Collina <hello@matteocollina.com>
+Copyright (c) 2014-2021, Matteo Collina <hello@matteocollina.com>
 
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
@@ -6940,16 +6944,15 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
 IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */ 'use strict';
 
-var $j7izJ = parcelRequire("j7izJ");
-var $828debd1784c60c6$require$Transform = $j7izJ.Transform;
+var $3d875c1b006dce2f$require$Transform = $lEd20$stream.Transform;
 
-var $828debd1784c60c6$require$StringDecoder = $lEd20$string_decoder.StringDecoder;
-const $828debd1784c60c6$var$kLast = Symbol('last');
-const $828debd1784c60c6$var$kDecoder = Symbol('decoder');
-function $828debd1784c60c6$var$transform(chunk, enc, cb) {
-    var list;
+var $3d875c1b006dce2f$require$StringDecoder = $lEd20$string_decoder.StringDecoder;
+const $3d875c1b006dce2f$var$kLast = Symbol('last');
+const $3d875c1b006dce2f$var$kDecoder = Symbol('decoder');
+function $3d875c1b006dce2f$var$transform(chunk, enc, cb) {
+    let list;
     if (this.overflow) {
-        var buf = this[$828debd1784c60c6$var$kDecoder].write(chunk);
+        const buf = this[$3d875c1b006dce2f$var$kDecoder].write(chunk);
         list = buf.split(this.matcher);
         if (list.length === 1) return cb() // Line ending not found. Discard entire chunk.
         ;
@@ -6957,39 +6960,42 @@ function $828debd1784c60c6$var$transform(chunk, enc, cb) {
         list.shift();
         this.overflow = false;
     } else {
-        this[$828debd1784c60c6$var$kLast] += this[$828debd1784c60c6$var$kDecoder].write(chunk);
-        list = this[$828debd1784c60c6$var$kLast].split(this.matcher);
+        this[$3d875c1b006dce2f$var$kLast] += this[$3d875c1b006dce2f$var$kDecoder].write(chunk);
+        list = this[$3d875c1b006dce2f$var$kLast].split(this.matcher);
     }
-    this[$828debd1784c60c6$var$kLast] = list.pop();
-    for(var i = 0; i < list.length; i++)try {
-        $828debd1784c60c6$var$push(this, this.mapper(list[i]));
+    this[$3d875c1b006dce2f$var$kLast] = list.pop();
+    for(let i = 0; i < list.length; i++)try {
+        $3d875c1b006dce2f$var$push(this, this.mapper(list[i]));
     } catch (error) {
         return cb(error);
     }
-    this.overflow = this[$828debd1784c60c6$var$kLast].length > this.maxLength;
-    if (this.overflow && !this.skipOverflow) return cb(new Error('maximum buffer reached'));
+    this.overflow = this[$3d875c1b006dce2f$var$kLast].length > this.maxLength;
+    if (this.overflow && !this.skipOverflow) {
+        cb(new Error('maximum buffer reached'));
+        return;
+    }
     cb();
 }
-function $828debd1784c60c6$var$flush(cb) {
+function $3d875c1b006dce2f$var$flush(cb) {
     // forward any gibberish left in there
-    this[$828debd1784c60c6$var$kLast] += this[$828debd1784c60c6$var$kDecoder].end();
-    if (this[$828debd1784c60c6$var$kLast]) try {
-        $828debd1784c60c6$var$push(this, this.mapper(this[$828debd1784c60c6$var$kLast]));
+    this[$3d875c1b006dce2f$var$kLast] += this[$3d875c1b006dce2f$var$kDecoder].end();
+    if (this[$3d875c1b006dce2f$var$kLast]) try {
+        $3d875c1b006dce2f$var$push(this, this.mapper(this[$3d875c1b006dce2f$var$kLast]));
     } catch (error) {
         return cb(error);
     }
     cb();
 }
-function $828debd1784c60c6$var$push(self, val) {
+function $3d875c1b006dce2f$var$push(self, val) {
     if (val !== undefined) self.push(val);
 }
-function $828debd1784c60c6$var$noop(incoming) {
+function $3d875c1b006dce2f$var$noop(incoming) {
     return incoming;
 }
-function $828debd1784c60c6$var$split(matcher, mapper, options) {
+function $3d875c1b006dce2f$var$split(matcher, mapper, options) {
     // Set defaults for any arguments not supplied.
     matcher = matcher || /\r?\n/;
-    mapper = mapper || $828debd1784c60c6$var$noop;
+    mapper = mapper || $3d875c1b006dce2f$var$noop;
     options = options || {
     };
     // Test arguments explicitly.
@@ -7014,25 +7020,31 @@ function $828debd1784c60c6$var$split(matcher, mapper, options) {
             // If matcher and options are arguments.
             } else if (typeof mapper === 'object') {
                 options = mapper;
-                mapper = $828debd1784c60c6$var$noop;
+                mapper = $3d875c1b006dce2f$var$noop;
             }
     }
     options = Object.assign({
     }, options);
-    options.transform = $828debd1784c60c6$var$transform;
-    options.flush = $828debd1784c60c6$var$flush;
+    options.autoDestroy = true;
+    options.transform = $3d875c1b006dce2f$var$transform;
+    options.flush = $3d875c1b006dce2f$var$flush;
     options.readableObjectMode = true;
-    const stream = new $828debd1784c60c6$require$Transform(options);
-    stream[$828debd1784c60c6$var$kLast] = '';
-    stream[$828debd1784c60c6$var$kDecoder] = new $828debd1784c60c6$require$StringDecoder('utf8');
+    const stream = new $3d875c1b006dce2f$require$Transform(options);
+    stream[$3d875c1b006dce2f$var$kLast] = '';
+    stream[$3d875c1b006dce2f$var$kDecoder] = new $3d875c1b006dce2f$require$StringDecoder('utf8');
     stream.matcher = matcher;
     stream.mapper = mapper;
     stream.maxLength = options.maxLength;
-    stream.skipOverflow = options.skipOverflow;
+    stream.skipOverflow = options.skipOverflow || false;
     stream.overflow = false;
+    stream._destroy = function(err, cb) {
+        // Weird Node v12 bug that we need to work around
+        this._writableState.errorEmitted = false;
+        cb(err);
+    };
     return stream;
 }
-module.exports = $828debd1784c60c6$var$split;
+module.exports = $3d875c1b006dce2f$var$split;
 
 });
 
