@@ -348,6 +348,7 @@ const $d2bfa6f66116f409$var$DEFAULT_SOURCE = [
 
 
 
+
 const $d2bfa6f66116f409$var$PROVIDERS = {
     qq: (parcelRequire("aFEGh")),
     kugou: (parcelRequire("a8HAq")),
@@ -357,6 +358,7 @@ const $d2bfa6f66116f409$var$PROVIDERS = {
     youtube: (parcelRequire("4AswL")),
     ytdownload: (parcelRequire("bRnQ3")),
     youtubedl: (parcelRequire("6q0WV")),
+    ytdlp: (parcelRequire("k8UAV")),
     bilibili: (parcelRequire("8LdI1")),
     pyncmd: (parcelRequire("7mJOE"))
 };
@@ -13096,6 +13098,81 @@ module.exports = $788d5bc1bdae046d$var$ProcessExitNotSuccessfully;
 });
 
 
+
+parcelRequire.register("k8UAV", function(module, exports) {
+
+var $c3fn4 = parcelRequire("c3fn4");
+var $eaa0748173c163cf$require$getManagedCacheStorage = $c3fn4.getManagedCacheStorage;
+
+var $fRKJQ = parcelRequire("fRKJQ");
+var $eaa0748173c163cf$require$logScope = $fRKJQ.logScope;
+
+var $7rWip = parcelRequire("7rWip");
+
+var $9SaPF = parcelRequire("9SaPF");
+
+var $iU8Ja = parcelRequire("iU8Ja");
+var $eaa0748173c163cf$require$spawnStdout = $iU8Ja.spawnStdout;
+/**
+ * The arguments to pass to yt-dlp
+ *
+ * ```plain
+ * yt-dlp -f bestaudio --dump-json <query>
+ *		-f bestaudio 	choose the best quality of the audio
+ *		--dump-json		dump the information as JSON without downloading it
+ * ```
+ *
+ * @param {string} query
+ */ const $eaa0748173c163cf$var$dlArguments = (query)=>[
+        '-f',
+        '140',
+        '--dump-json',
+        query
+    ]
+;
+/** @param {string} id */ const $eaa0748173c163cf$var$byId = (id)=>`https://www.youtube.com/watch?v=${id}`
+;
+/** @param {string} keyword */ const $eaa0748173c163cf$var$byKeyword = (keyword)=>`ytsearch1:${keyword}`
+;
+const $eaa0748173c163cf$var$logger = $eaa0748173c163cf$require$logScope('provider/yt-dlp');
+/**
+ * Checking if yt-dlp is available,
+ * then execute the command and extract the ID and URL.
+ *
+ * @param {string[]} args
+ * @returns {Promise<{id: string, url: string}>}
+ */ async function $eaa0748173c163cf$var$getUrl(args) {
+    try {
+        const { stdout: stdout  } = await $eaa0748173c163cf$require$spawnStdout('yt-dlp', args);
+        const response = JSON.parse(stdout.toString());
+        if (typeof response === 'object' && typeof response.id === 'string' && typeof response.url === 'string') return response;
+        throw new $7rWip(response);
+    } catch (e) {
+        if (e && e.code === 'ENOENT') throw new $9SaPF();
+        throw e;
+    }
+}
+const $eaa0748173c163cf$var$search = async (info)=>{
+    const { id: id  } = await $eaa0748173c163cf$var$getUrl($eaa0748173c163cf$var$dlArguments($eaa0748173c163cf$var$byKeyword(info.keyword)));
+    return id;
+};
+const $eaa0748173c163cf$var$track = async (id)=>{
+    const { url: url  } = await $eaa0748173c163cf$var$getUrl($eaa0748173c163cf$var$dlArguments($eaa0748173c163cf$var$byId(id)));
+    return url;
+};
+const $eaa0748173c163cf$var$cs = $eaa0748173c163cf$require$getManagedCacheStorage('yt-dlp');
+const $eaa0748173c163cf$var$check = (info)=>$eaa0748173c163cf$var$cs.cache(info, ()=>$eaa0748173c163cf$var$search(info)
+    ).then($eaa0748173c163cf$var$track).catch((e)=>{
+        if (e) $eaa0748173c163cf$var$logger.error(e);
+        throw e;
+    })
+;
+module.exports = {
+    check: $eaa0748173c163cf$var$check,
+    track: $eaa0748173c163cf$var$track
+};
+
+});
 
 parcelRequire.register("8LdI1", function(module, exports) {
 

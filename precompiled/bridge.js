@@ -3477,8 +3477,8 @@ function $cf360c1981bdc3f7$var$format(f, args, opts) {
 var $07c42eb2bd77cacc$require$mapHttpRequest = $89514c8164f525a0$exports.mapHttpRequest;
 var $07c42eb2bd77cacc$require$mapHttpResponse = $89514c8164f525a0$exports.mapHttpResponse;
 
-var $70c2dde5dcad0348$exports = {};
-$70c2dde5dcad0348$exports = $70c2dde5dcad0348$var$stringify;
+parcelRequire.register("9GdXI", function(module, exports) {
+module.exports = $70c2dde5dcad0348$var$stringify;
 $70c2dde5dcad0348$var$stringify.default = $70c2dde5dcad0348$var$stringify;
 $70c2dde5dcad0348$var$stringify.stable = $70c2dde5dcad0348$var$deterministicStringify;
 $70c2dde5dcad0348$var$stringify.stableStringify = $70c2dde5dcad0348$var$deterministicStringify;
@@ -3657,7 +3657,10 @@ function $70c2dde5dcad0348$var$replaceGetterValues(replacer) {
     };
 }
 
+});
 
+
+var $9GdXI = parcelRequire("9GdXI");
 
 var $07c42eb2bd77cacc$require$lsCacheSym = $b424b59a8e1d8e2b$exports.lsCacheSym;
 var $07c42eb2bd77cacc$require$chindingsSym = $b424b59a8e1d8e2b$exports.chindingsSym;
@@ -8300,6 +8303,7 @@ const $b695439ffb944b44$var$clone = (parcelRequire("8Z7fx"))({
 
 var $cauxf = parcelRequire("cauxf");
 
+var $9GdXI = parcelRequire("9GdXI");
 
 const $b695439ffb944b44$var$defaultColorizer = (parcelRequire("2jkFg"))();
 
@@ -8600,12 +8604,12 @@ function $b695439ffb944b44$var$isObject(input) {
     });
     if (singleLine) {
         // Stringify the entire object as a single JSON line
-        if (Object.keys(plain).length > 0) result += colorizer.greyMessage($70c2dde5dcad0348$exports(plain));
+        if (Object.keys(plain).length > 0) result += colorizer.greyMessage($9GdXI(plain));
         result += eol;
     } else // Put each object entry on its own line
     Object.entries(plain).forEach(([keyName, keyValue])=>{
         // custom prettifiers are already applied above, so we can skip it now
-        const lines = typeof customPrettifiers[keyName] === 'function' ? keyValue : $70c2dde5dcad0348$exports(keyValue, null, 2);
+        const lines = typeof customPrettifiers[keyName] === 'function' ? keyValue : $9GdXI(keyValue, null, 2);
         if (lines === undefined) return;
         const joinedLines = $b695439ffb944b44$var$joinLinesWithIndentation({
             input: lines,
@@ -8617,7 +8621,7 @@ function $b695439ffb944b44$var$isObject(input) {
     // Errors
     Object.entries(errors).forEach(([keyName, keyValue])=>{
         // custom prettifiers are already applied above, so we can skip it now
-        const lines = typeof customPrettifiers[keyName] === 'function' ? keyValue : $70c2dde5dcad0348$exports(keyValue, null, 2);
+        const lines = typeof customPrettifiers[keyName] === 'function' ? keyValue : $9GdXI(keyValue, null, 2);
         if (lines === undefined) return;
         result += $b695439ffb944b44$var$prettifyError({
             keyName: keyName,
@@ -9466,7 +9470,7 @@ function $07c42eb2bd77cacc$var$stringify(obj) {
     try {
         return JSON.stringify(obj);
     } catch (_) {
-        return $70c2dde5dcad0348$exports(obj);
+        return $9GdXI(obj);
     }
 }
 function $07c42eb2bd77cacc$var$buildFormatters(level, bindings, log) {
@@ -10438,6 +10442,7 @@ const $d2bfa6f66116f409$var$DEFAULT_SOURCE = [
 
 
 
+
 const $d2bfa6f66116f409$var$PROVIDERS = {
     qq: (parcelRequire("aFEGh")),
     kugou: (parcelRequire("a8HAq")),
@@ -10447,6 +10452,7 @@ const $d2bfa6f66116f409$var$PROVIDERS = {
     youtube: (parcelRequire("4AswL")),
     ytdownload: (parcelRequire("bRnQ3")),
     youtubedl: (parcelRequire("6q0WV")),
+    ytdlp: (parcelRequire("k8UAV")),
     bilibili: (parcelRequire("8LdI1")),
     pyncmd: (parcelRequire("7mJOE"))
 };
@@ -12065,6 +12071,79 @@ module.exports = $788d5bc1bdae046d$var$ProcessExitNotSuccessfully;
 });
 
 
+
+parcelRequire.register("k8UAV", function(module, exports) {
+
+var $eaa0748173c163cf$require$getManagedCacheStorage = $8c61b03f08df35f0$exports.getManagedCacheStorage;
+
+var $eaa0748173c163cf$require$logScope = $b8d00f8afd4b3d31$exports.logScope;
+
+var $7rWip = parcelRequire("7rWip");
+
+var $9SaPF = parcelRequire("9SaPF");
+
+var $iU8Ja = parcelRequire("iU8Ja");
+var $eaa0748173c163cf$require$spawnStdout = $iU8Ja.spawnStdout;
+/**
+ * The arguments to pass to yt-dlp
+ *
+ * ```plain
+ * yt-dlp -f bestaudio --dump-json <query>
+ *		-f bestaudio 	choose the best quality of the audio
+ *		--dump-json		dump the information as JSON without downloading it
+ * ```
+ *
+ * @param {string} query
+ */ const $eaa0748173c163cf$var$dlArguments = (query)=>[
+        '-f',
+        '140',
+        '--dump-json',
+        query
+    ]
+;
+/** @param {string} id */ const $eaa0748173c163cf$var$byId = (id)=>`https://www.youtube.com/watch?v=${id}`
+;
+/** @param {string} keyword */ const $eaa0748173c163cf$var$byKeyword = (keyword)=>`ytsearch1:${keyword}`
+;
+const $eaa0748173c163cf$var$logger = $eaa0748173c163cf$require$logScope('provider/yt-dlp');
+/**
+ * Checking if yt-dlp is available,
+ * then execute the command and extract the ID and URL.
+ *
+ * @param {string[]} args
+ * @returns {Promise<{id: string, url: string}>}
+ */ async function $eaa0748173c163cf$var$getUrl(args) {
+    try {
+        const { stdout: stdout  } = await $eaa0748173c163cf$require$spawnStdout('yt-dlp', args);
+        const response = JSON.parse(stdout.toString());
+        if (typeof response === 'object' && typeof response.id === 'string' && typeof response.url === 'string') return response;
+        throw new $7rWip(response);
+    } catch (e) {
+        if (e && e.code === 'ENOENT') throw new $9SaPF();
+        throw e;
+    }
+}
+const $eaa0748173c163cf$var$search = async (info)=>{
+    const { id: id  } = await $eaa0748173c163cf$var$getUrl($eaa0748173c163cf$var$dlArguments($eaa0748173c163cf$var$byKeyword(info.keyword)));
+    return id;
+};
+const $eaa0748173c163cf$var$track = async (id)=>{
+    const { url: url  } = await $eaa0748173c163cf$var$getUrl($eaa0748173c163cf$var$dlArguments($eaa0748173c163cf$var$byId(id)));
+    return url;
+};
+const $eaa0748173c163cf$var$cs = $eaa0748173c163cf$require$getManagedCacheStorage('yt-dlp');
+const $eaa0748173c163cf$var$check = (info)=>$eaa0748173c163cf$var$cs.cache(info, ()=>$eaa0748173c163cf$var$search(info)
+    ).then($eaa0748173c163cf$var$track).catch((e)=>{
+        if (e) $eaa0748173c163cf$var$logger.error(e);
+        throw e;
+    })
+;
+module.exports = {
+    check: $eaa0748173c163cf$var$check,
+    track: $eaa0748173c163cf$var$track
+};
+
+});
 
 parcelRequire.register("8LdI1", function(module, exports) {
 
