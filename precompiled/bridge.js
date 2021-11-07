@@ -3477,8 +3477,8 @@ function $cf360c1981bdc3f7$var$format(f, args, opts) {
 var $07c42eb2bd77cacc$require$mapHttpRequest = $89514c8164f525a0$exports.mapHttpRequest;
 var $07c42eb2bd77cacc$require$mapHttpResponse = $89514c8164f525a0$exports.mapHttpResponse;
 
-parcelRequire.register("9GdXI", function(module, exports) {
-module.exports = $70c2dde5dcad0348$var$stringify;
+var $70c2dde5dcad0348$exports = {};
+$70c2dde5dcad0348$exports = $70c2dde5dcad0348$var$stringify;
 $70c2dde5dcad0348$var$stringify.default = $70c2dde5dcad0348$var$stringify;
 $70c2dde5dcad0348$var$stringify.stable = $70c2dde5dcad0348$var$deterministicStringify;
 $70c2dde5dcad0348$var$stringify.stableStringify = $70c2dde5dcad0348$var$deterministicStringify;
@@ -3657,10 +3657,7 @@ function $70c2dde5dcad0348$var$replaceGetterValues(replacer) {
     };
 }
 
-});
 
-
-var $9GdXI = parcelRequire("9GdXI");
 
 var $07c42eb2bd77cacc$require$lsCacheSym = $b424b59a8e1d8e2b$exports.lsCacheSym;
 var $07c42eb2bd77cacc$require$chindingsSym = $b424b59a8e1d8e2b$exports.chindingsSym;
@@ -8303,7 +8300,6 @@ const $b695439ffb944b44$var$clone = (parcelRequire("8Z7fx"))({
 
 var $cauxf = parcelRequire("cauxf");
 
-var $9GdXI = parcelRequire("9GdXI");
 
 const $b695439ffb944b44$var$defaultColorizer = (parcelRequire("2jkFg"))();
 
@@ -8604,12 +8600,12 @@ function $b695439ffb944b44$var$isObject(input) {
     });
     if (singleLine) {
         // Stringify the entire object as a single JSON line
-        if (Object.keys(plain).length > 0) result += colorizer.greyMessage($9GdXI(plain));
+        if (Object.keys(plain).length > 0) result += colorizer.greyMessage($70c2dde5dcad0348$exports(plain));
         result += eol;
     } else // Put each object entry on its own line
     Object.entries(plain).forEach(([keyName, keyValue])=>{
         // custom prettifiers are already applied above, so we can skip it now
-        const lines = typeof customPrettifiers[keyName] === 'function' ? keyValue : $9GdXI(keyValue, null, 2);
+        const lines = typeof customPrettifiers[keyName] === 'function' ? keyValue : $70c2dde5dcad0348$exports(keyValue, null, 2);
         if (lines === undefined) return;
         const joinedLines = $b695439ffb944b44$var$joinLinesWithIndentation({
             input: lines,
@@ -8621,7 +8617,7 @@ function $b695439ffb944b44$var$isObject(input) {
     // Errors
     Object.entries(errors).forEach(([keyName, keyValue])=>{
         // custom prettifiers are already applied above, so we can skip it now
-        const lines = typeof customPrettifiers[keyName] === 'function' ? keyValue : $9GdXI(keyValue, null, 2);
+        const lines = typeof customPrettifiers[keyName] === 'function' ? keyValue : $70c2dde5dcad0348$exports(keyValue, null, 2);
         if (lines === undefined) return;
         result += $b695439ffb944b44$var$prettifyError({
             keyName: keyName,
@@ -9470,7 +9466,7 @@ function $07c42eb2bd77cacc$var$stringify(obj) {
     try {
         return JSON.stringify(obj);
     } catch (_) {
-        return $9GdXI(obj);
+        return $70c2dde5dcad0348$exports(obj);
     }
 }
 function $07c42eb2bd77cacc$var$buildFormatters(level, bindings, log) {
