@@ -30,6 +30,7 @@ jobs:
                     - 'linux-x64'
                     - 'win-arm64'
                     - 'win-x64'
+            fail-fast: false
 
         runs-on: ubuntu-latest
 
