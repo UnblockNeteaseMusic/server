@@ -79,6 +79,12 @@ docker pull pan93412/unblock-netease-music-enhanced
 docker run -e JSON_LOG=true -e LOG_LEVEL=debug pan93412/unblock-netease-music-enhanced
 ```
 
+若要传入配置参数，只要在 `docker run` 的 image 之后传入参数即可：
+
+```bash
+docker run pan93412/unblock-netease-music-enhanced -o bilibili -p 1234
+```
+
 #### 自行编译
 
 ```bash
