@@ -10,7 +10,8 @@
 
 ## 特性
 
--   使用 Bilibili / QQ / 酷狗 / 酷我 / 咪咕 / JOOX / Youtube 等音源替换变灰歌曲链接 (默认仅激活一、三、四、五)
+-   支援多个音源，替换变灰歌曲链接
+    -   支援的完整音源清单可以见下方〈音源清单〉处。
 -   为请求增加 `X-Real-IP` 参数解锁海外限制，支持指定网易云服务器 IP，支持设置上游 HTTP / HTTPS 代理
 -   完整的流量代理功能 (HTTP / HTTPS)，可直接作为系统代理 (同时支持 PAC)
 
@@ -145,6 +146,28 @@ optional arguments:
   -h, --help                      output usage information
 ```
 
+### 音源清单
+
+将有兴趣的音源代号用 `-o` 传入 UNM 即可使用，像这样：
+
+```bash
+node app.js -o bilibili ytdlp
+```
+
+| 名称                        | 代号         | 默认启用 | 注意事项                                                                       |
+| --------------------------- | ------------ | -------- | ------------------------------------------------------------------------------ |
+| QQ 音乐                     | `qq`         |          | 需要准备自己的 `QQ_COOKIE`（请参阅下方〈环境变量〉处）。                       |
+| 酷狗音乐                    | `kugou`      | ✅       |                                                                                |
+| 酷我音乐                    | `kuwo`       | ✅       |                                                                                |
+| 咪咕音乐                    | `migu`       | ✅       | 需要准备自己的 `MIGU_COOKIE`（请参阅下方〈环境变量〉处）。                     |
+| JOOX                        | `joox`       |          | 需要准备自己的 `JOOX_COOKIE`（请参阅下方〈环境变量〉处）。似乎有严格地区限制。 |
+| YouTube（纯 JS 解析方式）   | `youtube`    |          | **似乎不能使用**。                                                             |
+| yt-download                 | `ytdownload` |          | **似乎不能使用**。                                                             |
+| YouTube（通过 `youtube-dl`) | `youtubedl`  |          | 需要自行安装 `youtube-dl`。                                                    |
+| YouTube（通过 `yt-dlp`)     | `ytdlp`      |          | 需要自行安装 `yt-dlp`（`youtube-dl` 仍在活跃维护的 fork）。                    |
+| B 站音乐                    | `bilibili`   | ✅       |                                                                                |
+| 第三方网易云 API            | `pyncmd`     |          | 有地区限制。                                                                   |
+
 ### 环境变量
 
 | 变量名称         | 类型 | 描述                                                                                              | 示例                                                             |
@@ -249,27 +272,27 @@ match(418602084, ['qq', 'kuwo', 'migu']).then(console.log);
 
 ### Windows 客户端
 
-<img src="https://user-images.githubusercontent.com/26399680/60316017-87de8a80-999b-11e9-9381-16d40efbe7f6.png" width="100%">
+<img alt="Windows 客户端" src="https://user-images.githubusercontent.com/26399680/60316017-87de8a80-999b-11e9-9381-16d40efbe7f6.png" width="100%">
 
 ### UWP 客户端
 
-<img src="https://user-images.githubusercontent.com/26399680/52215123-5a028780-28ce-11e9-8491-08c4c5dac3b4.png" width="100%">
+<img alt="UWP 客户端" src="https://user-images.githubusercontent.com/26399680/52215123-5a028780-28ce-11e9-8491-08c4c5dac3b4.png" width="100%">
 
 ### Linux 客户端
 
-<img src="https://user-images.githubusercontent.com/26399680/60316169-18b56600-999c-11e9-8ae5-5cd168b0edae.png" width="100%">
+<img alt="Linux 客户端" src="https://user-images.githubusercontent.com/26399680/60316169-18b56600-999c-11e9-8ae5-5cd168b0edae.png" width="100%">
 
 ### macOS 客户端
 
-<img src="https://user-images.githubusercontent.com/26399680/52196035-51418f80-2895-11e9-8f33-78a631cdf151.png" width="100%">
+<img alt="macOS 客户端" src="https://user-images.githubusercontent.com/26399680/52196035-51418f80-2895-11e9-8f33-78a631cdf151.png" width="100%">
 
 ### Android 客户端
 
-<img src="https://user-images.githubusercontent.com/26399680/57972549-eabd2900-79ce-11e9-8fef-95cb60906298.png" width="50%">
+<img alt="Android 客户端" src="https://user-images.githubusercontent.com/26399680/57972549-eabd2900-79ce-11e9-8fef-95cb60906298.png" width="50%">
 
 ### iOS 客户端
 
-<img src="https://user-images.githubusercontent.com/26399680/57972440-f90a4580-79cc-11e9-8dbf-6150ee299b9c.jpg" width="50%">
+<img alt="iOS 客户端" src="https://user-images.githubusercontent.com/26399680/57972440-f90a4580-79cc-11e9-8dbf-6150ee299b9c.jpg" width="50%">
 
 ## 致谢
 
