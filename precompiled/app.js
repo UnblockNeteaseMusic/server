@@ -118,10 +118,10 @@ const $fb9059bbef231663$var$cli = {
         let pointer = 0;
         while(pointer < args.length){
             let value = null;
-            const part = args[pointer];
-            const index = part.startsWith('-') ? optionals[part] : positionals.shift();
-            if (index === undefined) part.startsWith('-') ? $fb9059bbef231663$var$error(`no such option: ${part}`) : $fb9059bbef231663$var$error(`extra arguments found: ${part}`);
-            if (part.startsWith('-')) pointer += 1;
+            const part1 = args[pointer];
+            const index = part1.startsWith('-') ? optionals[part1] : positionals.shift();
+            if (index === undefined) part1.startsWith('-') ? $fb9059bbef231663$var$error(`no such option: ${part1}`) : $fb9059bbef231663$var$error(`extra arguments found: ${part1}`);
+            if (part1.startsWith('-')) pointer += 1;
             const { action: action  } = $fb9059bbef231663$var$cli._options[index];
             if ([
                 'help',
@@ -139,9 +139,9 @@ const $fb9059bbef231663$var$cli = {
                 const next = gap === -1 ? args.length : pointer + gap;
                 value = args.slice(pointer, next);
                 if (value.length === 0) {
-                    if ($fb9059bbef231663$var$cli._options[index].positional) $fb9059bbef231663$var$error(`the following arguments are required: ${part}`);
-                    else if ($fb9059bbef231663$var$cli._options[index].nargs === '+') $fb9059bbef231663$var$error(`argument ${part}: expected at least one argument`);
-                    else $fb9059bbef231663$var$error(`argument ${part}: expected one argument`);
+                    if ($fb9059bbef231663$var$cli._options[index].positional) $fb9059bbef231663$var$error(`the following arguments are required: ${part1}`);
+                    else if ($fb9059bbef231663$var$cli._options[index].nargs === '+') $fb9059bbef231663$var$error(`argument ${part1}: expected at least one argument`);
+                    else $fb9059bbef231663$var$error(`argument ${part1}: expected one argument`);
                 }
                 if ($fb9059bbef231663$var$cli._options[index].nargs !== '+') {
                     value = value[0];
@@ -2920,13 +2920,13 @@ function $07c42eb2bd77cacc$var$createArgsNormalizer(defaultOptions) {
         };
     };
 }
-function $07c42eb2bd77cacc$var$final(logger, handler) {
-    if (typeof logger === 'undefined' || typeof logger.child !== 'function') throw Error('expected a pino logger instance');
+function $07c42eb2bd77cacc$var$final(logger1, handler) {
+    if (typeof logger1 === 'undefined' || typeof logger1.child !== 'function') throw Error('expected a pino logger instance');
     const hasHandler = typeof handler !== 'undefined';
     if (hasHandler && typeof handler !== 'function') throw Error('if supplied, the handler parameter should be a function');
-    const stream = logger[$07c42eb2bd77cacc$require$streamSym];
+    const stream = logger1[$07c42eb2bd77cacc$require$streamSym];
     if (typeof stream.flushSync !== 'function') throw Error('final requires a stream that has a flushSync method, such as pino.destination');
-    const finalLogger = new Proxy(logger, {
+    const finalLogger = new Proxy(logger1, {
         get: (logger, key)=>{
             if (key in logger.levels.values) return (...args)=>{
                 logger[key](...args);
@@ -3703,8 +3703,8 @@ parcelRequire.register("jT13G", function(module, exports) {
 // This makes sure that own properties are retained, so that
 // decorations and such are not lost along the way.
 module.exports = $e7a3f98c67624844$var$wrappy;
-function $e7a3f98c67624844$var$wrappy(fn, cb) {
-    if (fn && cb) return $e7a3f98c67624844$var$wrappy(fn)(cb);
+function $e7a3f98c67624844$var$wrappy(fn, cb1) {
+    if (fn && cb1) return $e7a3f98c67624844$var$wrappy(fn)(cb1);
     if (typeof fn !== 'function') throw new TypeError('need wrapper function');
     Object.keys(fn).forEach(function(k) {
         wrapper[k] = fn[k];
@@ -4606,7 +4606,7 @@ $12dc25bc14f15ca0$var$Readable.prototype.wrap = function(stream) {
         };
     })(i);
      // proxy certain important events.
-    for(var n = 0; n < $12dc25bc14f15ca0$var$kProxyEvents.length; n++)stream.on($12dc25bc14f15ca0$var$kProxyEvents[n], this.emit.bind(this, $12dc25bc14f15ca0$var$kProxyEvents[n]));
+    for(var n1 = 0; n1 < $12dc25bc14f15ca0$var$kProxyEvents.length; n1++)stream.on($12dc25bc14f15ca0$var$kProxyEvents[n1], this.emit.bind(this, $12dc25bc14f15ca0$var$kProxyEvents[n1]));
      // when we try to consume some more bytes, simply unpause the
     // underlying stream.
     this._read = function(n) {
@@ -4961,17 +4961,17 @@ module.exports = /*#__PURE__*/ (function() {
 
 parcelRequire.register("fka0R", function(module, exports) {
 'use strict'; // undocumented cb() API, needed for core, not for public API
-function $b2807d9e31363a76$var$destroy(err, cb) {
+function $b2807d9e31363a76$var$destroy(err1, cb) {
     var _this = this;
     var readableDestroyed = this._readableState && this._readableState.destroyed;
     var writableDestroyed = this._writableState && this._writableState.destroyed;
     if (readableDestroyed || writableDestroyed) {
-        if (cb) cb(err);
-        else if (err) {
-            if (!this._writableState) process.nextTick($b2807d9e31363a76$var$emitErrorNT, this, err);
+        if (cb) cb(err1);
+        else if (err1) {
+            if (!this._writableState) process.nextTick($b2807d9e31363a76$var$emitErrorNT, this, err1);
             else if (!this._writableState.errorEmitted) {
                 this._writableState.errorEmitted = true;
-                process.nextTick($b2807d9e31363a76$var$emitErrorNT, this, err);
+                process.nextTick($b2807d9e31363a76$var$emitErrorNT, this, err1);
             }
         }
         return this;
@@ -4980,7 +4980,7 @@ function $b2807d9e31363a76$var$destroy(err, cb) {
     if (this._readableState) this._readableState.destroyed = true;
      // if this is a duplex stream mark the writable part as destroyed as well
     if (this._writableState) this._writableState.destroyed = true;
-    this._destroy(err || null, function(err) {
+    this._destroy(err1 || null, function(err) {
         if (!cb && err) {
             if (!_this._writableState) process.nextTick($b2807d9e31363a76$var$emitErrorAndCloseNT, _this, err);
             else if (!_this._writableState.errorEmitted) {
@@ -7142,19 +7142,19 @@ $ad1e48e580cb7bdf$var$Duplexify.prototype.setWritable = function(writable) {
         writable: true,
         readable: false
     }, $ad1e48e580cb7bdf$var$destroyer(this, this._forwardEnd));
-    var ondrain = function() {
+    var ondrain1 = function() {
         var ondrain = self._ondrain;
         self._ondrain = null;
         if (ondrain) ondrain();
     };
     var clear = function() {
-        self._writable.removeListener('drain', ondrain);
+        self._writable.removeListener('drain', ondrain1);
         unend();
     };
-    if (this._unwrite) process.nextTick(ondrain) // force a drain on stream reset to avoid livelocks
+    if (this._unwrite) process.nextTick(ondrain1) // force a drain on stream reset to avoid livelocks
     ;
     this._writable = writable;
-    this._writable.on('drain', ondrain);
+    this._writable.on('drain', ondrain1);
     this._unwrite = clear;
     this.uncork() // always uncork setWritable
     ;
@@ -7334,9 +7334,9 @@ function $479dbac0ab2adff2$var$openFile(file, sonic) {
         });
         const fd = $lEd20$fs.openSync(file, mode);
         fileOpened(null, fd);
-    } catch (err) {
-        fileOpened(err);
-        throw err;
+    } catch (err1) {
+        fileOpened(err1);
+        throw err1;
     }
     else if (sonic.mkdir) $lEd20$fs.mkdir($lEd20$path.dirname(file), {
         recursive: true
@@ -8049,7 +8049,7 @@ function $b695439ffb944b44$var$isObject(input) {
     if (excludeLoggerKeys === true) Array.prototype.push.apply(keysToIgnore, $b695439ffb944b44$require$LOGGER_KEYS);
     let result = '';
     // Split object keys into two categories: error and non-error
-    const { plain: plain , errors: errors  } = Object.entries(input).reduce(({ plain: plain , errors: errors  }, [k, v])=>{
+    const { plain: plain1 , errors: errors1  } = Object.entries(input).reduce(({ plain: plain , errors: errors  }, [k, v])=>{
         if (keysToIgnore.includes(k) === false) {
             // Pre-apply custom prettifiers, because all 3 cases below will need this
             const pretty = typeof customPrettifiers[k] === 'function' ? customPrettifiers[k](v, k, input) : v;
@@ -8068,10 +8068,10 @@ function $b695439ffb944b44$var$isObject(input) {
     });
     if (singleLine) {
         // Stringify the entire object as a single JSON line
-        if (Object.keys(plain).length > 0) result += colorizer.greyMessage($9GdXI(plain));
+        if (Object.keys(plain1).length > 0) result += colorizer.greyMessage($9GdXI(plain1));
         result += eol;
     } else // Put each object entry on its own line
-    Object.entries(plain).forEach(([keyName, keyValue])=>{
+    Object.entries(plain1).forEach(([keyName, keyValue])=>{
         // custom prettifiers are already applied above, so we can skip it now
         const lines = typeof customPrettifiers[keyName] === 'function' ? keyValue : $9GdXI(keyValue, null, 2);
         if (lines === undefined) return;
@@ -8083,7 +8083,7 @@ function $b695439ffb944b44$var$isObject(input) {
         result += `${ident}${keyName}: ${joinedLines}${eol}`;
     });
     // Errors
-    Object.entries(errors).forEach(([keyName, keyValue])=>{
+    Object.entries(errors1).forEach(([keyName, keyValue])=>{
         // custom prettifiers are already applied above, so we can skip it now
         const lines = typeof customPrettifiers[keyName] === 'function' ? keyValue : $9GdXI(keyValue, null, 2);
         if (lines === undefined) return;
@@ -8405,14 +8405,14 @@ function $68a9a4df0380ac45$var$rfdcCircles(opts) {
 
 parcelRequire.register("cauxf", function(module, exports) {
 "use strict";
-function $8dbe1ada73d22404$var$_typeof(obj) {
+function $8dbe1ada73d22404$var$_typeof(obj1) {
     if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") $8dbe1ada73d22404$var$_typeof = function _typeof(obj) {
         return typeof obj;
     };
     else $8dbe1ada73d22404$var$_typeof = function _typeof(obj) {
         return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
     };
-    return $8dbe1ada73d22404$var$_typeof(obj);
+    return $8dbe1ada73d22404$var$_typeof(obj1);
 }
 (function(global) {
     var _arguments = arguments;
@@ -8773,10 +8773,10 @@ module.exports = JSON.parse("{\"name\":\"pino\",\"version\":\"6.13.3\",\"descrip
 parcelRequire.register("iQRVQ", function(module, exports) {
 module.exports = (list, info)=>{
     const { duration: duration  } = info;
-    const song = list.slice(0, 5) // 挑前5个结果
+    const song1 = list.slice(0, 5) // 挑前5个结果
     .find((song)=>song.duration && Math.abs(song.duration - duration) < 5000
     ); // 第一个时长相差5s (5000ms) 之内的结果
-    if (song) return song;
+    if (song1) return song1;
     else return list[0]; // 没有就播放第一条
 };
 module.exports.ENABLE_FLAC = (process.env.ENABLE_FLAC || '').toLowerCase() === 'true';
@@ -8847,12 +8847,12 @@ const $8c61b03f08df35f0$var$CacheStorageEvents = {
    * Construct a cache storage.
    *
    * @param {string?} id The ID of this cache storage.
-   */ constructor(id){
+   */ constructor(id1){
         super(); // Set the ID of this cache storage.
         $8c61b03f08df35f0$var$_defineProperty(this, "id", 'Default Cache Storage');
         $8c61b03f08df35f0$var$_defineProperty(this, "cacheMap", new Map());
         $8c61b03f08df35f0$var$_defineProperty(this, "aliveDuration", 1800000);
-        if (id) this.id = id; // Register the CLEANUP event. It will clean up
+        if (id1) this.id = id1; // Register the CLEANUP event. It will clean up
         // the expired cache when emitting "CLEANUP" event.
         this.on($8c61b03f08df35f0$var$CacheStorageEvents.CLEANUP, async ()=>this.removeExpiredCache()
         );
@@ -11761,21 +11761,21 @@ module.exports = {
                     iv: buffer.slice(keySize, keySize + ivSize)
                 };
             };
-            const password = Buffer.from($lEd20$crypto.randomBytes(32).toString('hex')), salt = $lEd20$crypto.randomBytes(8);
+            const password1 = Buffer.from($lEd20$crypto.randomBytes(32).toString('hex')), salt1 = $lEd20$crypto.randomBytes(8);
             const key = '-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC8asrfSaoOb4je+DSmKdriQJKWVJ2oDZrs3wi5W67m3LwTB9QVR+cE3XWU21Nx+YBxS0yun8wDcjgQvYt625ZCcgin2ro/eOkNyUOTBIbuj9CvMnhUYiR61lC1f1IGbrSYYimqBVSjpifVufxtx/I3exReZosTByYp4Xwpb1+WAQIDAQAB\n-----END PUBLIC KEY-----';
-            const secret = derive(password, salt, 256, 16);
+            const secret = derive(password1, salt1, 256, 16);
             const cipher = $lEd20$crypto.createCipheriv('aes-256-cbc', secret.key, secret.iv);
             return $5cdbe14f96887c02$require$bodyify({
                 data: Buffer.concat([
                     Buffer.from('Salted__'),
-                    salt,
+                    salt1,
                     cipher.update(Buffer.from(text)),
                     cipher.final()
                 ]).toString('base64'),
                 secKey: $lEd20$crypto.publicEncrypt({
                     key: key,
                     padding: $lEd20$crypto.constants.RSA_PKCS1_PADDING
-                }, password).toString('base64')
+                }, password1).toString('base64')
             });
         }
     },
@@ -12595,12 +12595,12 @@ const $36ef0a73c6dc228e$var$search = (info)=>{
     });
 };
 const $36ef0a73c6dc228e$var$track = (id)=>{
-    const url = $7YhIx.kuwoapi ? 'http://mobi.kuwo.cn/mobi.s?f=kuwo&q=' + $7YhIx.kuwoapi.encryptQuery('corp=kuwo&p2p=1&type=convert_url2&sig=0&format=' + [
+    const url1 = $7YhIx.kuwoapi ? 'http://mobi.kuwo.cn/mobi.s?f=kuwo&q=' + $7YhIx.kuwoapi.encryptQuery('corp=kuwo&p2p=1&type=convert_url2&sig=0&format=' + [
         'flac',
         'mp3'
     ].slice($iQRVQ.ENABLE_FLAC ? 0 : 1).join('|') + '&rid=' + id) : 'http://antiserver.kuwo.cn/anti.s?type=convert_url&format=mp3&response=url&rid=MUSIC_' + id; // flac refuse
     // : 'http://www.kuwo.cn/url?format=mp3&response=url&type=convert_url3&br=320kmp3&rid=' + id // flac refuse
-    return $1wHCb('GET', url, {
+    return $1wHCb('GET', url1, {
         'user-agent': 'okhttp/3.10.0'
     }).then((response)=>response.body()
     ).then((body)=>{
@@ -13930,8 +13930,8 @@ const $419825499f248e88$var$logger = $419825499f248e88$require$logScope('provide
     }, 'The audio matched!');
     return song;
 }
-async function $419825499f248e88$var$match(id, source, data) {
-    const candidate = (source || $parcel$global.source || $419825499f248e88$require$defaultSrc).filter((name)=>name in $419825499f248e88$require$providers
+async function $419825499f248e88$var$match(id, source1, data) {
+    const candidate = (source1 || $parcel$global.source || $419825499f248e88$require$defaultSrc).filter((name)=>name in $419825499f248e88$require$providers
     );
     const audioInfo = await $213628973b93b89c$exports(id, data);
     const audioData = await Promise.any(candidate.map(async (source)=>$419825499f248e88$var$getAudioFromSource(source, audioInfo).catch((e)=>{
@@ -13942,7 +13942,7 @@ async function $419825499f248e88$var$match(id, source, data) {
             throw e; // We just log it instead of resolving it.
         })
     ));
-    const { id: audioId , name: name  } = audioInfo;
+    const { id: audioId , name: name1  } = audioInfo;
     const { url: url  } = audioData;
     $419825499f248e88$var$logger.debug({
         audioInfo: audioInfo,
@@ -13950,9 +13950,9 @@ async function $419825499f248e88$var$match(id, source, data) {
     }, 'The data to replace:');
     $419825499f248e88$var$logger.info({
         audioId: audioId,
-        songName: name,
+        songName: name1,
         url: url
-    }, `Replaced: [${audioId}] ${name}`);
+    }, `Replaced: [${audioId}] ${name1}`);
     return audioData;
 }
 /**
@@ -14252,10 +14252,10 @@ $53dee90c5364eef4$var$hook.request.before = (ctx)=>{
         };
     } else if (req.url.includes('package')) try {
         const data = req.url.split('package/').pop().split('/');
-        const url1 = $53dee90c5364eef4$require$parse($7YhIx.base64.decode(data[0]));
+        const url = $53dee90c5364eef4$require$parse($7YhIx.base64.decode(data[0]));
         const id = data[1].replace(/\.\w+/, '');
-        req.url = url1.href;
-        req.headers['host'] = url1.hostname;
+        req.url = url.href;
+        req.headers['host'] = url.hostname;
         req.headers['cookie'] = null;
         ctx.package = {
             id: id
@@ -14439,10 +14439,10 @@ const $53dee90c5364eef4$var$tryMatch = (ctx)=>{
     const { jsonBody: jsonBody  } = netease;
     /** @type {number} */ const min_br = Number(process.env.MIN_BR) || 0;
     /** @type {Promise<any>[]} */ let tasks;
-    let target = 0;
+    let target1 = 0;
     const inject = (item)=>{
         item.flag = 0;
-        if ((item.code !== 200 || item.freeTrialInfo || item.br < min_br) && (target === 0 || item.id === target)) return $419825499f248e88$exports(item.id).then((song)=>{
+        if ((item.code !== 200 || item.freeTrialInfo || item.br < min_br) && (target1 === 0 || item.id === target1)) return $419825499f248e88$exports(item.id).then((song)=>{
             let os = '';
             try {
                 let { header: header  } = netease.param;
@@ -14508,7 +14508,7 @@ const $53dee90c5364eef4$var$tryMatch = (ctx)=>{
             inject(jsonBody.data)
         ];
     } else {
-        target = netease.web ? 0 : parseInt(((Array.isArray(netease.param.ids) ? netease.param.ids : JSON.parse(netease.param.ids))[0] || 0).toString().replace('_0', '')); // reduce time cost
+        target1 = netease.web ? 0 : parseInt(((Array.isArray(netease.param.ids) ? netease.param.ids : JSON.parse(netease.param.ids))[0] || 0).toString().replace('_0', '')); // reduce time cost
         tasks = jsonBody.data.map((item)=>inject(item)
         );
     }
