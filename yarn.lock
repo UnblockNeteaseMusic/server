@@ -1154,9 +1154,9 @@
     astring "^1.6.2"
 
 "@parcel/babel-preset-env@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@parcel/babel-preset-env/-/babel-preset-env-2.0.0.tgz#4cc76fabaca4cd3c30f5480b19f77c34825f6c38"
-  integrity sha512-t3pHErO+5XYQC//NftUMTI7KKO8IPRBaXb0fc2b14nAkF/4jll7oxhZ8l0McdnrgSSctW//D/J8J+oRSU43W/Q==
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@parcel/babel-preset-env/-/babel-preset-env-2.0.1.tgz#704185be3f2d85343c19af5bc58c74ee0c7fcc59"
+  integrity sha512-s5UNsLTZzc00MUuM7AIvS/bYc0WyODlgORZuhR8sXdFj4V/JEt7vjDhWeUMeh6d/0pajSr3EVBrG504zSVU8UA==
   dependencies:
     "@babel/preset-env" "^7.4.0"
     semver "^5.4.1"
