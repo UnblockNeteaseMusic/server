@@ -254,18 +254,21 @@ hook.request.after = (ctx) => {
 								];
 							if (info) {
 								try {
-								const expireTime = info.data.now + 31622400000;
-								info.data.redVipLevel = 7;
-								info.data.redVipAnnualCount = 1;
+									const expireTime =
+										info.data.now + 31622400000;
+									info.data.redVipLevel = 7;
+									info.data.redVipAnnualCount = 1;
 
-								info.data.musicPackage.expireTime = expireTime;
-								info.data.musicPackage.vipCode = 230;
+									info.data.musicPackage.expireTime =
+										expireTime;
+									info.data.musicPackage.vipCode = 230;
 
-								info.data.associator.expireTime = expireTime;
+									info.data.associator.expireTime =
+										expireTime;
 
-								netease.jsonBody[
-									'/api/music-vip-membership/client/vip/info'
-								] = info;
+									netease.jsonBody[
+										'/api/music-vip-membership/client/vip/info'
+									] = info;
 								} catch (error) {}
 							}
 						}
@@ -297,14 +300,17 @@ hook.request.after = (ctx) => {
 
 				const inject = (key, value) => {
 					if (typeof value === 'object' && value != null) {
-						if ('cp' in value) value['cp'] = 1
-						if ('dl' in value && 'downloadMaxbr' in value) value['dl'] = value['downloadMaxbr']
-						if ('fee' in value) value['fee'] = 0
-						if ('pl' in value && 'playMaxbr' in value) value['pl'] = value['playMaxbr']
-						if ('sp' in value && 'st' in value && 'subp' in value) { // batch modify
-							value['sp'] = 7
-							value['st'] = 0
-							value['subp'] = 1
+						if ('cp' in value) value['cp'] = 1;
+						if ('dl' in value && 'downloadMaxbr' in value)
+							value['dl'] = value['downloadMaxbr'];
+						if ('fee' in value) value['fee'] = 0;
+						if ('pl' in value && 'playMaxbr' in value)
+							value['pl'] = value['playMaxbr'];
+						if ('sp' in value && 'st' in value && 'subp' in value) {
+							// batch modify
+							value['sp'] = 7;
+							value['st'] = 0;
+							value['subp'] = 1;
 						}
 					}
 					return value;
