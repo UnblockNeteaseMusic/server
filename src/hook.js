@@ -317,12 +317,18 @@ hook.request.after = (ctx) => {
 							value['st'] = 0;
 							value['subp'] = 1;
 						}
-						if ('start' in value && 'end' in value && 'playable' in value && 'unplayableType' in value && 'unplayableUserIds' in value) {
-							value['start'] = 0
-							value['end'] = 0
-							value['playable'] = true
-							value['unplayableType'] = 'unknown'
-							value['unplayableUserIds'] = []
+						if (
+							'start' in value &&
+							'end' in value &&
+							'playable' in value &&
+							'unplayableType' in value &&
+							'unplayableUserIds' in value
+						) {
+							value['start'] = 0;
+							value['end'] = 0;
+							value['playable'] = true;
+							value['unplayableType'] = 'unknown';
+							value['unplayableUserIds'] = [];
 						}
 					}
 					return value;
