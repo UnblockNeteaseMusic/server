@@ -14284,7 +14284,7 @@ $53dee90c5364eef4$var$hook.request.after = (ctx)=>{
             if ($53dee90c5364eef4$var$ENABLE_LOCAL_VIP) {
                 if (netease.path === '/batch' || netease.path === '/api/batch') {
                     var info = netease.jsonBody['/api/music-vip-membership/client/vip/info'];
-                    if (info) {
+                    if (info) try {
                         const expireTime = info.data.now + 31622400000;
                         info.data.redVipLevel = 7;
                         info.data.redVipAnnualCount = 1;
@@ -14292,6 +14292,8 @@ $53dee90c5364eef4$var$hook.request.after = (ctx)=>{
                         info.data.musicPackage.vipCode = 230;
                         info.data.associator.expireTime = expireTime;
                         netease.jsonBody['/api/music-vip-membership/client/vip/info'] = info;
+                    } catch (error) {
+                        $53dee90c5364eef4$var$logger.debug('Unable to apply the local VIP.');
                     }
                 }
             }
@@ -14317,13 +14319,15 @@ $53dee90c5364eef4$var$hook.request.after = (ctx)=>{
         );
         const inject = (key, value)=>{
             if (typeof value === 'object' && value != null) {
+                if ('cp' in value) value['cp'] = 1;
+                if ('dl' in value && 'downloadMaxbr' in value) value['dl'] = value['downloadMaxbr'];
                 if ('fee' in value) value['fee'] = 0;
-                if ('st' in value && 'pl' in value && 'dl' in value && 'subp' in value) {
+                if ('pl' in value && 'playMaxbr' in value) value['pl'] = value['playMaxbr'];
+                if ('sp' in value && 'st' in value && 'subp' in value) {
                     // batch modify
+                    value['sp'] = 7;
                     value['st'] = 0;
                     value['subp'] = 1;
-                    value['pl'] = value['pl'] === 0 ? 320000 : value['pl'];
-                    value['dl'] = value['dl'] === 0 ? 320000 : value['dl'];
                 }
             }
             return value;
