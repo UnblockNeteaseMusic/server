@@ -14177,6 +14177,7 @@ $53dee90c5364eef4$var$hook.target.path = new Set([
     '/api/song/enhance/privilege',
     '/batch',
     '/api/batch',
+    '/api/listen/together/privilege/get',
     '/api/v1/search/get',
     '/api/v1/search/song/get',
     '/api/search/complex/get',
@@ -14328,6 +14329,13 @@ $53dee90c5364eef4$var$hook.request.after = (ctx)=>{
                     value['sp'] = 7;
                     value['st'] = 0;
                     value['subp'] = 1;
+                }
+                if ('start' in value && 'end' in value && 'playable' in value && 'unplayableType' in value && 'unplayableUserIds' in value) {
+                    value['start'] = 0;
+                    value['end'] = 0;
+                    value['playable'] = true;
+                    value['unplayableType'] = 'unknown';
+                    value['unplayableUserIds'] = [];
                 }
             }
             return value;
