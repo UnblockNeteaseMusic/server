@@ -57,7 +57,7 @@
 	"devDependencies": {
 		"@parcel/babel-preset-env": "^2.0.0",
 		"@types/node": "^16.10.3",
-		"@types/pino": "^6.3.11",
+		"@types/pino": "^7.0.5",
 		"jest": "^27.2.5",
 		"parcel": "^2.0.0",
 		"pino": "~6.13.3",
