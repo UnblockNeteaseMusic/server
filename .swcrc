@@ -1,0 +1,19 @@
+{
+  "env": {
+    "targets": {
+      "node": "12"
+    },
+    "mode": "usage",
+    "coreJs": 3,
+    "shippedProposals": true
+  },
+  "jsc": {
+    "parser": {
+      "syntax": "ecmascript"
+    },
+    "target": "es2018"
+  },
+  "module": {
+      "type": "commonjs"
+  }
+}
