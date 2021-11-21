@@ -1049,6 +1049,7 @@ __metadata:
     node-windows: ^1.0.0-beta.6
     pino: 7.8.0
     pino-pretty: ^7.5.3
+    pino-webpack-plugin: ^1.1.0
     pkg: ^5.5.2
     prettier: ^2.5.1
     swc-loader: ^0.1.15
@@ -4384,6 +4385,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pino-webpack-plugin@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "pino-webpack-plugin@npm:1.1.0"
+  dependencies:
+    webpack: ^5.61.0
+  checksum: 062565aa8e93db5cdb29aa26d170181c0d1f55e3b54339e4c43960ce3d1b9cac34da8c794260fd3fed50f395f39fb7a5bb8d6744accd35c7eba5b50d4bb854ec
+  languageName: node
+  linkType: hard
+
 "pino@npm:7.8.0":
   version: 7.8.0
   resolution: "pino@npm:7.8.0"
@@ -5616,7 +5626,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5.70.0":
+"webpack@npm:^5.61.0, webpack@npm:^5.70.0":
   version: 5.70.0
   resolution: "webpack@npm:5.70.0"
   dependencies:

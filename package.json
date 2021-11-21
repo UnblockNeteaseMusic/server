@@ -36,7 +36,8 @@
 	"dependencies": {
 		"node-windows": "^1.0.0-beta.6",
 		"pino": "7.8.0",
-		"pino-pretty": "^7.5.3"
+		"pino-pretty": "^7.5.3",
+		"pino-webpack-plugin": "^1.1.0"
 	},
 	"devDependencies": {
 		"@swc/core": "^1.2.150",

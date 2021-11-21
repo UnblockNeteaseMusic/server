@@ -1,5 +1,9 @@
 const pino = require('pino');
 
+// FIXME: DEBUG_CODE: for pkg
+console.log(__dirname);
+require('fs').readdir(__dirname, {}, console.log);
+
 // The destination of the log file. Can be `undefined`.
 const destFile = process.env.LOG_FILE;
 const jsonLog = process.env.JSON_LOG;
