@@ -1,3 +1,5 @@
+const { PinoWebpackPlugin } = require('pino-webpack-plugin');
+
 module.exports = {
 	target: 'node',
 	mode: 'production',
@@ -21,6 +23,7 @@ module.exports = {
 			},
 		],
 	},
+	plugins: [new PinoWebpackPlugin({ transports: ['pino-pretty'] })],
 	optimization: {
 		minimize: false,
 	},

@@ -17,13 +17,16 @@
 	"pkg": {
 		"assets": [
 			"server.key",
-			"server.crt"
+			"server.crt",
+			"precompiled/pino-*.js",
+			"precompiled/thread-stream-worker.js"
 		],
 		"targets": [
 			"node16-linux-arm64",
 			"node16-win-arm64",
 			"node16-linux-x64",
-			"node16-win-x64"
+			"node16-win-x64",
+			"node16-macos-arm64"
 		],
 		"outputPath": "dist"
 	},
@@ -36,7 +39,8 @@
 	"dependencies": {
 		"node-windows": "^1.0.0-beta.6",
 		"pino": "7.6.2",
-		"pino-pretty": "^7.1.0"
+		"pino-pretty": "^7.1.0",
+		"pino-webpack-plugin": "^1.0.0"
 	},
 	"devDependencies": {
 		"@swc/core": "^1.2.111",
