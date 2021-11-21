@@ -62,7 +62,7 @@
 		"parcel": "^2.0.0",
 		"pino": "~6.13.3",
 		"pino-pretty": "^7.1.0",
-		"pkg": "^5.4.1",
+		"pkg": "5.4.0",
 		"prettier": "^2.4.1"
 	},
 	"publishConfig": {
