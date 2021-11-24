@@ -23,6 +23,7 @@ const LOCAL_VIP_UID = (process.env.LOCAL_VIP_UID || '')
 	.split(',')
 	.map((str) => parseInt(str))
 	.filter((num) => !Number.isNaN(num));
+const NCM_COOKIE = process.env.NCM_COOKIE || null;
 
 const hook = {
 	request: {
@@ -181,6 +182,18 @@ hook.request.before = (ctx) => {
 					netease.path = netease.path.replace(/\/\d*$/, '');
 					ctx.netease = netease;
 					// console.log(netease.path, netease.param)
+
+					if (netease.path.includes('song/enhance') && NCM_COOKIE) {
+						req.headers.cookie = [
+							`MUSIC_U=${NCM_COOKIE}`,
+							req.headers.cookie.replace(
+								/\s*MUSIC_\w=[^\s;]+;*/g,
+								''
+							),
+						]
+							.filter((line) => line)
+							.join('; ');
+					}
 
 					if (
 						netease.path === '/api/song/enhance/download/url' ||
