@@ -10511,10 +10511,10 @@ const CacheStorageEvents = {
 	 * Construct a cache storage.
 	 *
 	 * @param {string?} id The ID of this cache storage.
-	 */ constructor(id1){
+	 */ constructor(id){
         super();
         // Set the ID of this cache storage.
-        if (id1) this.id = id1;
+        if (id) this.id = id;
         // Register the CLEANUP event. It will clean up
         // the expired cache when emitting "CLEANUP" event.
         this.on(CacheStorageEvents.CLEANUP, async ()=>this.removeExpiredCache()
@@ -12635,7 +12635,7 @@ const select = __webpack_require__(5342);
 const crypto = __webpack_require__(2075);
 const request = __webpack_require__(4195);
 const { getManagedCacheStorage  } = __webpack_require__(1067);
-const format1 = (song)=>{
+const format = (song)=>{
     return {
         // id: song.FileHash,
         // name: song.SongName,
@@ -12659,15 +12659,15 @@ const search = (info)=>{
     return request('GET', url).then((response)=>response.json()
     ).then((jsonBody)=>{
         // const list = jsonBody.data.lists.map(format)
-        const list = jsonBody.data.info.map(format1);
+        const list = jsonBody.data.info.map(format);
         const matched = select(list, info);
         return matched ? matched : Promise.reject();
     }).catch(()=>insure().kugou.search(info)
     );
 };
-const single = (song, format)=>{
+const single = (song, format1)=>{
     const getHashId = ()=>{
-        switch(format){
+        switch(format1){
             case 'hash':
                 return song.id;
             case 'hqhash':
@@ -12688,7 +12688,7 @@ const track = (song)=>Promise.all([
         'sqhash',
         'hqhash',
         'hash'
-    ].slice(select.ENABLE_FLAC ? 0 : 1).map((format)=>single(song, format).catch(()=>null
+    ].slice(select.ENABLE_FLAC ? 0 : 1).map((format2)=>single(song, format2).catch(()=>null
         )
     )).then((result)=>result.find((url)=>url
         ) || Promise.reject()
@@ -13089,7 +13089,7 @@ const headers = {
     aversionid: process.env.MIGU_COOKIE || null,
     channel: '0'
 };
-const format1 = (song)=>{
+const format = (song)=>{
     const singerId = song.singerId.split(/\s*,\s*/);
     const singerName = song.singerName.split(/\s*,\s*/);
     return {
@@ -13112,23 +13112,23 @@ const search = (info)=>{
     return request('GET', url, headers).then((response)=>response.json()
     ).then((jsonBody)=>{
         const list = ((jsonBody || {
-        }).musics || []).map(format1);
+        }).musics || []).map(format);
         const matched = select(list, info);
         return matched ? matched.id : Promise.reject();
     });
 };
-const single = (id, format)=>{
+const single = (id, format1)=>{
     // const url =
     //	'https://music.migu.cn/v3/api/music/audioPlayer/getPlayInfo?' +
     //	'dataType=2&' + crypto.miguapi.encryptBody({copyrightId: id.toString(), type: format})
     const randomInt = Math.random().toString().substr(2);
-    const url = 'https://app.c.nf.migu.cn/MIGUM2.0/strategy/listen-url/v2.2?lowerQualityContentId=' + randomInt + '&netType=01&resourceType=E&songId=' + id.toString() + '&toneFlag=' + format;
+    const url = 'https://app.c.nf.migu.cn/MIGUM2.0/strategy/listen-url/v2.2?lowerQualityContentId=' + randomInt + '&netType=01&resourceType=E&songId=' + id.toString() + '&toneFlag=' + format1;
     return request('GET', url, headers).then((response)=>response.json()
     ).then((jsonBody)=>{
         // const {playUrl} = jsonBody.data
         // return playUrl ? encodeURI('http:' + playUrl) : Promise.reject()
         const { formatType  } = jsonBody.data;
-        if (formatType !== format) return Promise.reject();
+        if (formatType !== format1) return Promise.reject();
         else return url ? jsonBody.data.url : Promise.reject();
     });
 };
@@ -13138,7 +13138,7 @@ const track = (id)=>Promise.all(// [3, 2, 1].slice(select.ENABLE_FLAC ? 0 : 1)
         'SQ',
         'HQ',
         'PQ'
-    ].slice(select.ENABLE_FLAC ? 0 : 2).map((format)=>single(id, format).catch(()=>null
+    ].slice(select.ENABLE_FLAC ? 0 : 2).map((format2)=>single(id, format2).catch(()=>null
         )
     )).then((result)=>result.find((url)=>url
         ) || Promise.reject()
@@ -13204,7 +13204,7 @@ const headers = {
     referer: 'http://y.qq.com/',
     cookie: process.env.QQ_COOKIE || null
 };
-const format1 = (song)=>({
+const format = (song)=>({
         id: {
             song: song.mid,
             file: song.file.media_mid
@@ -13226,12 +13226,12 @@ const search = (info)=>{
     const url = 'https://c.y.qq.com/soso/fcgi-bin/client_search_cp?' + 'ct=24&qqmusic_ver=1298&new_json=1&remoteplace=txt.yqq.center&' + 't=0&aggr=1&cr=1&catZhida=1&lossless=0&flag_qc=0&p=1&n=20&w=' + encodeURIComponent(info.keyword) + '&' + 'g_tk=5381&jsonpCallback=MusicJsonCallback10005317669353331&loginUin=0&hostUin=0&' + 'format=jsonp&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0';
     return request('GET', url).then((response)=>response.jsonp()
     ).then((jsonBody)=>{
-        const list = jsonBody.data.song.list.map(format1);
+        const list = jsonBody.data.song.list.map(format);
         const matched = select(list, info);
         return matched ? matched.id : Promise.reject();
     });
 };
-const single = (id, format)=>{
+const single = (id, format1)=>{
     const uin = ((headers.cookie || '').match(/uin=(\d+)/) || [])[1] || '0';
     const url = 'https://u.y.qq.com/cgi-bin/musicu.fcg?data=' + encodeURIComponent(JSON.stringify({
         req_0: {
@@ -13241,7 +13241,7 @@ const single = (id, format)=>{
                 guid: (Math.random() * 10000000).toFixed(0),
                 loginflag: 1,
                 filename: [
-                    format.join(id.file)
+                    format1.join(id.file)
                 ],
                 songmid: [
                     id.song
@@ -13275,7 +13275,7 @@ const track = (id)=>{
             'M500',
             '.mp3'
         ], 
-    ].slice(headers.cookie || typeof window !== 'undefined' ? select.ENABLE_FLAC ? 0 : 1 : 2).map((format)=>single(id, format).catch(()=>null
+    ].slice(headers.cookie || typeof window !== 'undefined' ? select.ENABLE_FLAC ? 0 : 1 : 2).map((format2)=>single(id, format2).catch(()=>null
         )
     )).then((result)=>result.find((url)=>url
         ) || Promise.reject()
@@ -13915,8 +13915,8 @@ const proxy = {
                     req.headers['referer'] = 'https://www.yt-download.org/';
                 }
                 const url = parse(req.url);
-                const options = request.configure(req.method, url, req.headers);
-                ctx.proxyReq = request.create(url)(options).on('response', (proxyRes)=>resolve(ctx.proxyRes = proxyRes)
+                const options1 = request.configure(req.method, url, req.headers);
+                ctx.proxyReq = request.create(url)(options1).on('response', (proxyRes)=>resolve(ctx.proxyRes = proxyRes)
                 ).on('error', (error)=>reject(ctx.error = error)
                 );
                 req.readable ? req.pipe(ctx.proxyReq) : ctx.proxyReq.end(req.body);
@@ -13939,8 +13939,8 @@ const proxy = {
                 const { req  } = ctx;
                 const url = parse('https://' + req.url);
                 if (global.proxy && !req.local) {
-                    const options = request.configure(req.method, url, req.headers);
-                    request.create(proxy)(options).on('connect', (_, proxySocket)=>resolve(ctx.proxySocket = proxySocket)
+                    const options2 = request.configure(req.method, url, req.headers);
+                    request.create(proxy)(options2).on('connect', (_, proxySocket)=>resolve(ctx.proxySocket = proxySocket)
                     ).on('error', (error)=>reject(ctx.error = error)
                     ).end();
                 } else {
@@ -13977,13 +13977,13 @@ const proxy = {
 };
 const cert = process.env.SIGN_CERT || path.join(__dirname, '..', 'server.crt');
 const key = process.env.SIGN_KEY || path.join(__dirname, '..', 'server.key');
-const options1 = {
+const options = {
     key: fs.readFileSync(key),
     cert: fs.readFileSync(cert)
 };
 const server = {
     http: (__webpack_require__(3685).createServer)().on('request', proxy.core.mitm).on('connect', proxy.core.tunnel),
-    https: (__webpack_require__(5687).createServer)(options1).on('request', proxy.core.mitm).on('connect', proxy.core.tunnel)
+    https: (__webpack_require__(5687).createServer)(options).on('request', proxy.core.mitm).on('connect', proxy.core.tunnel)
 };
 server.whitelist = [];
 server.blacklist = [
