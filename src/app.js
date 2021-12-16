@@ -37,7 +37,7 @@ const config = require('./cli.js')
 	})
 	.option(['-c', '--cnrelay'], {
 		metavar: 'cnrelay',
-		help: 'Mainland China relay to get music url'
+		help: 'Mainland China relay to get music url',
 	})
 	.option(['-h', '--help'], { action: 'help' })
 	.parse(process.argv);
@@ -168,8 +168,7 @@ Promise.all(
 			server.https
 				.listen(port[1], address)
 				.once('listening', () => log(1));
-		if (cnrelay)
-			logger.info(`CNRelay: ${cnrelay}`);
+		if (cnrelay) logger.info(`CNRelay: ${cnrelay}`);
 	})
 	.catch((error) => {
 		console.log(error);
