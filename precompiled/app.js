@@ -12529,8 +12529,8 @@ module.exports = (id, data)=>{
 "use strict";
 
 const request = __webpack_require__(4195);
-const host = null; // 'http://localhost:9000'
 module.exports = ()=>{
+    const host = global.cnrelay; // 'http://localhost:9000'
     const proxy = new Proxy(()=>{
     }, {
         get: (target, property)=>{
@@ -14666,9 +14666,9 @@ function prettyFactory (options) {
       log = filterLog(log, ignoreKeys)
     }
 
-    const prettifiedLevel = prettifyLevel({ log, colorizer, levelKey })
+    const prettifiedLevel = prettifyLevel({ log, colorizer, levelKey, prettifier: customPrettifiers.level })
     const prettifiedMetadata = prettifyMetadata({ log })
-    const prettifiedTime = prettifyTime({ log, translateFormat: opts.translateTime, timestampKey })
+    const prettifiedTime = prettifyTime({ log, translateFormat: opts.translateTime, timestampKey, prettifier: customPrettifiers.time })
 
     let line = ''
     if (opts.levelFirst && prettifiedLevel) {
@@ -14722,6 +14722,7 @@ function prettyFactory (options) {
         ident: IDENT,
         eol: EOL
       })
+      if (singleLine) line += EOL
       line += prettifiedErrorLog
     } else if (!hideObject) {
       const skipKeys = [messageKey, levelKey, timestampKey].filter(key => typeof log[key] === 'string' || typeof log[key] === 'number')
@@ -14771,13 +14772,6 @@ function build (opts = {}) {
         sync: false
       })
     }
-    /* istanbul ignore else */
-    if (destination.fd === 1) {
-      // We cannot close the output
-      destination.end = function () {
-        this.emit('close')
-      }
-    }
 
     source.on('unknown', function (line) {
       destination.write(line + '\n')
@@ -14790,6 +14784,7 @@ function build (opts = {}) {
 
 module.exports = build
 module.exports.prettyFactory = prettyFactory
+module.exports.colorizerFactory = colors
 module.exports["default"] = build
 
 
@@ -15151,14 +15146,16 @@ function prettifyErrorLog ({
  * @param {function} [input.colorizer] A colorizer function that accepts a level
  * value and returns a colorized string. Default: a no-op colorizer.
  * @param {string} [levelKey='level'] The key to find the level under.
+ * @param {function} [input.prettifier] A user-supplied formatter to be called instead of colorizer.
  *
  * @returns {undefined|string} If `log` does not have a `level` property then
  * `undefined` will be returned. Otherwise, a string from the specified
  * `colorizer` is returned.
  */
-function prettifyLevel ({ log, colorizer = defaultColorizer, levelKey = LEVEL_KEY }) {
+function prettifyLevel ({ log, colorizer = defaultColorizer, levelKey = LEVEL_KEY, prettifier }) {
   if (levelKey in log === false) return undefined
-  return colorizer(log[levelKey])
+  const output = log[levelKey]
+  return prettifier ? prettifier(output) : colorizer(output)
 }
 
 /**
@@ -15326,7 +15323,7 @@ function prettifyObject ({
       if (lines === undefined) return
 
       const joinedLines = joinLinesWithIndentation({ input: lines, ident, eol })
-      result += `${ident}${keyName}: ${joinedLines}${eol}`
+      result += `${ident}${keyName}:${joinedLines.startsWith(eol) ? '' : ' '}${joinedLines}${eol}`
     })
   }
 
@@ -15356,12 +15353,13 @@ function prettifyObject ({
  * timestamp will be prettified into a string at UTC using the default
  * `DATE_FORMAT`. If a string, then `translateFormat` will be used as the format
  * string to determine the output; see the `formatTime` function for details.
+ * @param {function} [input.prettifier] A user-supplied formatter for altering output.
  *
  * @returns {undefined|string} If a timestamp property cannot be found then
  * `undefined` is returned. Otherwise, the prettified time is returned as a
  * string.
  */
-function prettifyTime ({ log, timestampKey = TIMESTAMP_KEY, translateFormat = undefined }) {
+function prettifyTime ({ log, timestampKey = TIMESTAMP_KEY, translateFormat = undefined, prettifier }) {
   let time = null
 
   if (timestampKey in log) {
@@ -15371,11 +15369,9 @@ function prettifyTime ({ log, timestampKey = TIMESTAMP_KEY, translateFormat = un
   }
 
   if (time === null) return undefined
-  if (translateFormat) {
-    return '[' + formatTime(time, translateFormat) + ']'
-  }
+  const output = translateFormat ? formatTime(time, translateFormat) : time
 
-  return `[${time}]`
+  return prettifier ? prettifier(output) : `[${output}]`
 }
 
 /**
@@ -16031,6 +16027,12 @@ const config = (__webpack_require__(2690).program)({
     action: 'store_true',
     help: 'enable proxy limitation'
 }).option([
+    '-c',
+    '--cnrelay'
+], {
+    metavar: 'cnrelay',
+    help: 'Mainland China relay to get music url'
+}).option([
     '-h',
     '--help'
 ], {
@@ -16095,6 +16097,7 @@ server.whitelist = [
     '://[\\w.]*music\\.126\\.net',
     '://[\\w.]*vod\\.126\\.net'
 ];
+global.cnrelay = config.cnrelay;
 if (config.strict) server.blacklist.push('.*');
 server.authentication = config.token || null;
 global.endpoint = config.endpoint;
@@ -16146,6 +16149,7 @@ Promise.all(dnsSource.map((query)=>query(target.join(','))
     );
     if (port[1]) server.https.listen(port[1], address).once('listening', ()=>log(1)
     );
+    if (cnrelay) logger.info(`CNRelay: ${cnrelay}`);
 }).catch((error)=>{
     console.log(error);
     process.exit(1);
