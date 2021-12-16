@@ -1,9 +1,8 @@
 FROM node:lts-alpine
 
 RUN set -ex && mkdir /app
-RUN apk add --no-cache python3 && ln -sf python3 /usr/bin/python
+RUN apk add --no-cache python3 youtube-dl
 RUN wget https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -O /usr/local/bin/yt-dlp && chmod a+rx /usr/local/bin/yt-dlp
-RUN wget https://yt-dl.org/downloads/latest/youtube-dl -O /usr/local/bin/youtube-dl && chmod a+rx /usr/local/bin/youtube-dl
 
 COPY ./precompiled/* /app/
 COPY ./*.crt /app/
