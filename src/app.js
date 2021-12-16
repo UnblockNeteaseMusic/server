@@ -35,6 +35,10 @@ const config = require('./cli.js')
 		action: 'store_true',
 		help: 'enable proxy limitation',
 	})
+	.option(['-c', '--cnrelay'], {
+		metavar: 'cnrelay',
+		help: 'Mainland China relay to get music url'
+	})
 	.option(['-h', '--help'], { action: 'help' })
 	.parse(process.argv);
 
@@ -92,6 +96,7 @@ global.hosts = target.reduce(
 	{}
 );
 server.whitelist = ['://[\\w.]*music\\.126\\.net', '://[\\w.]*vod\\.126\\.net'];
+global.cnrelay = config.cnrelay;
 if (config.strict) server.blacklist.push('.*');
 server.authentication = config.token || null;
 global.endpoint = config.endpoint;
@@ -163,6 +168,8 @@ Promise.all(
 			server.https
 				.listen(port[1], address)
 				.once('listening', () => log(1));
+		if (cnrelay)
+			logger.info(`CNRelay: ${cnrelay}`);
 	})
 	.catch((error) => {
 		console.log(error);
