@@ -170,7 +170,7 @@ node app.js -o bilibili ytdlp
 | YouTube（纯 JS 解析方式）   | `youtube`    |          | **似乎不能使用**。                                                             |
 | yt-download                 | `ytdownload` |          | **似乎不能使用**。                                                             |
 | YouTube（通过 `youtube-dl`) | `youtubedl`  |          | 需要自行安装 `youtube-dl`。                                                    |
-| YouTube（通过 `yt-dlp`)     | `ytdlp`      |          | 需要自行安装 `yt-dlp`（`youtube-dl` 仍在活跃维护的 fork）。                    |
+| YouTube（通过 `yt-dlp`)     | `ytdlp`      | ✅       | 需要自行安装 `yt-dlp`（`youtube-dl` 仍在活跃维护的 fork）。                    |
 | B 站音乐                    | `bilibili`   | ✅       |                                                                                |
 | 第三方网易云 API            | `pyncmd`     |          | 有地区限制。                                                                   |
 
