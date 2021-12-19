@@ -10460,7 +10460,7 @@ const CacheStorageEvents = {
 	 * @template T
 	 * @param {any} key the unique key of action to be cached.
 	 * @param {() => Promise<T>} action the action to do and be cached.
-	 * @param {number?} expireAt customize the expireAt of this key.
+	 * @param {number=} expireAt customize the expireAt of this key.
 	 * @return {Promise<T>}
 	 */ async cache(key, action, expireAt) {
         // Disable the cache when the NO_CACHE = true.
@@ -10577,7 +10577,8 @@ const DEFAULT_SOURCE = [
     'kugou',
     'kuwo',
     'migu',
-    'bilibili'
+    'bilibili',
+    'ytdlp'
 ];
 const PROVIDERS = {
     qq: __webpack_require__(1536),
@@ -10802,6 +10803,39 @@ class YoutubeDlNotInstalled extends Error {
     }
 }
 module.exports = YoutubeDlNotInstalled;
+
+
+/***/ }),
+
+/***/ 770:
+/***/ ((module) => {
+
+"use strict";
+
+class YtDlpInvalidResponse extends Error {
+    constructor(response){
+        super(`The response of yt-dlp is malformed.`);
+        this.name = 'YtDlpInvalidResponse';
+        this.response = response;
+    }
+}
+module.exports = YtDlpInvalidResponse;
+
+
+/***/ }),
+
+/***/ 6077:
+/***/ ((module) => {
+
+"use strict";
+
+class YtDlpNotInstalled extends Error {
+    constructor(){
+        super(`You must install "yt-dlp" before using the "ytdlp" source.`);
+        this.name = 'YtDlpNotInstalled';
+    }
+}
+module.exports = YtDlpNotInstalled;
 
 
 /***/ }),
@@ -12330,9 +12364,9 @@ module.exports = {
 
 const { getManagedCacheStorage  } = __webpack_require__(1067);
 const { logScope  } = __webpack_require__(3253);
-const YoutubeDlInvalidResponse = __webpack_require__(7763);
-const YoutubeDlNotInstalled = __webpack_require__(6995);
 const { spawnStdout  } = __webpack_require__(4828);
+const YtDlpInvalidResponse = __webpack_require__(770);
+const YtDlpNotInstalled = __webpack_require__(6077);
 /**
  * The arguments to pass to yt-dlp
  *
@@ -12366,9 +12400,9 @@ const logger = logScope('provider/yt-dlp');
         const { stdout  } = await spawnStdout('yt-dlp', args);
         const response = JSON.parse(stdout.toString());
         if (typeof response === 'object' && typeof response.id === 'string' && typeof response.url === 'string') return response;
-        throw new YoutubeDlInvalidResponse(response);
+        throw new YtDlpInvalidResponse(response);
     } catch (e) {
-        if (e && e.code === 'ENOENT') throw new YoutubeDlNotInstalled();
+        if (e && e.code === 'ENOENT') throw new YtDlpNotInstalled();
         throw e;
     }
 }
