@@ -88,7 +88,7 @@ class CacheStorage extends EventEmitter {
 	 * @template T
 	 * @param {any} key the unique key of action to be cached.
 	 * @param {() => Promise<T>} action the action to do and be cached.
-	 * @param {number?} expireAt customize the expireAt of this key.
+	 * @param {number=} expireAt customize the expireAt of this key.
 	 * @return {Promise<T>}
 	 */
 	async cache(key, action, expireAt) {
