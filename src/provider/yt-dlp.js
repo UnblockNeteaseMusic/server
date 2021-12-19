@@ -1,8 +1,8 @@
 const { getManagedCacheStorage } = require('../cache');
 const { logScope } = require('../logger');
-const YoutubeDlInvalidResponse = require('../exceptions/YoutubeDlInvalidResponse');
-const YoutubeDlNotInstalled = require('../exceptions/YoutubeDlNotInstalled');
 const { spawnStdout } = require('../spawn');
+const YtDlpInvalidResponse = require('../exceptions/YtDlpInvaildResponse');
+const YtDlpNotInstalled = require('../exceptions/YtDlpNotInstalled');
 
 /**
  * The arguments to pass to yt-dlp
@@ -40,9 +40,9 @@ async function getUrl(args) {
 		)
 			return response;
 
-		throw new YoutubeDlInvalidResponse(response);
+		throw new YtDlpInvalidResponse(response);
 	} catch (e) {
-		if (e && e.code === 'ENOENT') throw new YoutubeDlNotInstalled();
+		if (e && e.code === 'ENOENT') throw new YtDlpNotInstalled();
 		throw e;
 	}
 }
