@@ -149,6 +149,7 @@ optional arguments:
   -t token, --token token         set up proxy authentication
   -e url, --endpoint url          replace virtual endpoint with public host
   -s, --strict                    enable proxy limitation
+  -c, --cnrelay host:port         Mainland China relay to get music url
   -h, --help                      output usage information
 ```
 
