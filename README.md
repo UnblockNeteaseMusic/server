@@ -275,6 +275,10 @@ global.hosts = { 'i.y.qq.com': '59.37.96.220' };
 match(418602084, ['qq', 'kuwo', 'migu']).then(console.log);
 ```
 
+### 設定 HTTPS 憑證
+
+新版的 NeteaseMusic 需要 HTTPS 才能使用。证书的设置教学可参阅[《安裝 UNM 的 HTTPS 憑證》](https://github.com/UnblockNeteaseMusic/server/discussions/426)一文。
+
 ## 效果
 
 ### Windows 客户端
