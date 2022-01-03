@@ -523,10 +523,10 @@ module.exports = {
 var FunctionPrototype = Function.prototype;
 var bind = FunctionPrototype.bind;
 var call = FunctionPrototype.call;
-var callBind = bind && bind.bind(call);
+var uncurryThis = bind && bind.bind(call, call);
 
 module.exports = bind ? function (fn) {
-  return fn && callBind(call, fn);
+  return fn && uncurryThis(fn);
 } : function (fn) {
   return fn && function () {
     return call.apply(fn, arguments);
@@ -1168,16 +1168,37 @@ module.exports.f = function (C) {
 var global = __webpack_require__(7854);
 var DESCRIPTORS = __webpack_require__(9781);
 var IE8_DOM_DEFINE = __webpack_require__(4664);
+var V8_PROTOTYPE_DEFINE_BUG = __webpack_require__(3353);
 var anObject = __webpack_require__(9670);
 var toPropertyKey = __webpack_require__(4948);
 
 var TypeError = global.TypeError;
 // eslint-disable-next-line es/no-object-defineproperty -- safe
 var $defineProperty = Object.defineProperty;
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+var $getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+var ENUMERABLE = 'enumerable';
+var CONFIGURABLE = 'configurable';
+var WRITABLE = 'writable';
 
 // `Object.defineProperty` method
 // https://tc39.es/ecma262/#sec-object.defineproperty
-exports.f = DESCRIPTORS ? $defineProperty : function defineProperty(O, P, Attributes) {
+exports.f = DESCRIPTORS ? V8_PROTOTYPE_DEFINE_BUG ? function defineProperty(O, P, Attributes) {
+  anObject(O);
+  P = toPropertyKey(P);
+  anObject(Attributes);
+  if (typeof O === 'function' && P === 'prototype' && 'value' in Attributes && WRITABLE in Attributes && !Attributes[WRITABLE]) {
+    var current = $getOwnPropertyDescriptor(O, P);
+    if (current && current[WRITABLE]) {
+      O[P] = Attributes.value;
+      Attributes = {
+        configurable: CONFIGURABLE in Attributes ? Attributes[CONFIGURABLE] : current[CONFIGURABLE],
+        enumerable: ENUMERABLE in Attributes ? Attributes[ENUMERABLE] : current[ENUMERABLE],
+        writable: false
+      };
+    }
+  } return $defineProperty(O, P, Attributes);
+} : $defineProperty : function defineProperty(O, P, Attributes) {
   anObject(O);
   P = toPropertyKey(P);
   anObject(Attributes);
@@ -1505,9 +1526,9 @@ var store = __webpack_require__(5465);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.20.1',
+  version: '3.20.2',
   mode: IS_PURE ? 'pure' : 'global',
-  copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
+  copyright: '© 2022 Denis Pushkarev (zloirock.ru)'
 });
 
 
@@ -1739,6 +1760,25 @@ var NATIVE_SYMBOL = __webpack_require__(133);
 module.exports = NATIVE_SYMBOL
   && !Symbol.sham
   && typeof Symbol.iterator == 'symbol';
+
+
+/***/ }),
+
+/***/ 3353:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var DESCRIPTORS = __webpack_require__(9781);
+var fails = __webpack_require__(7293);
+
+// V8 ~ Chrome 36-
+// https://bugs.chromium.org/p/v8/issues/detail?id=3334
+module.exports = DESCRIPTORS && fails(function () {
+  // eslint-disable-next-line es/no-object-defineproperty -- required for testing
+  return Object.defineProperty(function () { /* empty */ }, 'prototype', {
+    value: 42,
+    writable: false
+  }).prototype != 42;
+});
 
 
 /***/ }),
@@ -10544,8 +10584,7 @@ const CacheStorageEvents = {
 	 * @param {Record<string, string>?} customContext The additional context.
 	 * @return {Record<string, string>}
 	 * @private
-	 */ getLoggerContext(customContext = {
-    }) {
+	 */ getLoggerContext(customContext = {}) {
         return {
             ...customContext,
             cacheStorageId: this.id
@@ -10608,8 +10647,7 @@ const CacheStorageEvents = {
 	 * @type {CacheStorageGroup | undefined}
 	 */ static instance = undefined;
     /** @type {Set<CacheStorage>} */ cacheStorages = new Set();
-    /** @private */ constructor(){
-    }
+    /** @private */ constructor(){}
     /**
 	 * @return {CacheStorageGroup}
 	 */ static getInstance() {
@@ -10680,16 +10718,13 @@ module.exports = {
 
 const cli = {
     width: 80,
-    _program: {
-    },
+    _program: {},
     _options: [],
-    program: (information = {
-    })=>{
+    program: (information = {})=>{
         cli._program = information;
         return cli;
     },
-    option: (flags, addition = {
-    })=>{
+    option: (flags, addition = {})=>{
         // name or flags - Either a name or a list of option strings, e.g. foo or -f, --foo.
         // dest - The name of the attribute to be added to the object returned by parse_options().
         // nargs - The number of command-line arguments that should be consumed. // N, ?, *, +, REMAINDER
@@ -10719,8 +10754,7 @@ const cli = {
     parse: (argv)=>{
         const positionals = cli._options.map((option, index)=>option.positional ? index : null
         ).filter((index)=>index !== null
-        ), optionals = {
-        };
+        ), optionals = {};
         cli._options.forEach((option, index)=>option.positional ? null : option.flags.forEach((flag)=>optionals[flag] = index
             )
         );
@@ -11027,8 +11061,7 @@ module.exports = {
 };
 try {
     module.exports.kuwoapi = __webpack_require__(8811);
-} catch (e) {
-}
+} catch (e) {}
 
 
 /***/ }),
@@ -11228,18 +11261,14 @@ cs.aliveDuration = 7 * 24 * 60 * 60 * 1000;
 const ENABLE_LOCAL_VIP = (process.env.ENABLE_LOCAL_VIP || '').toLowerCase() === 'true';
 const hook = {
     request: {
-        before: ()=>{
-        },
-        after: ()=>{
-        }
+        before: ()=>{},
+        after: ()=>{}
     },
     connect: {
-        before: ()=>{
-        }
+        before: ()=>{}
     },
     negotiate: {
-        before: ()=>{
-        }
+        before: ()=>{}
     },
     target: {
         host: new Set(),
@@ -11320,8 +11349,7 @@ hook.request.before = (ctx)=>{
             if (req.url.includes('stream')) return; // look living eapi can not be decrypted
             if (body) {
                 let data;
-                const netease = {
-                };
+                const netease = {};
                 netease.pad = (body.match(/%0+$/) || [
                     ''
                 ])[0];
@@ -11575,8 +11603,7 @@ const tryMatch = (ctx)=>{
                     header = typeof header === 'string' ? JSON.parse(header) : header;
                     const cookie = querystring.parse(req.headers.cookie.replace(/\s/g, ''), ';');
                     os = header.os || cookie.os;
-                } catch (e) {
-                }
+                } catch (e) {}
                 item.type = song.br === 999000 ? 'flac' : 'mp3';
                 if (os === 'pc' || os === 'uwp') {
                     item.url = global.endpoint ? `${global.endpoint.replace('https://', 'http://')}/package/${crypto.base64.encode(song.url)}/${item.id}.${item.type}` : song.url;
@@ -11624,8 +11651,7 @@ const tryMatch = (ctx)=>{
                         ).then((value)=>item.md5 = value
                         );
                     }
-                } catch (e) {
-                }
+                } catch (e) {}
             }).catch((e)=>e && logger.error(e)
             );
         } else if (item.code === 200 && netease.web) {
@@ -12494,8 +12520,7 @@ const { getManagedCacheStorage  } = __webpack_require__(1067);
 const filter = (object, keys)=>Object.keys(object).reduce((result, key)=>Object.assign(result, keys.includes(key) && {
             [key]: object[key]
         })
-    , {
-    })
+    , {})
 ;
 // Object.keys(object).filter(key => !keys.includes(key)).forEach(key => delete object[key])
 const limit = (text)=>{
@@ -12535,8 +12560,7 @@ const getFormatData = (data)=>{
         return info;
     } catch (err) {
         console.log('getFormatData err: ', err);
-        return {
-        };
+        return {};
     }
 };
 const find = (id, data)=>{
@@ -12576,8 +12600,7 @@ module.exports = (id, data)=>{
 const request = __webpack_require__(4195);
 module.exports = ()=>{
     const host = global.cnrelay; // 'http://localhost:9000'
-    const proxy = new Proxy(()=>{
-    }, {
+    const proxy = new Proxy(()=>{}, {
         get: (target, property)=>{
             target.route = (target.route || []).concat(property);
             return proxy;
@@ -13156,8 +13179,7 @@ const search = (info)=>{
     const url = 'https://m.music.migu.cn/migu/remoting/scr_search_tag?' + 'keyword=' + encodeURIComponent(info.keyword) + '&type=2&rows=20&pgc=1';
     return request('GET', url, headers).then((response)=>response.json()
     ).then((jsonBody)=>{
-        const list = ((jsonBody || {
-        }).musics || []).map(format);
+        const list = ((jsonBody || {}).musics || []).map(format);
         const matched = select(list, info);
         return matched ? matched.id : Promise.reject();
     });
@@ -13438,12 +13460,10 @@ const request = __webpack_require__(4195);
 const { getManagedCacheStorage  } = __webpack_require__(1067);
 const parse = (query)=>(query || '').split('&').reduce((result, item)=>{
         const splitItem = item.split('=').map(decodeURIComponent);
-        return Object.assign({
-        }, result, {
+        return Object.assign({}, result, {
             [splitItem[0]]: splitItem[1]
         });
-    }, {
-    })
+    }, {})
 ;
 const cs = getManagedCacheStorage('provider/youtube');
 // const proxy = require('url').parse('http://127.0.0.1:1080')
@@ -13451,13 +13471,11 @@ const proxy = undefined;
 const key = process.env.YOUTUBE_KEY || null; // YouTube Data API v3
 const signature = (id = '-tKVN2mAKRI')=>{
     const url = `https://www.youtube.com/watch?v=${id}`;
-    return request('GET', url, {
-    }, null, proxy).then((response)=>response.body()
+    return request('GET', url, {}, null, proxy).then((response)=>response.body()
     ).then((body)=>{
         let assets = /"WEB_PLAYER_CONTEXT_CONFIG_ID_KEVLAR_VERTICAL_LANDING_PAGE_PROMO":{[^}]+}/.exec(body)[0];
         assets = JSON.parse(`{${assets}}}`).WEB_PLAYER_CONTEXT_CONFIG_ID_KEVLAR_VERTICAL_LANDING_PAGE_PROMO;
-        return request('GET', 'https://youtube.com' + assets.jsUrl, {
-        }, null, proxy).then((response)=>response.body()
+        return request('GET', 'https://youtube.com' + assets.jsUrl, {}, null, proxy).then((response)=>response.body()
         );
     }).then((body)=>{
         const [, funcArg, funcBody] = /function\((\w+)\)\s*{([^}]+split\(""\)[^}]+join\(""\))};/.exec(body);
@@ -13481,8 +13499,7 @@ const apiSearch = (info)=>{
 };
 const search = (info)=>{
     const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(info.keyword)}`;
-    return request('GET', url, {
-    }, null, proxy).then((response)=>response.body()
+    return request('GET', url, {}, null, proxy).then((response)=>response.body()
     ).then((body)=>{
         const initialData = JSON.parse(body.match(/ytInitialData\s*=\s*([^;]+);/)[1]);
         const matched = initialData.contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents[0].itemSectionRenderer.contents[0];
@@ -13507,8 +13524,7 @@ const track = (id)=>{
 	 * }`;
 	 */ const url = `https://www.youtube.com/watch?v=${id}`;
     return(// request('POST', url, json_header, json_body, proxy)
-    request('GET', url, {
-    }, null, proxy).then((response)=>response.body()
+    request('GET', url, {}, null, proxy).then((response)=>response.body()
     )// .then((body) => JSON.parse(body).streamingData)
     .then((body)=>JSON.parse(body.match(/ytInitialPlayerResponse\s*=\s*{[^]+};\s*var\s*meta/)[0].replace(/;var meta/, '').replace(/ytInitialPlayerResponse = /, '')).streamingData
     ).then((streamingData)=>{
@@ -13630,8 +13646,7 @@ const apiSearch = (info)=>{
 };
 const search = (info)=>{
     const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(info.keyword)}`;
-    return request('GET', url, {
-    }, null, proxy).then((response)=>response.body()
+    return request('GET', url, {}, null, proxy).then((response)=>response.body()
     ).then((body)=>{
         const initialData = JSON.parse(body.match(/ytInitialData\s*=\s*([^;]+);/)[1]);
         const matched = initialData.contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents[0].itemSectionRenderer.contents[0];
@@ -13642,8 +13657,7 @@ const search = (info)=>{
 const track = (id)=>{
     const url = `https://www.yt-download.org/api/button/mp3/${id}`;
     const regex = /<a[^>]*href=["']([^"']*)["']/;
-    return request('GET', url, {
-    }, null, proxy).then((response)=>response.body()
+    return request('GET', url, {}, null, proxy).then((response)=>response.body()
     ).then((body)=>{
         var matched = body.match(regex);
         return matched ? matched[1] : Promise.reject();
@@ -13678,18 +13692,15 @@ const parse = (__webpack_require__(7310).parse);
 const format = (__webpack_require__(7310).format);
 const logger = logScope('request');
 const timeoutThreshold = 10 * 1000;
-const translate = (host)=>(global.hosts || {
-    })[host] || host
+const translate = (host)=>(global.hosts || {})[host] || host
 ;
 const create = (url, proxy)=>(((typeof proxy === 'undefined' ? global.proxy : proxy) || url).protocol === 'https:' ? https : http).request
 ;
 const configure = (method, url, headers, proxy)=>{
-    headers = headers || {
-    };
+    headers = headers || {};
     proxy = typeof proxy === 'undefined' ? global.proxy : proxy;
     if ('content-length' in headers) delete headers['content-length'];
-    const options = {
-    };
+    const options = {};
     options._headers = headers;
     if (proxy && url.protocol === 'https:') {
         options.method = 'CONNECT';
@@ -13699,8 +13710,7 @@ const configure = (method, url, headers, proxy)=>{
             ].includes(key) && {
                 [key]: headers[key]
             })
-        , {
-        });
+        , {});
     } else {
         options.method = method;
         options.headers = headers;
@@ -13732,8 +13742,7 @@ const configure = (method, url, headers, proxy)=>{
  * @return {Promise<http.IncomingMessage & RequestExtension<T>>}
  */ const request = (method, receivedUrl, receivedHeaders, body, proxy, cancelRequest)=>{
     const url = parse(receivedUrl);
-    /* @type {Partial<Record<string,string>>} */ const headers = receivedHeaders || {
-    };
+    /* @type {Partial<Record<string,string>>} */ const headers = receivedHeaders || {};
     const options = configure(method, url, {
         host: url.hostname,
         accept: 'application/json, text/plain, */*',
@@ -16136,8 +16145,7 @@ global.proxy = config.proxyUrl ? parse(config.proxyUrl) : null;
 global.hosts = target.reduce((result, host)=>Object.assign(result, {
         [host]: config.forceHost
     })
-, {
-});
+, {});
 server.whitelist = [
     '://[\\w.]*music\\.126\\.net',
     '://[\\w.]*vod\\.126\\.net'
@@ -16156,8 +16164,7 @@ const dns = (host)=>new Promise((resolve, reject)=>(__webpack_require__(9523).lo
         )
     )
 ;
-const httpdns = (host)=>__webpack_require__(4195)('POST', 'http://music.httpdns.c.163.com/d', {
-    }, host).then((response)=>response.json()
+const httpdns = (host)=>__webpack_require__(4195)('POST', 'http://music.httpdns.c.163.com/d', {}, host).then((response)=>response.json()
     ).then((jsonBody)=>jsonBody.dns.reduce((result, domain)=>result.concat(domain.ips)
         , [])
     )
