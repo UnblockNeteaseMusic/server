@@ -4,7 +4,7 @@
 	"description": "Revive unavailable songs for Netease Cloud Music",
 	"main": "src/provider/match.js",
 	"bin": {
-		"unblockneteasemusic": "./precompiled/app.js"
+		"unblockneteasemusic": "./src/app.js"
 	},
 	"engines": {
 		"node": ">= 12"
@@ -18,8 +18,8 @@
 		"assets": [
 			"server.key",
 			"server.crt",
-			"precompiled/pino-*.js",
-			"precompiled/thread-stream-worker.js"
+			"./node_modules/thread-stream/lib/worker.js",
+      		"./node_modules/pino/lib/worker.js"
 		],
 		"targets": [
 			"node16-linux-arm64",
@@ -28,6 +28,16 @@
 			"node16-win-x64",
 			"node16-macos-arm64"
 		],
+		"patches": {
+			"./node_modules/thread-stream/lib/worker.js": [
+				"fn = (await realImport(workerData.filename)).default",
+				"fn = realRequire(workerData.filename.replace('file://', ''))"
+			],
+			"./node_modules/pino/lib/worker.js": [
+				"fn = (await realImport(toLoad)).default",
+				"fn = realRequire(t.target)"
+			]
+		},
 		"outputPath": "dist"
 	},
 	"repository": {

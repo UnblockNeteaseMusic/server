@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "esnext",
+        "lib": ["es2021"],
+        "checkJs": false
+    },
+    "exclude": ["node_modules", "precompiled"],
+    "include": ["src/**/*.js", "app.js", "bridge.js"]
+}
