@@ -1057,7 +1057,7 @@ __metadata:
     webpack: ^5.70.0
     webpack-cli: ^4.9.2
   bin:
-    unblockneteasemusic: ./precompiled/app.js
+    unblockneteasemusic: ./src/app.js
   languageName: unknown
   linkType: soft
 
