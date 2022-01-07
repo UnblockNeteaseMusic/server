@@ -13233,7 +13233,7 @@ const select = __webpack_require__(5342);
 const request = __webpack_require__(4195);
 const { getManagedCacheStorage  } = __webpack_require__(1067);
 const track = (info)=>{
-    const url = 'http://mos9527.tooo.top/ncm/pyncm/track/GetTrackAudio?song_ids=' + info.id + '&bitrate=' + [
+    const url = 'https://service-q3dhb0bw-1302373778.gz.apigw.tencentcs.com/release/pyncm/track/GetTrackAudio?song_ids=' + info.id + '&bitrate=' + [
         '999000',
         '320000'
     ].slice(select.ENABLE_FLAC ? 0 : 1, select.ENABLE_FLAC ? 1 : 2);
