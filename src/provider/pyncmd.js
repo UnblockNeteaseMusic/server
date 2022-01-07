@@ -4,7 +4,7 @@ const { getManagedCacheStorage } = require('../cache');
 
 const track = (info) => {
 	const url =
-		'http://mos9527.tooo.top/ncm/pyncm/track/GetTrackAudio?song_ids=' +
+		'https://service-q3dhb0bw-1302373778.gz.apigw.tencentcs.com/release/pyncm/track/GetTrackAudio?song_ids=' +
 		info.id +
 		'&bitrate=' +
 		['999000', '320000'].slice(
