@@ -467,13 +467,14 @@ module.exports = function (exec) {
 
 var uncurryThis = __webpack_require__(1702);
 var aCallable = __webpack_require__(9662);
+var NATIVE_BIND = __webpack_require__(4374);
 
 var bind = uncurryThis(uncurryThis.bind);
 
 // optional / simple context binding
 module.exports = function (fn, that) {
   aCallable(fn);
-  return that === undefined ? fn : bind ? bind(fn, that) : function (/* ...args */) {
+  return that === undefined ? fn : NATIVE_BIND ? bind(fn, that) : function (/* ...args */) {
     return fn.apply(that, arguments);
   };
 };
@@ -481,12 +482,28 @@ module.exports = function (fn, that) {
 
 /***/ }),
 
+/***/ 4374:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var fails = __webpack_require__(7293);
+
+module.exports = !fails(function () {
+  var test = (function () { /* empty */ }).bind();
+  // eslint-disable-next-line no-prototype-builtins -- safe
+  return typeof test != 'function' || test.hasOwnProperty('prototype');
+});
+
+
+/***/ }),
+
 /***/ 1460:
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var NATIVE_BIND = __webpack_require__(4374);
 
 var call = Function.prototype.call;
 
-module.exports = call.bind ? call.bind(call) : function () {
+module.exports = NATIVE_BIND ? call.bind(call) : function () {
   return call.apply(call, arguments);
 };
 
@@ -518,14 +535,16 @@ module.exports = {
 /***/ }),
 
 /***/ 1702:
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var NATIVE_BIND = __webpack_require__(4374);
 
 var FunctionPrototype = Function.prototype;
 var bind = FunctionPrototype.bind;
 var call = FunctionPrototype.call;
-var uncurryThis = bind && bind.bind(call, call);
+var uncurryThis = NATIVE_BIND && bind.bind(call, call);
 
-module.exports = bind ? function (fn) {
+module.exports = NATIVE_BIND ? function (fn) {
   return fn && uncurryThis(fn);
 } : function (fn) {
   return fn && function () {
@@ -687,7 +706,7 @@ var DESCRIPTORS = __webpack_require__(9781);
 var fails = __webpack_require__(7293);
 var createElement = __webpack_require__(317);
 
-// Thank's IE8 for his funny defineProperty
+// Thanks to IE8 for its funny defineProperty
 module.exports = !DESCRIPTORS && !fails(function () {
   // eslint-disable-next-line es/no-object-defineproperty -- required for testing
   return Object.defineProperty(createElement('div'), 'a', {
@@ -1485,9 +1504,11 @@ var store = __webpack_require__(5465);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.20.2',
+  version: '3.21.0',
   mode: IS_PURE ? 'pure' : 'global',
-  copyright: '© 2022 Denis Pushkarev (zloirock.ru)'
+  copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
+  license: 'https://github.com/zloirock/core-js/blob/v3.21.0/LICENSE',
+  source: 'https://github.com/zloirock/core-js'
 });
 
 
@@ -1779,12 +1800,11 @@ module.exports = function (name) {
 "use strict";
 
 var $ = __webpack_require__(2109);
-var IS_PURE = __webpack_require__(1913);
 var deleteAll = __webpack_require__(4092);
 
 // `Map.prototype.deleteAll` method
 // https://github.com/tc39/proposal-collection-methods
-$({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Map', proto: true, real: true, forced: true }, {
   deleteAll: deleteAll
 });
 
@@ -1797,7 +1817,6 @@ $({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
 "use strict";
 
 var $ = __webpack_require__(2109);
-var IS_PURE = __webpack_require__(1913);
 var anObject = __webpack_require__(9670);
 var bind = __webpack_require__(9974);
 var getMapIterator = __webpack_require__(4647);
@@ -1805,7 +1824,7 @@ var iterate = __webpack_require__(408);
 
 // `Map.prototype.every` method
 // https://github.com/tc39/proposal-collection-methods
-$({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Map', proto: true, real: true, forced: true }, {
   every: function every(callbackfn /* , thisArg */) {
     var map = anObject(this);
     var iterator = getMapIterator(map);
@@ -1824,7 +1843,6 @@ $({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
 
 "use strict";
 
-var IS_PURE = __webpack_require__(1913);
 var $ = __webpack_require__(2109);
 var getBuiltIn = __webpack_require__(5005);
 var bind = __webpack_require__(9974);
@@ -1837,7 +1855,7 @@ var iterate = __webpack_require__(408);
 
 // `Map.prototype.filter` method
 // https://github.com/tc39/proposal-collection-methods
-$({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Map', proto: true, real: true, forced: true }, {
   filter: function filter(callbackfn /* , thisArg */) {
     var map = anObject(this);
     var iterator = getMapIterator(map);
@@ -1860,7 +1878,6 @@ $({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
 "use strict";
 
 var $ = __webpack_require__(2109);
-var IS_PURE = __webpack_require__(1913);
 var anObject = __webpack_require__(9670);
 var bind = __webpack_require__(9974);
 var getMapIterator = __webpack_require__(4647);
@@ -1868,7 +1885,7 @@ var iterate = __webpack_require__(408);
 
 // `Map.prototype.findKey` method
 // https://github.com/tc39/proposal-collection-methods
-$({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Map', proto: true, real: true, forced: true }, {
   findKey: function findKey(callbackfn /* , thisArg */) {
     var map = anObject(this);
     var iterator = getMapIterator(map);
@@ -1888,7 +1905,6 @@ $({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
 "use strict";
 
 var $ = __webpack_require__(2109);
-var IS_PURE = __webpack_require__(1913);
 var anObject = __webpack_require__(9670);
 var bind = __webpack_require__(9974);
 var getMapIterator = __webpack_require__(4647);
@@ -1896,7 +1912,7 @@ var iterate = __webpack_require__(408);
 
 // `Map.prototype.find` method
 // https://github.com/tc39/proposal-collection-methods
-$({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Map', proto: true, real: true, forced: true }, {
   find: function find(callbackfn /* , thisArg */) {
     var map = anObject(this);
     var iterator = getMapIterator(map);
@@ -1915,7 +1931,6 @@ $({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
 
 "use strict";
 
-var IS_PURE = __webpack_require__(1913);
 var $ = __webpack_require__(2109);
 var anObject = __webpack_require__(9670);
 var getMapIterator = __webpack_require__(4647);
@@ -1924,7 +1939,7 @@ var iterate = __webpack_require__(408);
 
 // `Map.prototype.includes` method
 // https://github.com/tc39/proposal-collection-methods
-$({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Map', proto: true, real: true, forced: true }, {
   includes: function includes(searchElement) {
     return iterate(getMapIterator(anObject(this)), function (key, value, stop) {
       if (sameValueZero(value, searchElement)) return stop();
@@ -1941,14 +1956,13 @@ $({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
 "use strict";
 
 var $ = __webpack_require__(2109);
-var IS_PURE = __webpack_require__(1913);
 var anObject = __webpack_require__(9670);
 var getMapIterator = __webpack_require__(4647);
 var iterate = __webpack_require__(408);
 
 // `Map.prototype.keyOf` method
 // https://github.com/tc39/proposal-collection-methods
-$({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Map', proto: true, real: true, forced: true }, {
   keyOf: function keyOf(searchElement) {
     return iterate(getMapIterator(anObject(this)), function (key, value, stop) {
       if (value === searchElement) return stop(key);
@@ -1964,7 +1978,6 @@ $({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
 
 "use strict";
 
-var IS_PURE = __webpack_require__(1913);
 var $ = __webpack_require__(2109);
 var getBuiltIn = __webpack_require__(5005);
 var bind = __webpack_require__(9974);
@@ -1977,7 +1990,7 @@ var iterate = __webpack_require__(408);
 
 // `Map.prototype.mapKeys` method
 // https://github.com/tc39/proposal-collection-methods
-$({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Map', proto: true, real: true, forced: true }, {
   mapKeys: function mapKeys(callbackfn /* , thisArg */) {
     var map = anObject(this);
     var iterator = getMapIterator(map);
@@ -1999,7 +2012,6 @@ $({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
 
 "use strict";
 
-var IS_PURE = __webpack_require__(1913);
 var $ = __webpack_require__(2109);
 var getBuiltIn = __webpack_require__(5005);
 var bind = __webpack_require__(9974);
@@ -2012,7 +2024,7 @@ var iterate = __webpack_require__(408);
 
 // `Map.prototype.mapValues` method
 // https://github.com/tc39/proposal-collection-methods
-$({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Map', proto: true, real: true, forced: true }, {
   mapValues: function mapValues(callbackfn /* , thisArg */) {
     var map = anObject(this);
     var iterator = getMapIterator(map);
@@ -2035,14 +2047,13 @@ $({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
 "use strict";
 
 var $ = __webpack_require__(2109);
-var IS_PURE = __webpack_require__(1913);
 var aCallable = __webpack_require__(9662);
 var anObject = __webpack_require__(9670);
 var iterate = __webpack_require__(408);
 
 // `Map.prototype.merge` method
 // https://github.com/tc39/proposal-collection-methods
-$({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Map', proto: true, real: true, forced: true }, {
   // eslint-disable-next-line no-unused-vars -- required for `.length`
   merge: function merge(iterable /* ...iterables */) {
     var map = anObject(this);
@@ -2066,7 +2077,6 @@ $({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
 
 var $ = __webpack_require__(2109);
 var global = __webpack_require__(7854);
-var IS_PURE = __webpack_require__(1913);
 var anObject = __webpack_require__(9670);
 var aCallable = __webpack_require__(9662);
 var getMapIterator = __webpack_require__(4647);
@@ -2076,7 +2086,7 @@ var TypeError = global.TypeError;
 
 // `Map.prototype.reduce` method
 // https://github.com/tc39/proposal-collection-methods
-$({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Map', proto: true, real: true, forced: true }, {
   reduce: function reduce(callbackfn /* , initialValue */) {
     var map = anObject(this);
     var iterator = getMapIterator(map);
@@ -2105,7 +2115,6 @@ $({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
 "use strict";
 
 var $ = __webpack_require__(2109);
-var IS_PURE = __webpack_require__(1913);
 var anObject = __webpack_require__(9670);
 var bind = __webpack_require__(9974);
 var getMapIterator = __webpack_require__(4647);
@@ -2113,7 +2122,7 @@ var iterate = __webpack_require__(408);
 
 // `Set.prototype.some` method
 // https://github.com/tc39/proposal-collection-methods
-$({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Map', proto: true, real: true, forced: true }, {
   some: function some(callbackfn /* , thisArg */) {
     var map = anObject(this);
     var iterator = getMapIterator(map);
@@ -2132,7 +2141,6 @@ $({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
 
 "use strict";
 
-var IS_PURE = __webpack_require__(1913);
 var $ = __webpack_require__(2109);
 var global = __webpack_require__(7854);
 var call = __webpack_require__(1460);
@@ -2143,7 +2151,7 @@ var TypeError = global.TypeError;
 
 // `Set.prototype.update` method
 // https://github.com/tc39/proposal-collection-methods
-$({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Map', proto: true, real: true, forced: true }, {
   update: function update(key, callback /* , thunk */) {
     var map = anObject(this);
     var get = aCallable(map.get);
@@ -2170,12 +2178,11 @@ $({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
 "use strict";
 
 var $ = __webpack_require__(2109);
-var IS_PURE = __webpack_require__(1913);
 var addAll = __webpack_require__(1501);
 
 // `Set.prototype.addAll` method
 // https://github.com/tc39/proposal-collection-methods
-$({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Set', proto: true, real: true, forced: true }, {
   addAll: addAll
 });
 
@@ -2188,12 +2195,11 @@ $({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
 "use strict";
 
 var $ = __webpack_require__(2109);
-var IS_PURE = __webpack_require__(1913);
 var deleteAll = __webpack_require__(4092);
 
 // `Set.prototype.deleteAll` method
 // https://github.com/tc39/proposal-collection-methods
-$({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Set', proto: true, real: true, forced: true }, {
   deleteAll: deleteAll
 });
 
@@ -2205,7 +2211,6 @@ $({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
 
 "use strict";
 
-var IS_PURE = __webpack_require__(1913);
 var $ = __webpack_require__(2109);
 var getBuiltIn = __webpack_require__(5005);
 var call = __webpack_require__(1460);
@@ -2216,7 +2221,7 @@ var iterate = __webpack_require__(408);
 
 // `Set.prototype.difference` method
 // https://github.com/tc39/proposal-set-methods
-$({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Set', proto: true, real: true, forced: true }, {
   difference: function difference(iterable) {
     var set = anObject(this);
     var newSet = new (speciesConstructor(set, getBuiltIn('Set')))(set);
@@ -2237,7 +2242,6 @@ $({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
 "use strict";
 
 var $ = __webpack_require__(2109);
-var IS_PURE = __webpack_require__(1913);
 var anObject = __webpack_require__(9670);
 var bind = __webpack_require__(9974);
 var getSetIterator = __webpack_require__(6767);
@@ -2245,7 +2249,7 @@ var iterate = __webpack_require__(408);
 
 // `Set.prototype.every` method
 // https://github.com/tc39/proposal-collection-methods
-$({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Set', proto: true, real: true, forced: true }, {
   every: function every(callbackfn /* , thisArg */) {
     var set = anObject(this);
     var iterator = getSetIterator(set);
@@ -2264,7 +2268,6 @@ $({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
 
 "use strict";
 
-var IS_PURE = __webpack_require__(1913);
 var $ = __webpack_require__(2109);
 var getBuiltIn = __webpack_require__(5005);
 var call = __webpack_require__(1460);
@@ -2277,7 +2280,7 @@ var iterate = __webpack_require__(408);
 
 // `Set.prototype.filter` method
 // https://github.com/tc39/proposal-collection-methods
-$({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Set', proto: true, real: true, forced: true }, {
   filter: function filter(callbackfn /* , thisArg */) {
     var set = anObject(this);
     var iterator = getSetIterator(set);
@@ -2300,7 +2303,6 @@ $({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
 "use strict";
 
 var $ = __webpack_require__(2109);
-var IS_PURE = __webpack_require__(1913);
 var anObject = __webpack_require__(9670);
 var bind = __webpack_require__(9974);
 var getSetIterator = __webpack_require__(6767);
@@ -2308,7 +2310,7 @@ var iterate = __webpack_require__(408);
 
 // `Set.prototype.find` method
 // https://github.com/tc39/proposal-collection-methods
-$({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Set', proto: true, real: true, forced: true }, {
   find: function find(callbackfn /* , thisArg */) {
     var set = anObject(this);
     var iterator = getSetIterator(set);
@@ -2327,7 +2329,6 @@ $({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
 
 "use strict";
 
-var IS_PURE = __webpack_require__(1913);
 var $ = __webpack_require__(2109);
 var getBuiltIn = __webpack_require__(5005);
 var call = __webpack_require__(1460);
@@ -2338,7 +2339,7 @@ var iterate = __webpack_require__(408);
 
 // `Set.prototype.intersection` method
 // https://github.com/tc39/proposal-set-methods
-$({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Set', proto: true, real: true, forced: true }, {
   intersection: function intersection(iterable) {
     var set = anObject(this);
     var newSet = new (speciesConstructor(set, getBuiltIn('Set')))();
@@ -2359,7 +2360,6 @@ $({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
 
 "use strict";
 
-var IS_PURE = __webpack_require__(1913);
 var $ = __webpack_require__(2109);
 var call = __webpack_require__(1460);
 var aCallable = __webpack_require__(9662);
@@ -2368,7 +2368,7 @@ var iterate = __webpack_require__(408);
 
 // `Set.prototype.isDisjointFrom` method
 // https://tc39.github.io/proposal-set-methods/#Set.prototype.isDisjointFrom
-$({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Set', proto: true, real: true, forced: true }, {
   isDisjointFrom: function isDisjointFrom(iterable) {
     var set = anObject(this);
     var hasCheck = aCallable(set.has);
@@ -2386,7 +2386,6 @@ $({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
 
 "use strict";
 
-var IS_PURE = __webpack_require__(1913);
 var $ = __webpack_require__(2109);
 var getBuiltIn = __webpack_require__(5005);
 var call = __webpack_require__(1460);
@@ -2398,7 +2397,7 @@ var iterate = __webpack_require__(408);
 
 // `Set.prototype.isSubsetOf` method
 // https://tc39.github.io/proposal-set-methods/#Set.prototype.isSubsetOf
-$({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Set', proto: true, real: true, forced: true }, {
   isSubsetOf: function isSubsetOf(iterable) {
     var iterator = getIterator(this);
     var otherSet = anObject(iterable);
@@ -2421,7 +2420,6 @@ $({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
 
 "use strict";
 
-var IS_PURE = __webpack_require__(1913);
 var $ = __webpack_require__(2109);
 var call = __webpack_require__(1460);
 var aCallable = __webpack_require__(9662);
@@ -2430,7 +2428,7 @@ var iterate = __webpack_require__(408);
 
 // `Set.prototype.isSupersetOf` method
 // https://tc39.github.io/proposal-set-methods/#Set.prototype.isSupersetOf
-$({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Set', proto: true, real: true, forced: true }, {
   isSupersetOf: function isSupersetOf(iterable) {
     var set = anObject(this);
     var hasCheck = aCallable(set.has);
@@ -2448,7 +2446,6 @@ $({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
 
 "use strict";
 
-var IS_PURE = __webpack_require__(1913);
 var $ = __webpack_require__(2109);
 var uncurryThis = __webpack_require__(1702);
 var anObject = __webpack_require__(9670);
@@ -2461,7 +2458,7 @@ var push = [].push;
 
 // `Set.prototype.join` method
 // https://github.com/tc39/proposal-collection-methods
-$({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Set', proto: true, real: true, forced: true }, {
   join: function join(separator) {
     var set = anObject(this);
     var iterator = getSetIterator(set);
@@ -2480,7 +2477,6 @@ $({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
 
 "use strict";
 
-var IS_PURE = __webpack_require__(1913);
 var $ = __webpack_require__(2109);
 var getBuiltIn = __webpack_require__(5005);
 var bind = __webpack_require__(9974);
@@ -2493,7 +2489,7 @@ var iterate = __webpack_require__(408);
 
 // `Set.prototype.map` method
 // https://github.com/tc39/proposal-collection-methods
-$({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Set', proto: true, real: true, forced: true }, {
   map: function map(callbackfn /* , thisArg */) {
     var set = anObject(this);
     var iterator = getSetIterator(set);
@@ -2517,7 +2513,6 @@ $({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
 
 var $ = __webpack_require__(2109);
 var global = __webpack_require__(7854);
-var IS_PURE = __webpack_require__(1913);
 var aCallable = __webpack_require__(9662);
 var anObject = __webpack_require__(9670);
 var getSetIterator = __webpack_require__(6767);
@@ -2527,7 +2522,7 @@ var TypeError = global.TypeError;
 
 // `Set.prototype.reduce` method
 // https://github.com/tc39/proposal-collection-methods
-$({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Set', proto: true, real: true, forced: true }, {
   reduce: function reduce(callbackfn /* , initialValue */) {
     var set = anObject(this);
     var iterator = getSetIterator(set);
@@ -2556,7 +2551,6 @@ $({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
 "use strict";
 
 var $ = __webpack_require__(2109);
-var IS_PURE = __webpack_require__(1913);
 var anObject = __webpack_require__(9670);
 var bind = __webpack_require__(9974);
 var getSetIterator = __webpack_require__(6767);
@@ -2564,7 +2558,7 @@ var iterate = __webpack_require__(408);
 
 // `Set.prototype.some` method
 // https://github.com/tc39/proposal-collection-methods
-$({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Set', proto: true, real: true, forced: true }, {
   some: function some(callbackfn /* , thisArg */) {
     var set = anObject(this);
     var iterator = getSetIterator(set);
@@ -2583,7 +2577,6 @@ $({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
 
 "use strict";
 
-var IS_PURE = __webpack_require__(1913);
 var $ = __webpack_require__(2109);
 var getBuiltIn = __webpack_require__(5005);
 var call = __webpack_require__(1460);
@@ -2594,7 +2587,7 @@ var iterate = __webpack_require__(408);
 
 // `Set.prototype.symmetricDifference` method
 // https://github.com/tc39/proposal-set-methods
-$({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Set', proto: true, real: true, forced: true }, {
   symmetricDifference: function symmetricDifference(iterable) {
     var set = anObject(this);
     var newSet = new (speciesConstructor(set, getBuiltIn('Set')))(set);
@@ -2616,7 +2609,6 @@ $({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
 "use strict";
 
 var $ = __webpack_require__(2109);
-var IS_PURE = __webpack_require__(1913);
 var getBuiltIn = __webpack_require__(5005);
 var aCallable = __webpack_require__(9662);
 var anObject = __webpack_require__(9670);
@@ -2625,7 +2617,7 @@ var iterate = __webpack_require__(408);
 
 // `Set.prototype.union` method
 // https://github.com/tc39/proposal-set-methods
-$({ target: 'Set', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Set', proto: true, real: true, forced: true }, {
   union: function union(iterable) {
     var set = anObject(this);
     var newSet = new (speciesConstructor(set, getBuiltIn('Set')))(set);
@@ -13182,6 +13174,8 @@ const defaultOptions = {
   crlf: false,
   errorLikeObjectKeys: ERROR_LIKE_KEYS,
   errorProps: '',
+  customLevels: null,
+  customColors: null,
   levelFirst: false,
   messageKey: MESSAGE_KEY,
   messageFormat: false,
@@ -13206,11 +13200,47 @@ function prettyFactory (options) {
   const timestampKey = opts.timestampKey
   const errorLikeObjectKeys = opts.errorLikeObjectKeys
   const errorProps = opts.errorProps.split(',')
+  const customLevels = opts.customLevels
+    ? opts.customLevels
+        .split(',')
+        .reduce((agg, value, idx) => {
+          const [levelName, levelIdx = idx] = value.split(':')
+
+          agg[levelIdx] = levelName.toUpperCase()
+
+          return agg
+        }, { default: 'USERLVL' })
+    : undefined
+  const customLevelNames = opts.customLevels
+    ? opts.customLevels
+        .split(',')
+        .reduce((agg, value, idx) => {
+          const [levelName, levelIdx = idx] = value.split(':')
+
+          agg[levelName] = levelIdx
+
+          return agg
+        }, {})
+    : undefined
+  const customColors = opts.customColors
+    ? opts.customColors
+        .split(',')
+        .reduce((agg, value) => {
+          const [level, color] = value.split(':')
+
+          const levelNum = customLevelNames !== undefined ? customLevelNames[level] : LEVEL_NAMES[level]
+          const colorIdx = levelNum !== undefined ? levelNum : level
+
+          agg.push([colorIdx, color])
+
+          return agg
+        }, [])
+    : undefined
   const customPrettifiers = opts.customPrettifiers
   const ignoreKeys = opts.ignore ? new Set(opts.ignore.split(',')) : undefined
   const hideObject = opts.hideObject
   const singleLine = opts.singleLine
-  const colorizer = colors(opts.colorize)
+  const colorizer = colors(opts.colorize, customColors)
 
   return pretty
 
@@ -13228,7 +13258,7 @@ function prettyFactory (options) {
     }
 
     if (minimumLevel) {
-      const minimum = LEVEL_NAMES[minimumLevel] || Number(minimumLevel)
+      const minimum = (customLevelNames === undefined ? LEVEL_NAMES[minimumLevel] : customLevelNames[minimumLevel]) || Number(minimumLevel)
       const level = log[levelKey === undefined ? LEVEL_KEY : levelKey]
       if (level < minimum) return
     }
@@ -13239,8 +13269,8 @@ function prettyFactory (options) {
       log = filterLog(log, ignoreKeys)
     }
 
-    const prettifiedLevel = prettifyLevel({ log, colorizer, levelKey, prettifier: customPrettifiers.level })
-    const prettifiedMetadata = prettifyMetadata({ log })
+    const prettifiedLevel = prettifyLevel({ log, colorizer, levelKey, prettifier: customPrettifiers.level, customLevels, customLevelNames })
+    const prettifiedMetadata = prettifyMetadata({ log, prettifiers: customPrettifiers })
     const prettifiedTime = prettifyTime({ log, translateFormat: opts.translateTime, timestampKey, prettifier: customPrettifiers.time })
 
     let line = ''
@@ -13342,7 +13372,7 @@ function build (opts = {}) {
         dest: opts.destination || 1,
         append: opts.append,
         mkdir: opts.mkdir,
-        sync: false
+        sync: opts.sync // by default sonic will be async
       })
     }
 
@@ -13385,7 +13415,8 @@ const plain = {
 }
 
 const { createColors } = __webpack_require__(9485)
-const { white, bgRed, red, yellow, green, blue, gray, cyan } = createColors({ useColor: true })
+const availableColors = createColors({ useColor: true })
+const { white, bgRed, red, yellow, green, blue, gray, cyan } = availableColors
 
 const colored = {
   default: white,
@@ -13399,27 +13430,56 @@ const colored = {
   greyMessage: gray
 }
 
-function colorizeLevel (level, colorizer) {
-  if (Number.isInteger(+level)) {
-    return Object.prototype.hasOwnProperty.call(LEVELS, level)
-      ? colorizer[level](LEVELS[level])
-      : colorizer.default(LEVELS.default)
-  }
-  const levelNum = LEVEL_NAMES[level.toLowerCase()] || 'default'
-  return colorizer[levelNum](LEVELS[levelNum])
+function resolveCustomColoredColorizer (customColors) {
+  return customColors.reduce(
+    function (agg, [level, color]) {
+      agg[level] = typeof availableColors[color] === 'function' ? availableColors[color] : white
+
+      return agg
+    },
+    { default: white, message: cyan, greyMessage: gray }
+  )
 }
 
-function plainColorizer (level) {
-  return colorizeLevel(level, plain)
+function colorizeLevel (level, colorizer, { customLevels, customLevelNames } = {}) {
+  const levels = customLevels || LEVELS
+  const levelNames = customLevelNames || LEVEL_NAMES
+
+  let levelNum = 'default'
+  if (Number.isInteger(+level)) {
+    levelNum = Object.prototype.hasOwnProperty.call(levels, level) ? level : levelNum
+  } else {
+    levelNum = Object.prototype.hasOwnProperty.call(levelNames, level.toLowerCase()) ? levelNames[level.toLowerCase()] : levelNum
+  }
+
+  const levelStr = levels[levelNum]
+
+  return Object.prototype.hasOwnProperty.call(colorizer, levelNum) ? colorizer[levelNum](levelStr) : colorizer.default(levelStr)
+}
+
+function plainColorizer (level, opts) {
+  return colorizeLevel(level, plain, opts)
 }
 plainColorizer.message = plain.message
 plainColorizer.greyMessage = plain.greyMessage
 
-function coloredColorizer (level) {
-  return colorizeLevel(level, colored)
+function coloredColorizer (level, opts) {
+  return colorizeLevel(level, colored, opts)
 }
 coloredColorizer.message = colored.message
 coloredColorizer.greyMessage = colored.greyMessage
+
+function customColoredColorizerFactory (customColors) {
+  const customColored = resolveCustomColoredColorizer(customColors)
+
+  const customColoredColorizer = function (level, opts) {
+    return colorizeLevel(level, customColored, opts)
+  }
+  customColoredColorizer.message = customColoredColorizer.message || customColored.message
+  customColoredColorizer.greyMessage = customColoredColorizer.greyMessage || customColored.greyMessage
+
+  return customColoredColorizer
+}
 
 /**
  * Factory function get a function to colorized levels. The returned function
@@ -13427,6 +13487,7 @@ coloredColorizer.greyMessage = colored.greyMessage
  *
  * @param {boolean} [useColors=false] When `true` a function that applies standard
  * terminal colors is returned.
+ * @param {array[]} [customColors] Touple where first item of each array is the level index and the second item is the color
  *
  * @returns {function} `function (level) {}` has a `.message(str)` method to
  * apply colorization to a string. The core function accepts either an integer
@@ -13435,8 +13496,14 @@ coloredColorizer.greyMessage = colored.greyMessage
  * colors as the integer `level` and will also default to `USERLVL` if the given
  * string is not a recognized level name.
  */
-module.exports = function getColorizer (useColors = false) {
-  return useColors ? coloredColorizer : plainColorizer
+module.exports = function getColorizer (useColors = false, customColors) {
+  if (useColors && customColors !== undefined) {
+    return customColoredColorizerFactory(customColors)
+  } else if (useColors) {
+    return coloredColorizer
+  }
+
+  return plainColorizer
 }
 
 
@@ -13718,17 +13785,19 @@ function prettifyErrorLog ({
  * @param {object} input.log The log object.
  * @param {function} [input.colorizer] A colorizer function that accepts a level
  * value and returns a colorized string. Default: a no-op colorizer.
- * @param {string} [levelKey='level'] The key to find the level under.
+ * @param {string} [input.levelKey='level'] The key to find the level under.
  * @param {function} [input.prettifier] A user-supplied formatter to be called instead of colorizer.
+ * @param {object} [input.customLevels] The custom levels where key as the level index and value as the level name.
+ * @param {object} [input.customLevelNames] The custom level names where key is the level name and value is the level index.
  *
  * @returns {undefined|string} If `log` does not have a `level` property then
  * `undefined` will be returned. Otherwise, a string from the specified
  * `colorizer` is returned.
  */
-function prettifyLevel ({ log, colorizer = defaultColorizer, levelKey = LEVEL_KEY, prettifier }) {
+function prettifyLevel ({ log, colorizer = defaultColorizer, levelKey = LEVEL_KEY, prettifier, customLevels, customLevelNames }) {
   if (levelKey in log === false) return undefined
   const output = log[levelKey]
-  return prettifier ? prettifier(output) : colorizer(output)
+  return prettifier ? prettifier(output) : colorizer(output, { customLevels, customLevelNames })
 }
 
 /**
@@ -13743,17 +13812,20 @@ function prettifyLevel ({ log, colorizer = defaultColorizer, levelKey = LEVEL_KE
  * @param {function} [input.colorizer] A colorizer function that has a
  * `.message(str)` method attached to it. This function should return a colorized
  * string which will be the "prettified" message. Default: a no-op colorizer.
+ * @param {string} [input.levelLabel='levelLabel'] The label used to output the log level
+ * @param {string} [input.levelKey='level'] The key to find the level under.
+ * @param {object} [input.customLevels] The custom levels where key as the level index and value as the level name.
  *
  * @returns {undefined|string} If the message key is not found, or the message
  * key is not a string, then `undefined` will be returned. Otherwise, a string
  * that is the prettified message.
  */
-function prettifyMessage ({ log, messageFormat, messageKey = MESSAGE_KEY, colorizer = defaultColorizer, levelLabel = LEVEL_LABEL }) {
+function prettifyMessage ({ log, messageFormat, messageKey = MESSAGE_KEY, colorizer = defaultColorizer, levelLabel = LEVEL_LABEL, levelKey = LEVEL_KEY, customLevels }) {
   if (messageFormat && typeof messageFormat === 'string') {
     const message = String(messageFormat).replace(/{([^{}]+)}/g, function (match, p1) {
       // return log level as string instead of int
-      if (p1 === levelLabel && log[LEVEL_KEY]) {
-        return LEVELS[log[LEVEL_KEY]]
+      if (p1 === levelLabel && log[levelKey]) {
+        return customLevels === undefined ? LEVELS[log[levelKey]] : customLevels[log[levelKey]]
       }
       // Parse nested key access, e.g. `{keyA.subKeyB}`.
       return p1.split('.').reduce(function (prev, curr) {
@@ -13782,37 +13854,44 @@ function prettifyMessage ({ log, messageFormat, messageKey = MESSAGE_KEY, colori
  * @param {object} input
  * @param {object} input.log The log that may or may not contain metadata to
  * be prettified.
+ * @param {object} input.prettifiers A set of functions used to prettify each
+ * key of the input log's metadata. The keys are the keys of the metadata (like
+ * `hostname`, `pid`, `name`, etc), and the values are functions which take the
+ * metadata value and return a string. Each key is optional.
  *
  * @returns {undefined|string} If no metadata is found then `undefined` is
  * returned. Otherwise, a string of prettified metadata is returned.
  */
-function prettifyMetadata ({ log }) {
+function prettifyMetadata ({ log, prettifiers = {} }) {
   let line = ''
 
   if (log.name || log.pid || log.hostname) {
     line += '('
 
     if (log.name) {
-      line += log.name
+      line += prettifiers.name ? prettifiers.name(log.name) : log.name
     }
 
-    if (log.name && log.pid) {
-      line += '/' + log.pid
-    } else if (log.pid) {
-      line += log.pid
+    if (log.pid) {
+      const prettyPid = prettifiers.pid ? prettifiers.pid(log.pid) : log.pid
+      if (log.name && log.pid) {
+        line += '/' + prettyPid
+      } else {
+        line += prettyPid
+      }
     }
 
     if (log.hostname) {
       // If `pid` and `name` were in the ignore keys list then we don't need
       // the leading space.
-      line += `${line === '(' ? 'on' : ' on'} ${log.hostname}`
+      line += `${line === '(' ? 'on' : ' on'} ${prettifiers.hostname ? prettifiers.hostname(log.hostname) : log.hostname}`
     }
 
     line += ')'
   }
 
   if (log.caller) {
-    line += `${line === '' ? '' : ' '}<${log.caller}>`
+    line += `${line === '' ? '' : ' '}<${prettifiers.caller ? prettifiers.caller(log.caller) : log.caller}>`
   }
 
   if (line === '') {
