@@ -16,7 +16,7 @@ module.exports = {
 				exclude: /(node_modules|bower_components)/,
 				use: {
 					// Use `.swcrc` to configure swc
-					loader: 'swc-loader',
+					loader: require.resolve('swc-loader'),
 				},
 			},
 		],
