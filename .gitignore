@@ -84,3 +84,12 @@ daemon/
 
 # Mac
 .DS_Store
+
+# Yarn 2 exclusions
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
