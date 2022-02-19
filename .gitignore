@@ -81,3 +81,6 @@ daemon/
 
 # parcel's cache
 .parcel-cache/
+
+# Mac
+.DS_Store
