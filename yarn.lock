@@ -1284,7 +1284,7 @@ __metadata:
     core-js: 3
     jest: ^27.2.5
     node-windows: ^1.0.0-beta.6
-    pino: 7.6.2
+    pino: ^7.6.2
     pino-pretty: ^7.1.0
     pino-webpack-plugin: ^1.0.0
     pkg: 5.5.2
@@ -4625,9 +4625,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pino@npm:7.6.2":
-  version: 7.6.2
-  resolution: "pino@npm:7.6.2"
+"pino@npm:^7.6.2":
+  version: 7.8.0
+  resolution: "pino@npm:7.8.0"
   dependencies:
     fast-redact: ^3.0.0
     on-exit-leak-free: ^0.2.0
@@ -4641,7 +4641,7 @@ __metadata:
     thread-stream: ^0.13.0
   bin:
     pino: bin.js
-  checksum: a748bda5b56e4bb357a986b9878d95e24e6dfb3ed6b741dd80a8f1101d0b7defc5131057cb2297ca76bd7cbcdb1bdc2d0986631e3899e12833cec08e690c83a8
+  checksum: 0be8a440f81e7e2f4a22156e5886d550c618d6609572f0f262ccbc15077b702ee56c17d8bff7779361a74e64e4257f533b6038f46845e583315895ac6babc753
   languageName: node
   linkType: hard
 
