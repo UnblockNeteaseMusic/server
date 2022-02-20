@@ -4,7 +4,7 @@
 	"description": "Revive unavailable songs for Netease Cloud Music",
 	"main": "src/provider/match.js",
 	"bin": {
-		"unblockneteasemusic": "./precompiled/app.js"
+		"unblockneteasemusic": "./src/app.js"
 	},
 	"engines": {
 		"node": ">= 12"
@@ -17,14 +17,27 @@
 	"pkg": {
 		"assets": [
 			"server.key",
-			"server.crt"
+			"server.crt",
+			"./node_modules/thread-stream/lib/worker.js",
+			"./node_modules/pino/lib/worker.js"
 		],
 		"targets": [
 			"node16-linux-arm64",
 			"node16-win-arm64",
 			"node16-linux-x64",
-			"node16-win-x64"
+			"node16-win-x64",
+			"node16-macos-arm64"
 		],
+		"patches": {
+			"./node_modules/thread-stream/lib/worker.js": [
+				"fn = (await realImport(workerData.filename)).default",
+				"fn = realRequire(workerData.filename.replace('file://', ''))"
+			],
+			"./node_modules/pino/lib/worker.js": [
+				"fn = (await realImport(toLoad)).default",
+				"fn = realRequire(t.target)"
+			]
+		},
 		"outputPath": "dist"
 	},
 	"repository": {
@@ -35,13 +48,13 @@
 	"license": "LGPL-3.0-only",
 	"dependencies": {
 		"node-windows": "^1.0.0-beta.6",
-		"pino": "6",
-		"pino-pretty": "^7.1.0"
+		"pino": "7.6.2",
+		"pino-pretty": "^7.1.0",
+		"pino-webpack-plugin": "^1.0.0"
 	},
 	"devDependencies": {
 		"@swc/core": "^1.2.111",
-		"@types/node": "^17.0.0",
-		"@types/pino": "6",
+		"@types/node": "^17.0.8",
 		"browserslist": "^4.18.1",
 		"core-js": "3",
 		"jest": "^27.2.5",

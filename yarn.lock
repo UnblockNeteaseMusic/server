@@ -1237,41 +1237,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^17.0.0":
+"@types/node@npm:*, @types/node@npm:^17.0.8":
   version: 17.0.18
   resolution: "@types/node@npm:17.0.18"
   checksum: 6c4edfc2b3ba2342a9c3d56e934c5245948ab752f4dc04bd6790b9603e6ebc53bc4f5befc3662e207f7dba2ddd17ccf657f915e319ea7cdd4f77b851079d1611
-  languageName: node
-  linkType: hard
-
-"@types/pino-pretty@npm:*":
-  version: 4.7.3
-  resolution: "@types/pino-pretty@npm:4.7.3"
-  dependencies:
-    "@types/node": "*"
-    "@types/pino": 6.3
-  checksum: 40fe67e73d26242d1f741ba62bd57aa4ce34842376878137f16befde3df0dd5ee39c30bc89da3d5e99848f69b00b73010863a740fd469585e0852ea656cb5b7b
-  languageName: node
-  linkType: hard
-
-"@types/pino-std-serializers@npm:*":
-  version: 2.4.1
-  resolution: "@types/pino-std-serializers@npm:2.4.1"
-  dependencies:
-    "@types/node": "*"
-  checksum: a156e25882db9aade2576dbe6414379efcdd4fad24211d3f22f20e0cd4bee569215799ee5cd9b2b15282f18461a8a54573ff42bf6bee5d35b72513be2f78bdec
-  languageName: node
-  linkType: hard
-
-"@types/pino@npm:6, @types/pino@npm:6.3":
-  version: 6.3.12
-  resolution: "@types/pino@npm:6.3.12"
-  dependencies:
-    "@types/node": "*"
-    "@types/pino-pretty": "*"
-    "@types/pino-std-serializers": "*"
-    sonic-boom: ^2.1.0
-  checksum: 801735146669312d02459781e5180220630eaef643da36dc5a9a97520e7ecc3da7270f31a86fcdcb1dc835073c9143fc628024ba5e3a0ea7cbb86aada4897709
   languageName: node
   linkType: hard
 
@@ -1310,14 +1279,14 @@ __metadata:
   resolution: "@unblockneteasemusic/server@workspace:."
   dependencies:
     "@swc/core": ^1.2.111
-    "@types/node": ^17.0.0
-    "@types/pino": 6
+    "@types/node": ^17.0.8
     browserslist: ^4.18.1
     core-js: 3
     jest: ^27.2.5
     node-windows: ^1.0.0-beta.6
-    pino: 6
+    pino: 7.6.2
     pino-pretty: ^7.1.0
+    pino-webpack-plugin: ^1.0.0
     pkg: 5.5.2
     prettier: ^2.4.1
     swc-loader: ^0.1.15
@@ -1325,7 +1294,7 @@ __metadata:
     webpack: ^5.64.2
     webpack-cli: ^4.9.1
   bin:
-    unblockneteasemusic: ./precompiled/app.js
+    unblockneteasemusic: ./src/app.js
   languageName: unknown
   linkType: soft
 
@@ -2705,7 +2674,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-safe-stringify@npm:^2.0.7, fast-safe-stringify@npm:^2.0.8":
+"fast-safe-stringify@npm:^2.0.7":
   version: 2.1.1
   resolution: "fast-safe-stringify@npm:2.1.1"
   checksum: a851cbddc451745662f8f00ddb622d6766f9bd97642dabfd9a405fb0d646d69fc0b9a1243cbf67f5f18a39f40f6fa821737651ff1bceeba06c9992ca2dc5bd3d
@@ -2753,13 +2722,6 @@ __metadata:
     locate-path: ^5.0.0
     path-exists: ^4.0.0
   checksum: 4c172680e8f8c1f78839486e14a43ef82e9decd0e74145f40707cc42e7420506d5ec92d9a11c22bd2c48fb0c384ea05dd30e10dd152fefeec6f2f75282a8b844
-  languageName: node
-  linkType: hard
-
-"flatstr@npm:^1.0.12":
-  version: 1.0.12
-  resolution: "flatstr@npm:1.0.12"
-  checksum: e1bb562c94b119e958bf37e55738b172b5f8aaae6532b9660ecd877779f8559dbbc89613ba6b29ccc13447e14c59277d41450f785cf75c30df9fce62f459e9a8
   languageName: node
   linkType: hard
 
@@ -4457,6 +4419,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"on-exit-leak-free@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "on-exit-leak-free@npm:0.2.0"
+  checksum: d22b0f0538069110626b578db6e68b6ee0e85b1ee9cc5ef9b4de1bba431431d6a8da91a61e09d2ad46f22a96f968e5237833cb9d0b69bc4d294f7ec82f609b05
+  languageName: node
+  linkType: hard
+
 "once@npm:^1.3.0, once@npm:^1.3.1, once@npm:^1.4.0":
   version: 1.4.0
   resolution: "once@npm:1.4.0"
@@ -4608,7 +4577,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pino-abstract-transport@npm:^0.5.0":
+"pino-abstract-transport@npm:^0.5.0, pino-abstract-transport@npm:v0.5.0":
   version: 0.5.0
   resolution: "pino-abstract-transport@npm:0.5.0"
   dependencies:
@@ -4640,27 +4609,39 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pino-std-serializers@npm:^3.1.0":
-  version: 3.2.0
-  resolution: "pino-std-serializers@npm:3.2.0"
-  checksum: 77e29675b116e42ae9fe6d4ef52ef3a082ffc54922b122d85935f93ddcc20277f0b0c873c5c6c5274a67b0409c672aaae3de6bcea10a2d84699718dda55ba95b
+"pino-std-serializers@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "pino-std-serializers@npm:4.0.0"
+  checksum: 89d487729b58c9d3273a0ee851ead068d6d2e2ccc1af8e1c1d28f1b3442423679bec7ec04d9a2aba36f94f335e82be9f4de19dc4fbc161e71c136aaa15b85ad3
   languageName: node
   linkType: hard
 
-"pino@npm:6":
-  version: 6.14.0
-  resolution: "pino@npm:6.14.0"
+"pino-webpack-plugin@npm:^1.0.0":
+  version: 1.1.0
+  resolution: "pino-webpack-plugin@npm:1.1.0"
+  dependencies:
+    webpack: ^5.61.0
+  checksum: 062565aa8e93db5cdb29aa26d170181c0d1f55e3b54339e4c43960ce3d1b9cac34da8c794260fd3fed50f395f39fb7a5bb8d6744accd35c7eba5b50d4bb854ec
+  languageName: node
+  linkType: hard
+
+"pino@npm:7.6.2":
+  version: 7.6.2
+  resolution: "pino@npm:7.6.2"
   dependencies:
     fast-redact: ^3.0.0
-    fast-safe-stringify: ^2.0.8
-    flatstr: ^1.0.12
-    pino-std-serializers: ^3.1.0
+    on-exit-leak-free: ^0.2.0
+    pino-abstract-transport: v0.5.0
+    pino-std-serializers: ^4.0.0
     process-warning: ^1.0.0
     quick-format-unescaped: ^4.0.3
-    sonic-boom: ^1.0.2
+    real-require: ^0.1.0
+    safe-stable-stringify: ^2.1.0
+    sonic-boom: ^2.2.1
+    thread-stream: ^0.13.0
   bin:
     pino: bin.js
-  checksum: eb13e12e3a3d682abe4a4da426455a9f4e041e55e4fa57d72d9677ee8d188a9c952f69347e728a3761c8262cdce76ef24bee29e1a53ab15aa9c5e851099163d0
+  checksum: a748bda5b56e4bb357a986b9878d95e24e6dfb3ed6b741dd80a8f1101d0b7defc5131057cb2297ca76bd7cbcdb1bdc2d0986631e3899e12833cec08e690c83a8
   languageName: node
   linkType: hard
 
@@ -4920,6 +4901,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"real-require@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "real-require@npm:0.1.0"
+  checksum: 96745583ed4f82cd5c6a6af012fd1d3c6fc2f13ae1bcff1a3c4f8094696013a1a07c82c5aa66a403d7d4f84949fc2203bc927c7ad120caad125941ca2d7e5e8e
+  languageName: node
+  linkType: hard
+
 "rechoir@npm:^0.7.0":
   version: 0.7.1
   resolution: "rechoir@npm:0.7.1"
@@ -5031,6 +5019,13 @@ __metadata:
   version: 5.1.2
   resolution: "safe-buffer@npm:5.1.2"
   checksum: f2f1f7943ca44a594893a852894055cf619c1fbcb611237fc39e461ae751187e7baf4dc391a72125e0ac4fb2d8c5c0b3c71529622e6a58f46b960211e704903c
+  languageName: node
+  linkType: hard
+
+"safe-stable-stringify@npm:^2.1.0":
+  version: 2.3.1
+  resolution: "safe-stable-stringify@npm:2.3.1"
+  checksum: a0a0bad0294c3e2a9d1bf3cf2b1096dfb83c162d09a5e4891e488cce082120bd69161d2a92aae7fc48255290f17700decae9c89a07fe139794e61b5c8b411377
   languageName: node
   linkType: hard
 
@@ -5205,22 +5200,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sonic-boom@npm:^1.0.2":
-  version: 1.4.1
-  resolution: "sonic-boom@npm:1.4.1"
-  dependencies:
-    atomic-sleep: ^1.0.0
-    flatstr: ^1.0.12
-  checksum: 189fa8fe5c2dc05d3513fc1a4926a2f16f132fa6fa0b511745a436010cdcd9c1d3b3cb6a9d7c05bd32a965dc77673a5ac0eb0992e920bdedd16330d95323124f
-  languageName: node
-  linkType: hard
-
-"sonic-boom@npm:^2.1.0, sonic-boom@npm:^2.2.0":
+"sonic-boom@npm:^2.2.0":
   version: 2.3.1
   resolution: "sonic-boom@npm:2.3.1"
   dependencies:
     atomic-sleep: ^1.0.0
   checksum: 4f5022de97483bb6f889415e342f9a451dbdebbe732df454f7d6e417cc80e813c19e2d646ad5ae20a92510a34c311fb9fbc440864bb234b78b3a2100467d851b
+  languageName: node
+  linkType: hard
+
+"sonic-boom@npm:^2.2.1":
+  version: 2.6.0
+  resolution: "sonic-boom@npm:2.6.0"
+  dependencies:
+    atomic-sleep: ^1.0.0
+  checksum: 7d7e3de33cb2f7fc56349b0593a703a498c4501f0df57cababe70bbcc3b3f196b73a0a221e6571ed04c3431beb7a7bcb20124874effe603e7ca3238a448ca543
   languageName: node
   linkType: hard
 
@@ -5562,6 +5556,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"thread-stream@npm:^0.13.0":
+  version: 0.13.1
+  resolution: "thread-stream@npm:0.13.1"
+  dependencies:
+    real-require: ^0.1.0
+  checksum: d1f9ab2dda89efcfd59700505140306b36b9efdf32190c6250956a6be6ab6d636bae53e9d33048added09c16a213c83eef3774c415bc37424b0d48c1fb14b83a
+  languageName: node
+  linkType: hard
+
 "throat@npm:^6.0.1":
   version: 6.0.1
   resolution: "throat@npm:6.0.1"
@@ -5854,7 +5857,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5.64.2":
+"webpack@npm:^5.61.0, webpack@npm:^5.64.2":
   version: 5.69.1
   resolution: "webpack@npm:5.69.1"
   dependencies:
