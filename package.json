@@ -39,18 +39,18 @@
 		"pino-pretty": "^7.1.0"
 	},
 	"devDependencies": {
-		"@swc/core": "^1.2.111",
-		"@types/node": "^17.0.0",
+		"@swc/core": "^1.2.143",
+		"@types/node": "^17.0.19",
 		"@types/pino": "6",
-		"browserslist": "^4.18.1",
-		"core-js": "3",
-		"jest": "^27.2.5",
-		"pkg": "5.5.2",
+		"browserslist": "^4.19.3",
+		"core-js": "^3.21.1",
+		"jest": "^27.5.1",
+		"pkg": "^5.5.2",
 		"prettier": "^2.4.1",
 		"swc-loader": "^0.1.15",
 		"typescript": "^4.5.5",
-		"webpack": "^5.64.2",
-		"webpack-cli": "^4.9.1"
+		"webpack": "^5.69.1",
+		"webpack-cli": "^4.9.2"
 	},
 	"publishConfig": {
 		"access": "public"
