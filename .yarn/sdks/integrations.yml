@@ -2,4 +2,4 @@
 # Manual changes might be lost!
 
 integrations:
-  - vscode
+    - vscode
