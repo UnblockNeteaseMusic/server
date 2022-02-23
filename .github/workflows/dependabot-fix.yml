@@ -47,13 +47,6 @@ jobs:
                   node-version: 16.x
                   cache: yarn
 
-            - name: Restore cache
-              uses: actions/cache@v2
-              with:
-                  path: '.yarn/cache'
-                  key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-                  restore-keys: ${{ runner.os }}-yarn-
-
             - run: git checkout HEAD~1 'yarn.lock'
 
             - run: yarn install --mode=skip-build
