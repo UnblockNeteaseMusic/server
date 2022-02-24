@@ -42,7 +42,7 @@ jobs:
             # - run: git lfs pull --include .yarn/
 
             - name: Use Node.js 16
-              uses: actions/setup-node@v2
+              uses: actions/setup-node@v3.0.0
               with:
                   node-version: 16.x
                   cache: yarn
