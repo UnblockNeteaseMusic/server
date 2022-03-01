@@ -30,7 +30,7 @@ jobs:
             YARN_ENABLE_IMMUTABLE_INSTALLS: false
 
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v3
               with:
                   # Using a Personal Access Token here is required to trigger workflows on our new commit.
                   # The default GitHub token doesn't trigger any workflows.
