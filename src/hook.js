@@ -76,7 +76,6 @@ hook.target.path = new Set([
 	'/api/playlist/v4/detail',
 	'/api/v1/radio/get',
 	'/api/v1/discovery/recommend/songs',
-	'/api/v1/discovery/recommend/songs',
 	'/api/usertool/sound/mobile/promote',
 	'/api/usertool/sound/mobile/theme',
 	'/api/usertool/sound/mobile/animationList',
@@ -306,10 +305,10 @@ hook.request.after = (ctx) => {
 				const inject = (key, value) => {
 					if (typeof value === 'object' && value != null) {
 						if ('cp' in value) value['cp'] = 1;
-						if ('dl' in value && 'downloadMaxbr' in value)
+						if ('dl' in value && 'downloadMaxbr' in value && value['dl'] < value['downloadMaxbr'])
 							value['dl'] = value['downloadMaxbr'];
 						if ('fee' in value) value['fee'] = 0;
-						if ('pl' in value && 'playMaxbr' in value)
+						if ('pl' in value && 'playMaxbr' in value && value['pl'] < value['playMaxbr'])
 							value['pl'] = value['playMaxbr'];
 						if ('sp' in value && 'st' in value && 'subp' in value) {
 							// batch modify
