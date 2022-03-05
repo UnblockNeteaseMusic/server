@@ -4596,7 +4596,7 @@ function getPrettyStream (opts, prettifier, dest, instance) {
     return prettifierMetaWrapper(prettifier(opts), dest, opts)
   }
   try {
-    const prettyFactory = (__webpack_require__(8906).prettyFactory) || __webpack_require__(8906)
+    const prettyFactory = (__webpack_require__(1361).prettyFactory) || __webpack_require__(1361)
     prettyFactory.asMetaWrapper = prettifierMetaWrapper
     return prettifierMetaWrapper(prettyFactory(opts), dest, opts)
   } catch (e) {
@@ -13154,7 +13154,7 @@ exports.yellowBright = yellowBright;
 
 /***/ }),
 
-/***/ 8906:
+/***/ 1361:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -13167,8 +13167,8 @@ const abstractTransport = __webpack_require__(2306)
 const sonic = __webpack_require__(6755)
 const sjs = __webpack_require__(9316)
 
-const colors = __webpack_require__(8825)
-const { ERROR_LIKE_KEYS, MESSAGE_KEY, TIMESTAMP_KEY, LEVEL_KEY, LEVEL_NAMES } = __webpack_require__(2956)
+const colors = __webpack_require__(4067)
+const { ERROR_LIKE_KEYS, MESSAGE_KEY, TIMESTAMP_KEY, LEVEL_KEY, LEVEL_NAMES } = __webpack_require__(4762)
 const {
   isObject,
   prettifyErrorLog,
@@ -13178,7 +13178,7 @@ const {
   prettifyObject,
   prettifyTime,
   filterLog
-} = __webpack_require__(134)
+} = __webpack_require__(6213)
 
 const jsonParser = input => {
   try {
@@ -13412,13 +13412,13 @@ module.exports["default"] = build
 
 /***/ }),
 
-/***/ 8825:
+/***/ 4067:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-const { LEVELS, LEVEL_NAMES } = __webpack_require__(2956)
+const { LEVELS, LEVEL_NAMES } = __webpack_require__(4762)
 
 const nocolor = input => input
 const plain = {
@@ -13528,7 +13528,7 @@ module.exports = function getColorizer (useColors = false, customColors) {
 
 /***/ }),
 
-/***/ 2956:
+/***/ 4762:
 /***/ ((module) => {
 
 "use strict";
@@ -13581,7 +13581,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 134:
+/***/ 6213:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -13590,7 +13590,7 @@ module.exports = {
 const clone = __webpack_require__(3268)({ circles: true })
 const dateformat = __webpack_require__(924)
 const stringifySafe = __webpack_require__(2988)
-const defaultColorizer = __webpack_require__(8825)()
+const defaultColorizer = __webpack_require__(4067)()
 const {
   DATE_FORMAT,
   ERROR_LIKE_KEYS,
@@ -13600,7 +13600,7 @@ const {
   TIMESTAMP_KEY,
   LOGGER_KEYS,
   LEVELS
-} = __webpack_require__(2956)
+} = __webpack_require__(4762)
 
 module.exports = {
   isObject,
