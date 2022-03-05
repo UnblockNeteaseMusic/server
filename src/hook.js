@@ -305,10 +305,18 @@ hook.request.after = (ctx) => {
 				const inject = (key, value) => {
 					if (typeof value === 'object' && value != null) {
 						if ('cp' in value) value['cp'] = 1;
-						if ('dl' in value && 'downloadMaxbr' in value && value['dl'] < value['downloadMaxbr'])
+						if (
+							'dl' in value &&
+							'downloadMaxbr' in value &&
+							value['dl'] < value['downloadMaxbr']
+						)
 							value['dl'] = value['downloadMaxbr'];
 						if ('fee' in value) value['fee'] = 0;
-						if ('pl' in value && 'playMaxbr' in value && value['pl'] < value['playMaxbr'])
+						if (
+							'pl' in value &&
+							'playMaxbr' in value &&
+							value['pl'] < value['playMaxbr']
+						)
 							value['pl'] = value['playMaxbr'];
 						if ('sp' in value && 'st' in value && 'subp' in value) {
 							// batch modify
