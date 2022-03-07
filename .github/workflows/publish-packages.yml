@@ -23,7 +23,7 @@ jobs:
                   registry-url: 'https://registry.npmjs.org'
 
             - run: yarn
-            - run: yarn publish
+            - run: yarn npm publish
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -44,6 +44,6 @@ jobs:
                   registry-url: 'https://npm.pkg.github.com'
 
             - run: yarn
-            - run: yarn publish
+            - run: yarn npm publish
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
