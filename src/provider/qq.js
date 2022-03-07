@@ -10,10 +10,10 @@ const headers = {
 };
 
 const format = (song) => ({
-	id: { song: song.mid, file: song.file.media_mid },
-	name: song.name,
+	id: { song: song.songmid, file: song.media_mid },
+	name: song.songname,
 	duration: song.interval * 1000,
-	album: { id: song.album.mid, name: song.album.name },
+	album: { id: song.albummid, name: song.albumname },
 	artists: song.singer.map(({ mid, name }) => ({ id: mid, name })),
 });
 
