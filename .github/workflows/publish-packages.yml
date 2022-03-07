@@ -20,12 +20,13 @@ jobs:
             - uses: actions/setup-node@v3
               with:
                   node-version: '16.x'
-                  registry-url: 'https://registry.npmjs.org'
 
             - run: yarn
             - run: yarn npm publish
               env:
-                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+                NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+                NODE_PUBLISH_REGISTRY: 'https://registry.npmjs.org'
+
 
     publish-to-github:
         runs-on: ubuntu-latest
@@ -41,9 +42,9 @@ jobs:
             - uses: actions/setup-node@v3
               with:
                   node-version: '16.x'
-                  registry-url: 'https://npm.pkg.github.com'
 
             - run: yarn
             - run: yarn npm publish
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  NODE_PUBLISH_REGISTRY: 'https://npm.pkg.github.com'
