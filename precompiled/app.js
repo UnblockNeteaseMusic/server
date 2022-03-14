@@ -2384,7 +2384,7 @@ __webpack_require__(1800);
 __webpack_require__(8153);
 __webpack_require__(690);
 __webpack_require__(883);
-__webpack_require__(9706);
+__webpack_require__(6697);
 const find = __webpack_require__(131);
 const request = __webpack_require__(2004);
 const { PROVIDERS: providers , DEFAULT_SOURCE: defaultSrc ,  } = __webpack_require__(1616);
@@ -13793,15 +13793,6 @@ $({ target: 'Map', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
-/***/ 9706:
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
-
-// TODO: Remove from `core-js@4`
-__webpack_require__(6697);
-
-
-/***/ }),
-
 /***/ 6547:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -16083,7 +16074,7 @@ module.exports = JSON.parse('{"name":"pino","version":"6.14.0","description":"su
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"@unblockneteasemusic/server","version":"v0.27.0-rc.6","description":"Revive unavailable songs for Netease Cloud Music","main":"src/provider/match.js","bin":{"unblockneteasemusic":"./precompiled/app.js"},"engines":{"node":">= 12"},"scripts":{"build":"webpack","pkg":"pkg . --out-path=dist/","test":"jest"},"pkg":{"assets":["server.key","server.crt"],"targets":["node16-linux-arm64","node16-win-arm64","node16-linux-x64","node16-win-x64"],"outputPath":"dist"},"repository":{"type":"git","url":"https://github.com/UnblockNeteaseMusic/server.git"},"author":"nondanee, 1715173329, pan93412","license":"LGPL-3.0-only","dependencies":{"node-windows":"^1.0.0-beta.6","pino":"6.14.0","pino-pretty":"^7.5.3"},"devDependencies":{"@swc/core":"^1.2.150","@types/node":"^17.0.21","@types/pino":"6.3.12","browserslist":"^4.20.0","core-js":"^3.21.1","jest":"^27.5.1","pkg":"^5.5.2","prettier":"^2.5.1","swc-loader":"^0.1.15","typescript":"^4.6.2","webpack":"^5.70.0","webpack-cli":"^4.9.2"},"publishConfig":{"access":"public"},"packageManager":"yarn@3.1.1"}');
+module.exports = JSON.parse('{"name":"@unblockneteasemusic/server","version":"0.27.0-rc.6","description":"Revive unavailable songs for Netease Cloud Music","main":"src/provider/match.js","bin":{"unblockneteasemusic":"./precompiled/app.js"},"engines":{"node":">= 12"},"scripts":{"build":"webpack","pkg":"pkg . --out-path=dist/","test":"jest"},"pkg":{"assets":["server.key","server.crt"],"targets":["node16-linux-arm64","node16-win-arm64","node16-linux-x64","node16-win-x64"],"outputPath":"dist"},"repository":{"type":"git","url":"https://github.com/UnblockNeteaseMusic/server.git"},"author":"nondanee, 1715173329, pan93412","license":"LGPL-3.0-only","dependencies":{"node-windows":"^1.0.0-beta.6","pino":"6.14.0","pino-pretty":"^7.5.3"},"devDependencies":{"@swc/core":"^1.2.155","@types/node":"^17.0.21","@types/pino":"6.3.12","browserslist":"^4.20.0","core-js":"^3.21.1","jest":"^27.5.1","pkg":"^5.5.2","prettier":"^2.5.1","swc-loader":"^0.1.15","typescript":"^4.6.2","webpack":"^5.70.0","webpack-cli":"^4.9.2"},"publishConfig":{"access":"public"},"packageManager":"yarn@3.1.1"}');
 
 /***/ })
 
