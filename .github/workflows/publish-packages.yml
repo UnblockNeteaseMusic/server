@@ -24,9 +24,8 @@ jobs:
             - run: yarn
             - run: yarn npm publish
               env:
-                NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-                NODE_PUBLISH_REGISTRY: 'https://registry.npmjs.org'
-
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+                  NODE_PUBLISH_REGISTRY: 'https://registry.npmjs.org'
 
     publish-to-github:
         runs-on: ubuntu-latest
