@@ -34,7 +34,7 @@
 	"author": "nondanee, 1715173329, pan93412",
 	"license": "LGPL-3.0-only",
 	"dependencies": {
-		"node-windows": "^1.0.0-beta.6",
+		"node-windows": "^1.0.0-beta.7",
 		"pino": "6.14.0",
 		"pino-pretty": "^7.5.4"
 	},

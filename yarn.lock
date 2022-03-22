@@ -14,6 +14,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@author.io/arg@npm:1.3.22":
+  version: 1.3.22
+  resolution: "@author.io/arg@npm:1.3.22"
+  checksum: 21d7f7a6f4fed9b25f17ff8b882245a57fd21b2ea6e1fd4b5111f4e00d2b97a51141fc55771935aca5679776bfd9a67a8b56d82aacc52d6a17524a841095548f
+  languageName: node
+  linkType: hard
+
 "@babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.12.13, @babel/code-frame@npm:^7.16.7":
   version: 7.16.7
   resolution: "@babel/code-frame@npm:7.16.7"
@@ -1078,7 +1085,7 @@ __metadata:
     browserslist: ^4.20.2
     core-js: ^3.21.1
     jest: ^27.5.1
-    node-windows: ^1.0.0-beta.6
+    node-windows: ^1.0.0-beta.7
     pino: 6.14.0
     pino-pretty: ^7.5.4
     pkg: ^5.5.2
@@ -3906,13 +3913,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimist@npm:~0.0.1":
-  version: 0.0.10
-  resolution: "minimist@npm:0.0.10"
-  checksum: f7b2cb17af165d042bb3d2803f5e6c38d137f0c36a62230fdb643058c25b56749d2c335b17d4de0b0f08f19cb868cac40df207ff7a4c59fd0771e8762e9b783c
-  languageName: node
-  linkType: hard
-
 "minipass-collect@npm:^1.0.2":
   version: 1.0.2
   resolution: "minipass-collect@npm:1.0.2"
@@ -4115,13 +4115,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-windows@npm:^1.0.0-beta.6":
-  version: 1.0.0-beta.6
-  resolution: "node-windows@npm:1.0.0-beta.6"
+"node-windows@npm:^1.0.0-beta.7":
+  version: 1.0.0-beta.7
+  resolution: "node-windows@npm:1.0.0-beta.7"
   dependencies:
-    optimist: ~0.6.0
-    xml: 0.0.12
-  checksum: 21fd1db335712c14390c9f72fd254c3104cd0863e6a23ca39169645a1b9dbfebcc9bddadd1100fec65bc61c0731f34b9e2320abb7d060fff1d4fd57c6e84f327
+    "@author.io/arg": 1.3.22
+    xml: 1.0.1
+  checksum: ee0c4a813a3e0669319f373461771fd340fd04fcb941f48990117cc13cf231929e83e3fa77d0e82a9dd0a1da0b12ba293e661f441580de484ba2771b8a590b9a
   languageName: node
   linkType: hard
 
@@ -4219,16 +4219,6 @@ __metadata:
   dependencies:
     mimic-fn: ^2.1.0
   checksum: 2478859ef817fc5d4e9c2f9e5728512ddd1dbc9fb7829ad263765bb6d3b91ce699d6e2332eef6b7dff183c2f490bd3349f1666427eaba4469fba0ac38dfd0d34
-  languageName: node
-  linkType: hard
-
-"optimist@npm:~0.6.0":
-  version: 0.6.1
-  resolution: "optimist@npm:0.6.1"
-  dependencies:
-    minimist: ~0.0.1
-    wordwrap: ~0.0.2
-  checksum: 191ab2b119b2908a229065119349d9cbd295217a8777febd2812fc7b95c5f31f5f6ecb4fd0222351466cb33af8410299373229e78dd96713ed5348fcebfb96f4
   languageName: node
   linkType: hard
 
@@ -5710,13 +5700,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wordwrap@npm:~0.0.2":
-  version: 0.0.3
-  resolution: "wordwrap@npm:0.0.3"
-  checksum: dfc2d3512e857ae4b3bc2e8d4e5d2c285c28a4b87cd1d81c977ce9a1a99152d355807e046851a3d61148f39d877fbb889352e07b65a9cbdd2256aa928e159026
-  languageName: node
-  linkType: hard
-
 "wrap-ansi@npm:^7.0.0":
   version: 7.0.0
   resolution: "wrap-ansi@npm:7.0.0"
@@ -5769,10 +5752,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xml@npm:0.0.12":
-  version: 0.0.12
-  resolution: "xml@npm:0.0.12"
-  checksum: 84d396405ed532417b3f12a44081f183a29e4c4b1fc505ee14ed845cf755545b4744d24b8ae48b5c22b8f8e4428b1db74fb228d0a4644bea12d6145765dba5d6
+"xml@npm:1.0.1":
+  version: 1.0.1
+  resolution: "xml@npm:1.0.1"
+  checksum: 11b5545ef3f8fec3fa29ce251f50ad7b6c97c103ed4d851306ec23366f5fa4699dd6a942262df52313a0cd1840ab26256da253c023bad3309d8ce46fe6020ca0
   languageName: node
   linkType: hard
 
