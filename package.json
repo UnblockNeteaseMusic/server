@@ -39,7 +39,7 @@
 		"pino-pretty": "^7.5.4"
 	},
 	"devDependencies": {
-		"@swc/core": "^1.2.159",
+		"@swc/core": "^1.2.160",
 		"@types/node": "^17.0.22",
 		"@types/pino": "6.3.12",
 		"browserslist": "^4.20.2",
