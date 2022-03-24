@@ -1087,7 +1087,7 @@ __metadata:
     jest: ^27.5.1
     node-windows: ^1.0.0-beta.7
     pino: 6.14.0
-    pino-pretty: ^7.5.4
+    pino-pretty: ^7.6.0
     pkg: ^5.5.2
     prettier: ^2.6.0
     swc-loader: ^0.1.15
@@ -4355,9 +4355,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pino-pretty@npm:^7.5.4":
-  version: 7.5.4
-  resolution: "pino-pretty@npm:7.5.4"
+"pino-pretty@npm:^7.6.0":
+  version: 7.6.0
+  resolution: "pino-pretty@npm:7.6.0"
   dependencies:
     args: ^5.0.1
     colorette: ^2.0.7
@@ -4374,7 +4374,7 @@ __metadata:
     strip-json-comments: ^3.1.1
   bin:
     pino-pretty: bin.js
-  checksum: 73f1f0c751dfc77029826b252c11ad61cf4b3164bf9fb48297a772e5319ff8d8cdc9b9218e93e6e40418cbb80d7c74eb5d80c044b1aca46562fae33288fb416e
+  checksum: 4ad640b6b08570d8b4b92b2370f886a28231cada6ed330fe5ea34392a40ccd8cdaca80f9e093bd3ff570512fd15f5571fd20b8e3780f0956f83e9264ab84ad28
   languageName: node
   linkType: hard
 
