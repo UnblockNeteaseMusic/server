@@ -3577,6 +3577,66 @@ if (typeof Object.create === 'function') {
 
 /***/ }),
 
+/***/ 3538:
+/***/ ((module) => {
+
+"use strict";
+
+
+function genWrap (wraps, ref, fn, event) {
+  function wrap () {
+    const obj = ref.deref()
+    // This should alway happen, however GC is
+    // undeterministic so it might happen.
+    /* istanbul ignore else */
+    if (obj !== undefined) {
+      fn(obj, event)
+    }
+  }
+
+  wraps[event] = wrap
+  process.once(event, wrap)
+}
+
+const registry = new FinalizationRegistry(clear)
+const map = new WeakMap()
+
+function clear (wraps) {
+  process.removeListener('exit', wraps.exit)
+  process.removeListener('beforeExit', wraps.beforeExit)
+}
+
+function register (obj, fn) {
+  if (obj === undefined) {
+    throw new Error('the object can\'t be undefined')
+  }
+  const ref = new WeakRef(obj)
+
+  const wraps = {}
+  map.set(obj, wraps)
+  registry.register(obj, wraps)
+
+  genWrap(wraps, ref, fn, 'exit')
+  genWrap(wraps, ref, fn, 'beforeExit')
+}
+
+function unregister (obj) {
+  const wraps = map.get(obj)
+  map.delete(obj)
+  if (wraps) {
+    clear(wraps)
+  }
+  registry.unregister(obj)
+}
+
+module.exports = {
+  register,
+  unregister
+}
+
+
+/***/ }),
+
 /***/ 5962:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -4596,7 +4656,7 @@ function getPrettyStream (opts, prettifier, dest, instance) {
     return prettifierMetaWrapper(prettifier(opts), dest, opts)
   }
   try {
-    const prettyFactory = (__webpack_require__(1361).prettyFactory) || __webpack_require__(1361)
+    const prettyFactory = (__webpack_require__(1659).prettyFactory) || __webpack_require__(1659)
     prettyFactory.asMetaWrapper = prettifierMetaWrapper
     return prettifierMetaWrapper(prettyFactory(opts), dest, opts)
   } catch (e) {
@@ -12923,6 +12983,14 @@ module.exports = require("vm");
 
 /***/ }),
 
+/***/ 1267:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("worker_threads");
+
+/***/ }),
+
 /***/ 9796:
 /***/ ((module) => {
 
@@ -13154,7 +13222,7 @@ exports.yellowBright = yellowBright;
 
 /***/ }),
 
-/***/ 1361:
+/***/ 1659:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -13164,11 +13232,9 @@ const { isColorSupported } = __webpack_require__(799)
 const pump = __webpack_require__(2181)
 const { Transform } = __webpack_require__(8118)
 const abstractTransport = __webpack_require__(2306)
-const sonic = __webpack_require__(6755)
 const sjs = __webpack_require__(9316)
-
-const colors = __webpack_require__(4067)
-const { ERROR_LIKE_KEYS, MESSAGE_KEY, TIMESTAMP_KEY, LEVEL_KEY, LEVEL_NAMES } = __webpack_require__(4762)
+const colors = __webpack_require__(9305)
+const { ERROR_LIKE_KEYS, MESSAGE_KEY, TIMESTAMP_KEY, LEVEL_KEY, LEVEL_NAMES } = __webpack_require__(3694)
 const {
   isObject,
   prettifyErrorLog,
@@ -13177,8 +13243,9 @@ const {
   prettifyMetadata,
   prettifyObject,
   prettifyTime,
+  buildSafeSonicBoom,
   filterLog
-} = __webpack_require__(6213)
+} = __webpack_require__(359)
 
 const jsonParser = input => {
   try {
@@ -13195,6 +13262,7 @@ const defaultOptions = {
   errorProps: '',
   customLevels: null,
   customColors: null,
+  useOnlyCustomProps: true,
   levelFirst: false,
   messageKey: MESSAGE_KEY,
   messageFormat: false,
@@ -13219,6 +13287,7 @@ function prettyFactory (options) {
   const timestampKey = opts.timestampKey
   const errorLikeObjectKeys = opts.errorLikeObjectKeys
   const errorProps = opts.errorProps.split(',')
+  const useOnlyCustomProps = typeof opts.useOnlyCustomProps === 'boolean' ? opts.useOnlyCustomProps : opts.useOnlyCustomProps === 'true'
   const customLevels = opts.customLevels
     ? opts.customLevels
         .split(',')
@@ -13229,25 +13298,26 @@ function prettyFactory (options) {
 
           return agg
         }, { default: 'USERLVL' })
-    : undefined
+    : {}
   const customLevelNames = opts.customLevels
     ? opts.customLevels
         .split(',')
         .reduce((agg, value, idx) => {
           const [levelName, levelIdx = idx] = value.split(':')
 
-          agg[levelName] = levelIdx
+          agg[levelName.toLowerCase()] = levelIdx
 
           return agg
         }, {})
-    : undefined
+    : {}
   const customColors = opts.customColors
     ? opts.customColors
         .split(',')
         .reduce((agg, value) => {
           const [level, color] = value.split(':')
 
-          const levelNum = customLevelNames !== undefined ? customLevelNames[level] : LEVEL_NAMES[level]
+          const condition = useOnlyCustomProps ? opts.customLevels : customLevelNames[level] !== undefined
+          const levelNum = condition ? customLevelNames[level] : LEVEL_NAMES[level]
           const colorIdx = levelNum !== undefined ? levelNum : level
 
           agg.push([colorIdx, color])
@@ -13255,11 +13325,19 @@ function prettyFactory (options) {
           return agg
         }, [])
     : undefined
+  const customProps = {
+    customLevels,
+    customLevelNames
+  }
+  if (useOnlyCustomProps && !opts.customLevels) {
+    customProps.customLevels = undefined
+    customProps.customLevelNames = undefined
+  }
   const customPrettifiers = opts.customPrettifiers
   const ignoreKeys = opts.ignore ? new Set(opts.ignore.split(',')) : undefined
   const hideObject = opts.hideObject
   const singleLine = opts.singleLine
-  const colorizer = colors(opts.colorize, customColors)
+  const colorizer = colors(opts.colorize, customColors, useOnlyCustomProps)
 
   return pretty
 
@@ -13277,18 +13355,19 @@ function prettyFactory (options) {
     }
 
     if (minimumLevel) {
-      const minimum = (customLevelNames === undefined ? LEVEL_NAMES[minimumLevel] : customLevelNames[minimumLevel]) || Number(minimumLevel)
+      const condition = useOnlyCustomProps ? opts.customLevels : customLevelNames[minimumLevel] !== undefined
+      const minimum = (condition ? customLevelNames[minimumLevel] : LEVEL_NAMES[minimumLevel]) || Number(minimumLevel)
       const level = log[levelKey === undefined ? LEVEL_KEY : levelKey]
       if (level < minimum) return
     }
 
-    const prettifiedMessage = prettifyMessage({ log, messageKey, colorizer, messageFormat, levelLabel })
+    const prettifiedMessage = prettifyMessage({ log, messageKey, colorizer, messageFormat, levelLabel, ...customProps, useOnlyCustomProps })
 
     if (ignoreKeys) {
       log = filterLog(log, ignoreKeys)
     }
 
-    const prettifiedLevel = prettifyLevel({ log, colorizer, levelKey, prettifier: customPrettifiers.level, customLevels, customLevelNames })
+    const prettifiedLevel = prettifyLevel({ log, colorizer, levelKey, prettifier: customPrettifiers.level, ...customProps })
     const prettifiedMetadata = prettifyMetadata({ log, prettifiers: customPrettifiers })
     const prettifiedTime = prettifyTime({ log, translateFormat: opts.translateTime, timestampKey, prettifier: customPrettifiers.time })
 
@@ -13387,7 +13466,7 @@ function build (opts = {}) {
     if (typeof opts.destination === 'object' && typeof opts.destination.write === 'function') {
       destination = opts.destination
     } else {
-      destination = sonic({
+      destination = buildSafeSonicBoom({
         dest: opts.destination || 1,
         append: opts.append,
         mkdir: opts.mkdir,
@@ -13412,13 +13491,13 @@ module.exports["default"] = build
 
 /***/ }),
 
-/***/ 4067:
+/***/ 9305:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-const { LEVELS, LEVEL_NAMES } = __webpack_require__(4762)
+const { LEVELS, LEVEL_NAMES } = __webpack_require__(3694)
 
 const nocolor = input => input
 const plain = {
@@ -13460,39 +13539,51 @@ function resolveCustomColoredColorizer (customColors) {
   )
 }
 
-function colorizeLevel (level, colorizer, { customLevels, customLevelNames } = {}) {
-  const levels = customLevels || LEVELS
-  const levelNames = customLevelNames || LEVEL_NAMES
+function colorizeLevel (useOnlyCustomProps) {
+  return function (level, colorizer, { customLevels, customLevelNames } = {}) {
+    const levels = useOnlyCustomProps ? customLevels || LEVELS : Object.assign({}, LEVELS, customLevels)
+    const levelNames = useOnlyCustomProps ? customLevelNames || LEVEL_NAMES : Object.assign({}, LEVEL_NAMES, customLevelNames)
 
-  let levelNum = 'default'
-  if (Number.isInteger(+level)) {
-    levelNum = Object.prototype.hasOwnProperty.call(levels, level) ? level : levelNum
-  } else {
-    levelNum = Object.prototype.hasOwnProperty.call(levelNames, level.toLowerCase()) ? levelNames[level.toLowerCase()] : levelNum
+    let levelNum = 'default'
+    if (Number.isInteger(+level)) {
+      levelNum = Object.prototype.hasOwnProperty.call(levels, level) ? level : levelNum
+    } else {
+      levelNum = Object.prototype.hasOwnProperty.call(levelNames, level.toLowerCase()) ? levelNames[level.toLowerCase()] : levelNum
+    }
+
+    const levelStr = levels[levelNum]
+
+    return Object.prototype.hasOwnProperty.call(colorizer, levelNum) ? colorizer[levelNum](levelStr) : colorizer.default(levelStr)
   }
-
-  const levelStr = levels[levelNum]
-
-  return Object.prototype.hasOwnProperty.call(colorizer, levelNum) ? colorizer[levelNum](levelStr) : colorizer.default(levelStr)
 }
 
-function plainColorizer (level, opts) {
-  return colorizeLevel(level, plain, opts)
+function plainColorizer (useOnlyCustomProps) {
+  const newPlainColorizer = colorizeLevel(useOnlyCustomProps)
+  const customColoredColorizer = function (level, opts) {
+    return newPlainColorizer(level, plain, opts)
+  }
+  customColoredColorizer.message = plain.message
+  customColoredColorizer.greyMessage = plain.greyMessage
+  return customColoredColorizer
 }
-plainColorizer.message = plain.message
-plainColorizer.greyMessage = plain.greyMessage
 
-function coloredColorizer (level, opts) {
-  return colorizeLevel(level, colored, opts)
+function coloredColorizer (useOnlyCustomProps) {
+  const newColoredColorizer = colorizeLevel(useOnlyCustomProps)
+  const customColoredColorizer = function (level, opts) {
+    return newColoredColorizer(level, colored, opts)
+  }
+  customColoredColorizer.message = colored.message
+  customColoredColorizer.greyMessage = colored.greyMessage
+  return customColoredColorizer
 }
-coloredColorizer.message = colored.message
-coloredColorizer.greyMessage = colored.greyMessage
 
-function customColoredColorizerFactory (customColors) {
-  const customColored = resolveCustomColoredColorizer(customColors)
+function customColoredColorizerFactory (customColors, useOnlyCustomProps) {
+  const onlyCustomColored = resolveCustomColoredColorizer(customColors)
+  const customColored = useOnlyCustomProps ? onlyCustomColored : Object.assign({}, colored, onlyCustomColored)
+  const colorizeLevelCustom = colorizeLevel(useOnlyCustomProps)
 
   const customColoredColorizer = function (level, opts) {
-    return colorizeLevel(level, customColored, opts)
+    return colorizeLevelCustom(level, customColored, opts)
   }
   customColoredColorizer.message = customColoredColorizer.message || customColored.message
   customColoredColorizer.greyMessage = customColoredColorizer.greyMessage || customColored.greyMessage
@@ -13507,6 +13598,7 @@ function customColoredColorizerFactory (customColors) {
  * @param {boolean} [useColors=false] When `true` a function that applies standard
  * terminal colors is returned.
  * @param {array[]} [customColors] Touple where first item of each array is the level index and the second item is the color
+ * @param {boolean} [useOnlyCustomProps] When `true`, only use the provided custom colors provided and not fallback to default
  *
  * @returns {function} `function (level) {}` has a `.message(str)` method to
  * apply colorization to a string. The core function accepts either an integer
@@ -13515,20 +13607,20 @@ function customColoredColorizerFactory (customColors) {
  * colors as the integer `level` and will also default to `USERLVL` if the given
  * string is not a recognized level name.
  */
-module.exports = function getColorizer (useColors = false, customColors) {
+module.exports = function getColorizer (useColors = false, customColors, useOnlyCustomProps) {
   if (useColors && customColors !== undefined) {
-    return customColoredColorizerFactory(customColors)
+    return customColoredColorizerFactory(customColors, useOnlyCustomProps)
   } else if (useColors) {
-    return coloredColorizer
+    return coloredColorizer(useOnlyCustomProps)
   }
 
-  return plainColorizer
+  return plainColorizer(useOnlyCustomProps)
 }
 
 
 /***/ }),
 
-/***/ 4762:
+/***/ 3694:
 /***/ ((module) => {
 
 "use strict";
@@ -13581,7 +13673,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 6213:
+/***/ 359:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -13589,8 +13681,10 @@ module.exports = {
 
 const clone = __webpack_require__(3268)({ circles: true })
 const dateformat = __webpack_require__(924)
+const SonicBoom = __webpack_require__(6755)
 const stringifySafe = __webpack_require__(2988)
-const defaultColorizer = __webpack_require__(4067)()
+const { isMainThread } = __webpack_require__(1267)
+const defaultColorizer = __webpack_require__(9305)()
 const {
   DATE_FORMAT,
   ERROR_LIKE_KEYS,
@@ -13600,7 +13694,7 @@ const {
   TIMESTAMP_KEY,
   LOGGER_KEYS,
   LEVELS
-} = __webpack_require__(4762)
+} = __webpack_require__(3694)
 
 module.exports = {
   isObject,
@@ -13610,6 +13704,7 @@ module.exports = {
   prettifyMetadata,
   prettifyObject,
   prettifyTime,
+  buildSafeSonicBoom,
   filterLog
 }
 
@@ -13839,12 +13934,13 @@ function prettifyLevel ({ log, colorizer = defaultColorizer, levelKey = LEVEL_KE
  * key is not a string, then `undefined` will be returned. Otherwise, a string
  * that is the prettified message.
  */
-function prettifyMessage ({ log, messageFormat, messageKey = MESSAGE_KEY, colorizer = defaultColorizer, levelLabel = LEVEL_LABEL, levelKey = LEVEL_KEY, customLevels }) {
+function prettifyMessage ({ log, messageFormat, messageKey = MESSAGE_KEY, colorizer = defaultColorizer, levelLabel = LEVEL_LABEL, levelKey = LEVEL_KEY, customLevels, useOnlyCustomProps }) {
   if (messageFormat && typeof messageFormat === 'string') {
     const message = String(messageFormat).replace(/{([^{}]+)}/g, function (match, p1) {
       // return log level as string instead of int
       if (p1 === levelLabel && log[levelKey]) {
-        return customLevels === undefined ? LEVELS[log[levelKey]] : customLevels[log[levelKey]]
+        const condition = useOnlyCustomProps ? customLevels === undefined : customLevels[log[levelKey]] === undefined
+        return condition ? LEVELS[log[levelKey]] : customLevels[log[levelKey]]
       }
       // Parse nested key access, e.g. `{keyA.subKeyB}`.
       return p1.split('.').reduce(function (prev, curr) {
@@ -14166,6 +14262,70 @@ function filterLog (log, ignoreKeys) {
     deleteLogProperty(logCopy, ignoreKey)
   })
   return logCopy
+}
+
+function noop () {}
+
+/**
+ * Creates a safe SonicBoom instance
+ *
+ * @param {object} opts Options for SonicBoom
+ *
+ * @returns {object} A new SonicBoom stream
+ */
+function buildSafeSonicBoom (opts) {
+  const stream = new SonicBoom(opts)
+  stream.on('error', filterBrokenPipe)
+  // if we are sync: false, we must flush on exit
+  if (!opts.sync && isMainThread) {
+    setupOnExit(stream)
+  }
+  return stream
+
+  function filterBrokenPipe (err) {
+    if (err.code === 'EPIPE') {
+      stream.write = noop
+      stream.end = noop
+      stream.flushSync = noop
+      stream.destroy = noop
+      return
+    }
+    stream.removeListener('error', filterBrokenPipe)
+  }
+}
+
+function setupOnExit (stream) {
+  /* istanbul ignore next */
+  if (global.WeakRef && global.WeakMap && global.FinalizationRegistry) {
+    // This is leak free, it does not leave event handlers
+    const onExit = __webpack_require__(3538)
+
+    onExit.register(stream, autoEnd)
+
+    stream.on('close', function () {
+      onExit.unregister(stream)
+    })
+  }
+}
+
+/* istanbul ignore next */
+function autoEnd (stream, eventName) {
+  // This check is needed only on some platforms
+
+  if (stream.destroyed) {
+    return
+  }
+
+  if (eventName === 'beforeExit') {
+    // We still have an event loop, let's use it
+    stream.flush()
+    stream.on('drain', function () {
+      stream.end()
+    })
+  } else {
+    // We do not have an event loop, so flush synchronously
+    stream.flushSync()
+  }
 }
 
 
