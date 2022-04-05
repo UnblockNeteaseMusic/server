@@ -1088,7 +1088,7 @@ __metadata:
     node-windows: ^1.0.0-beta.7
     pino: 6.14.0
     pino-pretty: ^7.6.0
-    pkg: ^5.5.2
+    pkg: ^5.6.0
     prettier: ^2.6.1
     swc-loader: ^0.1.15
     typescript: ^4.6.3
@@ -4418,9 +4418,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pkg-fetch@npm:3.2.6":
-  version: 3.2.6
-  resolution: "pkg-fetch@npm:3.2.6"
+"pkg-fetch@npm:3.3.0":
+  version: 3.3.0
+  resolution: "pkg-fetch@npm:3.3.0"
   dependencies:
     chalk: ^4.1.2
     fs-extra: ^9.1.0
@@ -4432,13 +4432,13 @@ __metadata:
     yargs: ^16.2.0
   bin:
     pkg-fetch: lib-es5/bin.js
-  checksum: ca62a39fbcf7dd7f096f425e9e24e685d6831104fae034ce6ec8445402253443d74f3f70c5192631ccccd86d09edb4fae8a3ed2eb5c03a8d1d2be67c6229004f
+  checksum: d242f0fe2f8d95773f1110b6b1444d22c165e241f004da8d7c323b4d64639e9087158c033e89e5c3fc7523a3f9f1608f029e8c5092c361aa4921b01fb86895e6
   languageName: node
   linkType: hard
 
-"pkg@npm:^5.5.2":
-  version: 5.5.2
-  resolution: "pkg@npm:5.5.2"
+"pkg@npm:^5.6.0":
+  version: 5.6.0
+  resolution: "pkg@npm:5.6.0"
   dependencies:
     "@babel/parser": 7.16.2
     "@babel/types": 7.16.0
@@ -4449,7 +4449,7 @@ __metadata:
     into-stream: ^6.0.0
     minimist: ^1.2.5
     multistream: ^4.1.0
-    pkg-fetch: 3.2.6
+    pkg-fetch: 3.3.0
     prebuild-install: 6.1.4
     progress: ^2.0.3
     resolve: ^1.20.0
@@ -4462,7 +4462,7 @@ __metadata:
       optional: true
   bin:
     pkg: lib-es5/bin.js
-  checksum: 8f3309cef1080b45d7abaa3b95dd7cfb00ae6867bfb4a30e52c078b781482040f24a7e65e90618e5d33339d788ad3aeda4d89bffeee7042e2f868799ca6d182f
+  checksum: 4591e48656f6e71e4ef4b0037bda747df8742b3c08bc3b34263dbaa32d7e999773cd2858367f91938890e395b9f10d3af01a74d427966495657bfa5a8d7fdb54
   languageName: node
   linkType: hard
 
