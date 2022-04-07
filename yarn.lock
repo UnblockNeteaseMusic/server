@@ -1092,7 +1092,7 @@ __metadata:
     prettier: ^2.6.1
     swc-loader: ^0.1.15
     typescript: ^4.6.3
-    webpack: ^5.71.0
+    webpack: ^5.72.0
     webpack-cli: ^4.9.2
   bin:
     unblockneteasemusic: ./precompiled/app.js
@@ -5592,9 +5592,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5.71.0":
-  version: 5.71.0
-  resolution: "webpack@npm:5.71.0"
+"webpack@npm:^5.72.0":
+  version: 5.72.0
+  resolution: "webpack@npm:5.72.0"
   dependencies:
     "@types/eslint-scope": ^3.7.3
     "@types/estree": ^0.0.51
@@ -5625,7 +5625,7 @@ __metadata:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: 84b273a15180d45dafe4fc4a3ccccba2f72210f327a1af39713b3ef78148768afb0e18fa0cddaea4af5dd54ace199fbbdfcef9aec8da7e9c248f8b1b7cc413e1
+  checksum: 8365f1466d0f7adbf80ebc9b780f263a28eeeabcd5fb515249bfd9a56ab7fe8d29ea53df3d9364d0732ab39ae774445eb28abce694ed375b13882a6b2fe93ffc
   languageName: node
   linkType: hard
 
