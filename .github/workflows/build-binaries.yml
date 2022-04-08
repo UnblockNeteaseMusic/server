@@ -63,7 +63,7 @@ jobs:
                   echo "ASSET_NAME=$(ls dist)" >> $GITHUB_ENV
 
             - name: Publishing to GitHub Artifacts
-              uses: actions/upload-artifact@v2
+              uses: actions/upload-artifact@v3
               if: github.event_name != 'release'
               with:
                   name: ${{ env.ASSET_NAME }}
