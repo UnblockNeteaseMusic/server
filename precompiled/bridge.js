@@ -547,7 +547,7 @@ const arrayLs = [
     2,
     1
 ];
-const arrayLsMask = LongArray(0, 1048577, 3145731);
+const arrayLsMask = LongArray(0, 0x100001, 0x300003);
 const arrayMask = range(64).map((n)=>power(2, n)
 );
 arrayMask[arrayMask.length - 1] = arrayMask[arrayMask.length - 1].multiply(-1);
@@ -1106,7 +1106,7 @@ const DES64 = (longs, l)=>{
     let L = Long(0);
     let R = Long(0);
     let out = bitTransform(arrayIP, 64, l);
-    pSource[0] = out.and(4294967295);
+    pSource[0] = out.and(0xffffffff);
     pSource[1] = out.and(-4294967296).shiftRight(32);
     range(16).forEach((i)=>{
         let SOut = Long(0);
@@ -1125,7 +1125,7 @@ const DES64 = (longs, l)=>{
         pSource[1] = L.xor(R);
     });
     pSource.reverse();
-    out = pSource[1].shiftLeft(32).and(-4294967296).or(pSource[0].and(4294967295));
+    out = pSource[1].shiftLeft(32).and(-4294967296).or(pSource[0].and(0xffffffff));
     out = bitTransform(arrayIP_1, 64, out);
     return out;
 };
@@ -1589,9 +1589,9 @@ const { getManagedCacheStorage  } = __webpack_require__(1205);
 const headers = {
     origin: 'http://music.migu.cn/',
     referer: 'http://m.music.migu.cn/v3/',
-    // 'cookie': 'migu_music_sid=' + (process.env.MIGU_COOKIE || null)
+    // cookie: 'migu_music_sid=' + (process.env.MIGU_COOKIE || null),
     aversionid: process.env.MIGU_COOKIE || null,
-    channel: '0'
+    channel: '0146921'
 };
 const format = (song)=>{
     const singerId = song.singerId.split(/\s*,\s*/);
@@ -1624,20 +1624,19 @@ const single = (id, format1)=>{
     // const url =
     //	'https://music.migu.cn/v3/api/music/audioPlayer/getPlayInfo?' +
     //	'dataType=2&' + crypto.miguapi.encryptBody({copyrightId: id.toString(), type: format})
-    const randomInt = Math.random().toString().substr(2);
-    const url = 'https://app.c.nf.migu.cn/MIGUM2.0/strategy/listen-url/v2.2?lowerQualityContentId=' + randomInt + '&netType=01&resourceType=E&songId=' + id.toString() + '&toneFlag=' + format1;
+    const url = 'https://app.c.nf.migu.cn/MIGUM2.0/strategy/listen-url/v2.4?' + 'netType=01&resourceType=2&songId=' + id.toString() + '&toneFlag=' + format1;
     return request('GET', url, headers).then((response)=>response.json()
     ).then((jsonBody)=>{
         // const {playUrl} = jsonBody.data
         // return playUrl ? encodeURI('http:' + playUrl) : Promise.reject()
-        const { formatType  } = jsonBody.data;
-        if (formatType !== format1) return Promise.reject();
+        const { audioFormatType  } = jsonBody.data;
+        if (audioFormatType !== format1) return Promise.reject();
         else return url ? jsonBody.data.url : Promise.reject();
     });
 };
 const track = (id)=>Promise.all(// [3, 2, 1].slice(select.ENABLE_FLAC ? 0 : 1)
     [
-        'ZQ',
+        'ZQ24',
         'SQ',
         'HQ',
         'PQ'
@@ -1805,7 +1804,7 @@ module.exports = {
 module.exports = (list, info)=>{
     const { duration  } = info;
     const song1 = list.slice(0, 5) // 挑前5个结果
-    .find((song)=>song.duration && Math.abs(song.duration - duration) < 5 * 1000
+    .find((song)=>song.duration && Math.abs(song.duration - duration) < 5 * 1e3
     ); // 第一个时长相差5s (5000ms) 之内的结果
     if (song1) return song1;
     else return list[0]; // 没有就播放第一条
@@ -2297,8 +2296,8 @@ const logger = logScope('spawn');
     return new Promise((resolve, reject)=>{
         let stdoutOffset = 0;
         let stderrOffset = 0;
-        const stdout = Buffer.alloc(5 * 1000 * 1000);
-        const stderr = Buffer.alloc(5 * 1000 * 1000);
+        const stdout = Buffer.alloc(5 * 1e3 * 1e3);
+        const stderr = Buffer.alloc(5 * 1e3 * 1e3);
         const spawn = child_process.spawn(cmd, args);
         spawn.on('spawn', ()=>{
             // Users should acknowledge what command is executing.
@@ -4656,7 +4655,7 @@ function getPrettyStream (opts, prettifier, dest, instance) {
     return prettifierMetaWrapper(prettifier(opts), dest, opts)
   }
   try {
-    const prettyFactory = (__webpack_require__(1659).prettyFactory) || __webpack_require__(1659)
+    const prettyFactory = (__webpack_require__(1686).prettyFactory) || __webpack_require__(1686)
     prettyFactory.asMetaWrapper = prettifierMetaWrapper
     return prettifierMetaWrapper(prettyFactory(opts), dest, opts)
   } catch (e) {
@@ -13222,7 +13221,7 @@ exports.yellowBright = yellowBright;
 
 /***/ }),
 
-/***/ 1659:
+/***/ 1686:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -13233,8 +13232,8 @@ const pump = __webpack_require__(2181)
 const { Transform } = __webpack_require__(8118)
 const abstractTransport = __webpack_require__(2306)
 const sjs = __webpack_require__(9316)
-const colors = __webpack_require__(9305)
-const { ERROR_LIKE_KEYS, MESSAGE_KEY, TIMESTAMP_KEY, LEVEL_KEY, LEVEL_NAMES } = __webpack_require__(3694)
+const colors = __webpack_require__(8202)
+const { ERROR_LIKE_KEYS, MESSAGE_KEY, TIMESTAMP_KEY, LEVEL_KEY, LEVEL_NAMES } = __webpack_require__(484)
 const {
   isObject,
   prettifyErrorLog,
@@ -13245,7 +13244,7 @@ const {
   prettifyTime,
   buildSafeSonicBoom,
   filterLog
-} = __webpack_require__(359)
+} = __webpack_require__(6741)
 
 const jsonParser = input => {
   try {
@@ -13491,13 +13490,13 @@ module.exports["default"] = build
 
 /***/ }),
 
-/***/ 9305:
+/***/ 8202:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-const { LEVELS, LEVEL_NAMES } = __webpack_require__(3694)
+const { LEVELS, LEVEL_NAMES } = __webpack_require__(484)
 
 const nocolor = input => input
 const plain = {
@@ -13620,7 +13619,7 @@ module.exports = function getColorizer (useColors = false, customColors, useOnly
 
 /***/ }),
 
-/***/ 3694:
+/***/ 484:
 /***/ ((module) => {
 
 "use strict";
@@ -13673,7 +13672,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 359:
+/***/ 6741:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -13684,7 +13683,7 @@ const dateformat = __webpack_require__(924)
 const SonicBoom = __webpack_require__(6755)
 const stringifySafe = __webpack_require__(2988)
 const { isMainThread } = __webpack_require__(1267)
-const defaultColorizer = __webpack_require__(9305)()
+const defaultColorizer = __webpack_require__(8202)()
 const {
   DATE_FORMAT,
   ERROR_LIKE_KEYS,
@@ -13694,7 +13693,7 @@ const {
   TIMESTAMP_KEY,
   LOGGER_KEYS,
   LEVELS
-} = __webpack_require__(3694)
+} = __webpack_require__(484)
 
 module.exports = {
   isObject,
