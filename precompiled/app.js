@@ -1254,7 +1254,7 @@ const arrayLs = [
     2,
     1
 ];
-const arrayLsMask = LongArray(0, 1048577, 3145731);
+const arrayLsMask = LongArray(0, 0x100001, 0x300003);
 const arrayMask = range(64).map((n)=>power(2, n)
 );
 arrayMask[arrayMask.length - 1] = arrayMask[arrayMask.length - 1].multiply(-1);
@@ -1813,7 +1813,7 @@ const DES64 = (longs, l)=>{
     let L = Long(0);
     let R = Long(0);
     let out = bitTransform(arrayIP, 64, l);
-    pSource[0] = out.and(4294967295);
+    pSource[0] = out.and(0xffffffff);
     pSource[1] = out.and(-4294967296).shiftRight(32);
     range(16).forEach((i)=>{
         let SOut = Long(0);
@@ -1832,7 +1832,7 @@ const DES64 = (longs, l)=>{
         pSource[1] = L.xor(R);
     });
     pSource.reverse();
-    out = pSource[1].shiftLeft(32).and(-4294967296).or(pSource[0].and(4294967295));
+    out = pSource[1].shiftLeft(32).and(-4294967296).or(pSource[0].and(0xffffffff));
     out = bitTransform(arrayIP_1, 64, out);
     return out;
 };
@@ -2618,15 +2618,15 @@ function decode(buffer) {
     if (buffer.slice(0, 4).toString() === 'fLaC') return 999;
     if (buffer.slice(0, 3).toString() === 'ID3') {
         pointer = 6;
-        const size = buffer.slice(pointer, pointer + 4).reduce((summation, value, index)=>summation + (value & 127) << 7 * (3 - index)
+        const size = buffer.slice(pointer, pointer + 4).reduce((summation, value, index)=>summation + (value & 0x7f) << 7 * (3 - index)
         , 0);
         pointer = 10 + size;
     }
     const header = buffer.slice(pointer, pointer + 4);
     // https://www.allegro.cc/forums/thread/591512/674023
-    if (header.length === 4 && header[0] === 255 && (header[1] >> 5 & 7) === 7 && (header[1] >> 1 & 3) !== 0 && (header[2] >> 4 & 15) !== 15 && (header[2] >> 2 & 3) !== 3) {
-        const version = header[1] >> 3 & 3;
-        const layer = header[1] >> 1 & 3;
+    if (header.length === 4 && header[0] === 0xff && (header[1] >> 5 & 0x7) === 0x7 && (header[1] >> 1 & 0x3) !== 0 && (header[2] >> 4 & 0xf) !== 0xf && (header[2] >> 2 & 0x3) !== 0x3) {
+        const version = header[1] >> 3 & 0x3;
+        const layer = header[1] >> 1 & 0x3;
         const bitrate = header[2] >> 4;
         return map[version][layer][bitrate];
     }
@@ -2648,9 +2648,9 @@ const { getManagedCacheStorage  } = __webpack_require__(1205);
 const headers = {
     origin: 'http://music.migu.cn/',
     referer: 'http://m.music.migu.cn/v3/',
-    // 'cookie': 'migu_music_sid=' + (process.env.MIGU_COOKIE || null)
+    // cookie: 'migu_music_sid=' + (process.env.MIGU_COOKIE || null),
     aversionid: process.env.MIGU_COOKIE || null,
-    channel: '0'
+    channel: '0146921'
 };
 const format = (song)=>{
     const singerId = song.singerId.split(/\s*,\s*/);
@@ -2683,20 +2683,19 @@ const single = (id, format1)=>{
     // const url =
     //	'https://music.migu.cn/v3/api/music/audioPlayer/getPlayInfo?' +
     //	'dataType=2&' + crypto.miguapi.encryptBody({copyrightId: id.toString(), type: format})
-    const randomInt = Math.random().toString().substr(2);
-    const url = 'https://app.c.nf.migu.cn/MIGUM2.0/strategy/listen-url/v2.2?lowerQualityContentId=' + randomInt + '&netType=01&resourceType=E&songId=' + id.toString() + '&toneFlag=' + format1;
+    const url = 'https://app.c.nf.migu.cn/MIGUM2.0/strategy/listen-url/v2.4?' + 'netType=01&resourceType=2&songId=' + id.toString() + '&toneFlag=' + format1;
     return request('GET', url, headers).then((response)=>response.json()
     ).then((jsonBody)=>{
         // const {playUrl} = jsonBody.data
         // return playUrl ? encodeURI('http:' + playUrl) : Promise.reject()
-        const { formatType  } = jsonBody.data;
-        if (formatType !== format1) return Promise.reject();
+        const { audioFormatType  } = jsonBody.data;
+        if (audioFormatType !== format1) return Promise.reject();
         else return url ? jsonBody.data.url : Promise.reject();
     });
 };
 const track = (id)=>Promise.all(// [3, 2, 1].slice(select.ENABLE_FLAC ? 0 : 1)
     [
-        'ZQ',
+        'ZQ24',
         'SQ',
         'HQ',
         'PQ'
@@ -2864,7 +2863,7 @@ module.exports = {
 module.exports = (list, info)=>{
     const { duration  } = info;
     const song1 = list.slice(0, 5) // 挑前5个结果
-    .find((song)=>song.duration && Math.abs(song.duration - duration) < 5 * 1000
+    .find((song)=>song.duration && Math.abs(song.duration - duration) < 5 * 1e3
     ); // 第一个时长相差5s (5000ms) 之内的结果
     if (song1) return song1;
     else return list[0]; // 没有就播放第一条
@@ -3623,8 +3622,8 @@ const logger = logScope('spawn');
     return new Promise((resolve, reject)=>{
         let stdoutOffset = 0;
         let stderrOffset = 0;
-        const stdout = Buffer.alloc(5 * 1000 * 1000);
-        const stderr = Buffer.alloc(5 * 1000 * 1000);
+        const stdout = Buffer.alloc(5 * 1e3 * 1e3);
+        const stderr = Buffer.alloc(5 * 1e3 * 1e3);
         const spawn = child_process.spawn(cmd, args);
         spawn.on('spawn', ()=>{
             // Users should acknowledge what command is executing.
@@ -6015,7 +6014,7 @@ function getPrettyStream (opts, prettifier, dest, instance) {
     return prettifierMetaWrapper(prettifier(opts), dest, opts)
   }
   try {
-    const prettyFactory = (__webpack_require__(1659).prettyFactory) || __webpack_require__(1659)
+    const prettyFactory = (__webpack_require__(1686).prettyFactory) || __webpack_require__(1686)
     prettyFactory.asMetaWrapper = prettifierMetaWrapper
     return prettifierMetaWrapper(prettyFactory(opts), dest, opts)
   } catch (e) {
@@ -14693,7 +14692,7 @@ exports.yellowBright = yellowBright;
 
 /***/ }),
 
-/***/ 1659:
+/***/ 1686:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -14704,8 +14703,8 @@ const pump = __webpack_require__(2181)
 const { Transform } = __webpack_require__(8118)
 const abstractTransport = __webpack_require__(2306)
 const sjs = __webpack_require__(9316)
-const colors = __webpack_require__(9305)
-const { ERROR_LIKE_KEYS, MESSAGE_KEY, TIMESTAMP_KEY, LEVEL_KEY, LEVEL_NAMES } = __webpack_require__(3694)
+const colors = __webpack_require__(8202)
+const { ERROR_LIKE_KEYS, MESSAGE_KEY, TIMESTAMP_KEY, LEVEL_KEY, LEVEL_NAMES } = __webpack_require__(484)
 const {
   isObject,
   prettifyErrorLog,
@@ -14716,7 +14715,7 @@ const {
   prettifyTime,
   buildSafeSonicBoom,
   filterLog
-} = __webpack_require__(359)
+} = __webpack_require__(6741)
 
 const jsonParser = input => {
   try {
@@ -14962,13 +14961,13 @@ module.exports["default"] = build
 
 /***/ }),
 
-/***/ 9305:
+/***/ 8202:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-const { LEVELS, LEVEL_NAMES } = __webpack_require__(3694)
+const { LEVELS, LEVEL_NAMES } = __webpack_require__(484)
 
 const nocolor = input => input
 const plain = {
@@ -15091,7 +15090,7 @@ module.exports = function getColorizer (useColors = false, customColors, useOnly
 
 /***/ }),
 
-/***/ 3694:
+/***/ 484:
 /***/ ((module) => {
 
 "use strict";
@@ -15144,7 +15143,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 359:
+/***/ 6741:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -15155,7 +15154,7 @@ const dateformat = __webpack_require__(924)
 const SonicBoom = __webpack_require__(6755)
 const stringifySafe = __webpack_require__(2988)
 const { isMainThread } = __webpack_require__(1267)
-const defaultColorizer = __webpack_require__(9305)()
+const defaultColorizer = __webpack_require__(8202)()
 const {
   DATE_FORMAT,
   ERROR_LIKE_KEYS,
@@ -15165,7 +15164,7 @@ const {
   TIMESTAMP_KEY,
   LOGGER_KEYS,
   LEVELS
-} = __webpack_require__(3694)
+} = __webpack_require__(484)
 
 module.exports = {
   isObject,
@@ -16234,7 +16233,7 @@ module.exports = JSON.parse('{"name":"pino","version":"6.14.0","description":"su
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"@unblockneteasemusic/server","version":"0.27.0-rc.6","description":"Revive unavailable songs for Netease Cloud Music","main":"src/provider/match.js","bin":{"unblockneteasemusic":"./precompiled/app.js"},"engines":{"node":">= 12"},"scripts":{"build":"webpack","pkg":"pkg . --out-path=dist/","test":"jest"},"pkg":{"assets":["server.key","server.crt"],"targets":["node16-linux-arm64","node16-win-arm64","node16-linux-x64","node16-win-x64"],"outputPath":"dist"},"repository":{"type":"git","url":"https://github.com/UnblockNeteaseMusic/server.git"},"author":"nondanee, 1715173329, pan93412","license":"LGPL-3.0-only","dependencies":{"node-windows":"^1.0.0-beta.7","pino":"6.14.0","pino-pretty":"^7.6.0"},"devDependencies":{"@swc/core":"^1.2.160","@types/node":"^17.0.23","@types/pino":"6.3.12","browserslist":"^4.20.2","core-js":"^3.21.1","jest":"^27.5.1","pkg":"^5.5.2","prettier":"^2.6.1","swc-loader":"^0.1.15","typescript":"^4.6.3","webpack":"^5.70.0","webpack-cli":"^4.9.2"},"resolutions":{"minimist":"^1.2.6"},"publishConfig":{"access":"public"},"packageManager":"yarn@3.1.1"}');
+module.exports = JSON.parse('{"name":"@unblockneteasemusic/server","version":"0.27.0-rc.6","description":"Revive unavailable songs for Netease Cloud Music","main":"src/provider/match.js","bin":{"unblockneteasemusic":"./precompiled/app.js"},"engines":{"node":">= 12"},"scripts":{"build":"webpack","pkg":"pkg . --out-path=dist/","test":"jest"},"pkg":{"assets":["server.key","server.crt"],"targets":["node16-linux-arm64","node16-win-arm64","node16-linux-x64","node16-win-x64"],"outputPath":"dist"},"repository":{"type":"git","url":"https://github.com/UnblockNeteaseMusic/server.git"},"author":"nondanee, 1715173329, pan93412","license":"LGPL-3.0-only","dependencies":{"node-windows":"^1.0.0-beta.7","pino":"6.14.0","pino-pretty":"^7.6.1"},"devDependencies":{"@swc/core":"^1.2.164","@types/node":"^17.0.23","@types/pino":"6.3.12","browserslist":"^4.20.2","core-js":"^3.21.1","jest":"^27.5.1","pkg":"^5.6.0","prettier":"^2.6.2","swc-loader":"^0.1.15","typescript":"^4.6.3","webpack":"^5.72.0","webpack-cli":"^4.9.2"},"resolutions":{"minimist":"^1.2.6"},"publishConfig":{"access":"public"},"packageManager":"yarn@3.1.1"}');
 
 /***/ })
 
