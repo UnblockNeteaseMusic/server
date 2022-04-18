@@ -2324,14 +2324,12 @@ const search = (info)=>{
     // })
     const keyword = encodeURIComponent(info.keyword.replace(' - ', ''));
     const url = `http://www.kuwo.cn/api/www/search/searchMusicBykeyWord?key=${keyword}&pn=1&rn=30`;
-    return request('GET', `http://kuwo.cn/search/list?key=${keyword}`).then((response)=>response.headers['set-cookie'].find((line)=>line.includes('kw_token')
-        ).replace(/;.*/, '').split('=').pop()
-    ).then((token)=>request('GET', url, {
-            referer: `http://www.kuwo.cn/search/list?key=${keyword}`,
-            csrf: token,
-            cookie: `kw_token=${token}`
-        })
-    ).then((response)=>response.json()
+    const token = Math.random().toString(16).slice(-11).toUpperCase();
+    return request('GET', url, {
+        referer: `http://www.kuwo.cn/search/list?key=${keyword}`,
+        csrf: token,
+        cookie: `kw_token=${token}`
+    }).then((response)=>response.json()
     ).then((jsonBody)=>{
         if (jsonBody && typeof jsonBody === 'object' && 'code' in jsonBody && jsonBody.code !== 200) return Promise.reject();
         const list = jsonBody.data.list.map(format);
@@ -2645,65 +2643,47 @@ const insure = __webpack_require__(6908);
 const select = __webpack_require__(5130);
 const request = __webpack_require__(2004);
 const { getManagedCacheStorage  } = __webpack_require__(1205);
-const headers = {
-    origin: 'http://music.migu.cn/',
-    referer: 'http://m.music.migu.cn/v3/',
-    // cookie: 'migu_music_sid=' + (process.env.MIGU_COOKIE || null),
-    aversionid: process.env.MIGU_COOKIE || null,
-    channel: '0146921'
-};
 const format = (song)=>{
-    const singerId = song.singerId.split(/\s*,\s*/);
-    const singerName = song.singerName.split(/\s*,\s*/);
     return {
-        // id: song.copyrightId,
         id: song.id,
-        name: song.title,
-        album: {
-            id: song.albumId,
-            name: song.albumName
-        },
-        artists: singerId.map((id, index)=>({
-                id,
-                name: singerName[index]
+        name: song.name,
+        album: song.albums && song.albums[0],
+        artists: song.singers,
+        resources: song.newRateFormats.map((detail)=>({
+                formatType: detail.formatType,
+                url: encodeURI(detail.url || detail.androidUrl)
             })
         )
     };
 };
 const search = (info)=>{
-    const url = 'https://m.music.migu.cn/migu/remoting/scr_search_tag?' + 'keyword=' + encodeURIComponent(info.keyword) + '&type=2&rows=20&pgc=1';
-    return request('GET', url, headers).then((response)=>response.json()
+    const url = 'https://pd.musicapp.migu.cn/MIGUM3.0/v1.0/content/search_all.do?' + '&ua=Android_migu&version=5.0.1&pageNo=1&pageSize=10&text=' + encodeURIComponent(info.keyword) + '&searchSwitch=' + '{"song":1,"album":0,"singer":0,"tagSong":0,"mvSong":0,"songlist":0,"bestShow":1}';
+    return request('GET', url).then((response)=>response.json()
     ).then((jsonBody)=>{
-        const list = ((jsonBody || {}).musics || []).map(format);
+        const list = ((jsonBody || {}).songResultData.result || []).map(format);
         const matched = select(list, info);
-        return matched ? matched.id : Promise.reject();
+        return matched ? matched.resources : Promise.reject();
     });
 };
-const single = (id, format1)=>{
-    // const url =
-    //	'https://music.migu.cn/v3/api/music/audioPlayer/getPlayInfo?' +
-    //	'dataType=2&' + crypto.miguapi.encryptBody({copyrightId: id.toString(), type: format})
-    const url = 'https://app.c.nf.migu.cn/MIGUM2.0/strategy/listen-url/v2.4?' + 'netType=01&resourceType=2&songId=' + id.toString() + '&toneFlag=' + format1;
-    return request('GET', url, headers).then((response)=>response.json()
-    ).then((jsonBody)=>{
-        // const {playUrl} = jsonBody.data
-        // return playUrl ? encodeURI('http:' + playUrl) : Promise.reject()
-        const { audioFormatType  } = jsonBody.data;
-        if (audioFormatType !== format1) return Promise.reject();
-        else return url ? jsonBody.data.url : Promise.reject();
-    });
+const single = (resources, format1)=>{
+    const song1 = resources.find((song)=>song.url && song.formatType === format1
+    );
+    if (song1) {
+        const playUrl = new URL(song1.url);
+        playUrl.protocol = 'http';
+        playUrl.hostname = 'freetyst.nf.migu.cn';
+        return playUrl.href;
+    } else return false;
 };
-const track = (id)=>Promise.all(// [3, 2, 1].slice(select.ENABLE_FLAC ? 0 : 1)
-    [
-        'ZQ24',
+const track = (resources)=>Promise.all([
+        'ZQ',
         'SQ',
         'HQ',
         'PQ'
-    ].slice(select.ENABLE_FLAC ? 0 : 2).map((format2)=>single(id, format2).catch(()=>null
-        )
+    ].slice(select.ENABLE_FLAC ? 0 : 2).map((format2)=>single(resources, format2)
     )).then((result)=>result.find((url)=>url
         ) || Promise.reject()
-    ).catch(()=>insure().migu.track(id)
+    ).catch(()=>insure().migu.track(resources)
     )
 ;
 const cs = getManagedCacheStorage('provider/migu');
@@ -16233,7 +16213,7 @@ module.exports = JSON.parse('{"name":"pino","version":"6.14.0","description":"su
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"@unblockneteasemusic/server","version":"0.27.0-rc.6","description":"Revive unavailable songs for Netease Cloud Music","main":"src/provider/match.js","bin":{"unblockneteasemusic":"./precompiled/app.js"},"engines":{"node":">= 12"},"scripts":{"build":"webpack","pkg":"pkg . --out-path=dist/","test":"jest"},"pkg":{"assets":["server.key","server.crt"],"targets":["node16-linux-arm64","node16-win-arm64","node16-linux-x64","node16-win-x64"],"outputPath":"dist"},"repository":{"type":"git","url":"https://github.com/UnblockNeteaseMusic/server.git"},"author":"nondanee, 1715173329, pan93412","license":"LGPL-3.0-only","dependencies":{"node-windows":"^1.0.0-beta.7","pino":"6.14.0","pino-pretty":"^7.6.1"},"devDependencies":{"@swc/core":"^1.2.164","@types/node":"^17.0.23","@types/pino":"6.3.12","browserslist":"^4.20.2","core-js":"^3.21.1","jest":"^27.5.1","pkg":"^5.6.0","prettier":"^2.6.2","swc-loader":"^0.1.15","typescript":"^4.6.3","webpack":"^5.72.0","webpack-cli":"^4.9.2"},"resolutions":{"minimist":"^1.2.6"},"publishConfig":{"access":"public"},"packageManager":"yarn@3.1.1"}');
+module.exports = JSON.parse('{"name":"@unblockneteasemusic/server","version":"0.27.0-rc.6","description":"Revive unavailable songs for Netease Cloud Music","main":"src/provider/match.js","bin":{"unblockneteasemusic":"./precompiled/app.js"},"engines":{"node":">= 12"},"scripts":{"build":"webpack","pkg":"pkg . --out-path=dist/","test":"jest"},"pkg":{"assets":["server.key","server.crt"],"targets":["node16-linux-arm64","node16-win-arm64","node16-linux-x64","node16-win-x64"],"outputPath":"dist"},"repository":{"type":"git","url":"https://github.com/UnblockNeteaseMusic/server.git"},"author":"nondanee, 1715173329, pan93412","license":"LGPL-3.0-only","dependencies":{"node-windows":"^1.0.0-beta.7","pino":"6.14.0","pino-pretty":"^7.6.1"},"devDependencies":{"@swc/core":"^1.2.165","@types/node":"^17.0.23","@types/pino":"6.3.12","browserslist":"^4.20.2","core-js":"^3.21.1","jest":"^27.5.1","pkg":"^5.6.0","prettier":"^2.6.2","swc-loader":"^0.1.15","typescript":"^4.6.3","webpack":"^5.72.0","webpack-cli":"^4.9.2"},"resolutions":{"minimist":"^1.2.6"},"publishConfig":{"access":"public"},"packageManager":"yarn@3.1.1"}');
 
 /***/ })
 
