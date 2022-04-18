@@ -168,12 +168,12 @@ node app.js -o bilibili ytdlp
 | 酷我音乐                    | `kuwo`       | ✅       |                                                                                |
 | 咪咕音乐                    | `migu`       | ✅       |                                                                                |
 | JOOX                        | `joox`       |          | 需要准备自己的 `JOOX_COOKIE`（请参阅下方〈环境变量〉处）。似乎有严格地区限制。 |
-| YouTube（纯 JS 解析方式）   | `youtube`    |          | **似乎不能使用**。                                                             |
+| YouTube（纯 JS 解析方式）   | `youtube`    |          | 需要 Google 认定的**非中国大陆区域** IP 地址。                                 |
 | yt-download                 | `ytdownload` |          | **似乎不能使用**。                                                             |
 | YouTube（通过 `youtube-dl`) | `youtubedl`  |          | 需要自行安装 `youtube-dl`。                                                    |
 | YouTube（通过 `yt-dlp`)     | `ytdlp`      | ✅       | 需要自行安装 `yt-dlp`（`youtube-dl` 仍在活跃维护的 fork）。                    |
 | B 站音乐                    | `bilibili`   | ✅       |                                                                                |
-| 第三方网易云 API            | `pyncmd`     |          | 有地区限制。                                                                   |
+| 第三方网易云 API            | `pyncmd`     |          |                                                                                |
 
 ### 环境变量
 
