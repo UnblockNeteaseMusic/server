@@ -1083,7 +1083,7 @@ __metadata:
     "@types/node": ^17.0.25
     "@types/pino": 6.3.12
     browserslist: ^4.20.2
-    core-js: ^3.22.0
+    core-js: ^3.22.2
     jest: ^27.5.1
     node-windows: ^1.0.0-beta.7
     pino: 6.14.0
@@ -1984,10 +1984,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:^3.22.0":
-  version: 3.22.0
-  resolution: "core-js@npm:3.22.0"
-  checksum: 88ac28dfb8e7fdcd80d32a69dc634900e3daf3bc873ebefb6f189b598ce96e9b68fe553428627e5c43f27749779389faceb865a2a120cf2d44f05795830b5cd7
+"core-js@npm:^3.22.2":
+  version: 3.22.2
+  resolution: "core-js@npm:3.22.2"
+  checksum: 23efd6148d2f564852f23de426401c86f1d8af410eacccf22ae5dd82b1e9de558f05692cacd4b7e709d47993c670d7bca6f601d0b2ab32cf397a113fc5b7d80c
   languageName: node
   linkType: hard
 
