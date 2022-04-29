@@ -175,6 +175,11 @@ node app.js -o bilibili ytdlp
 | B 站音乐                    | `bilibili`   | ✅       |                                                                                |
 | 第三方网易云 API            | `pyncmd`     |          |                                                                                |
 
+
+### 指定音源
+使用音源文件music.json解决音源匹配错误问题
+
+
 ### 环境变量
 
 | 变量名称         | 类型 | 描述                                                                                              | 示例                                                             |
