@@ -60,8 +60,8 @@ async function match(id, source, data) {
 	if(matchedSongData) {
 		return matchedSongData;
 	}
-
-	const candidate = (source || [tryGetSelectSource(id)] || global.source || defaultSrc).filter(
+	
+	const candidate = (source || tryGetSelectSource(id) || global.source || defaultSrc).filter(
 		(name) => name in providers
 	);
 

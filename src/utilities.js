@@ -37,7 +37,7 @@ const tryGetSelectSource = (songId) => {
 	if(source) {
 		logger.info(`${songId} selected source (${source})`);
 	}
-	return source;
+	return source ? [source] : null;
 }
 
 const isHost = (url, host) => {
