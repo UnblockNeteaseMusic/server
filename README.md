@@ -177,7 +177,7 @@ node app.js -o bilibili ytdlp
 
 
 ### 指定音源
-使用音源文件music.json解决音源匹配错误问题
+使用音源文件musicExample.json解决音源匹配错误问题，或使用环境变量MUSIC_FILE
 
 
 ### 环境变量
@@ -198,6 +198,7 @@ node app.js -o bilibili ytdlp
 | YOUTUBE_KEY      | str  | Youtube 音源的 Data API v3 Key                                                                    | `YOUTUBE_KEY="<your_data_api_key>"`                              |
 | SIGN_CERT        | path | 自定义证书文件                                                                                    | `SIGN_CERT="./server.crt"`                                       |
 | SIGN_KEY         | path | 自定义密钥文件                                                                                    | `SIGN_KEY="./server.key"`                                        |
+| MUSIC_FILE         | path | 自定义歌曲源配置文件                                                                                    | `MUSIC_FILE="musicExample.json"`                                        |
 
 #### 日志等级 (`LOG_LEVEL`)
 
