@@ -3,6 +3,7 @@ const {
 	CacheStorageGroup,
 	getManagedCacheStorage,
 } = require('../cache');
+const { tryGetMatchedData } = require('../utilities');
 const insure = require('./insure');
 const select = require('./select');
 const request = require('../request');
@@ -17,6 +18,12 @@ const format = (song) => {
 };
 
 const search = (info) => {
+	let songId = info.id;
+	let matchedSongData = tryGetMatchedData('bilibili', songId);
+	if(matchedSongData) {
+		return matchedSongData.id;
+	}
+
 	const url =
 		'https://api.bilibili.com/audio/music-service-c/s?' +
 		'search_type=music&page=1&pagesize=30&' +

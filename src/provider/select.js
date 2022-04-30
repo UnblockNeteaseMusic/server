@@ -4,7 +4,7 @@ module.exports = (list, info) => {
 	let song = sliceList
 		.find(
 			(s) =>
-				s.album?.name && s.album.name == album.name
+				s.album?.name == album.name
 		); // 第一个专辑名称一样的
 	if (song) return song;
 	song = sliceList

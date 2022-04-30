@@ -12,8 +12,8 @@
 				"<node_internals>/**"
 			],
 			"program": "${workspaceFolder}\\src\\app.js",
-			"args": ["-o", "kugou", "kuwo", "-e", "https://music.163.com"],
-			"env": { "LOG_LEVEL": "debug", "ENABLE_FLAC": "false" }
+			"args": ["-o", "kuwo", "kugou", "bilibili", "-e", "https://music.163.com"],
+			"env": { "LOG_LEVEL": "debug", "ENABLE_FLAC": "false", "NO_CACHE": "true", "MUSIC_FILE" : "musicExample.json"}
 		}
 	]
 }

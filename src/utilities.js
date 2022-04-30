@@ -7,16 +7,38 @@
  */
 const fs = require('fs');
 const path = require('path');
+const { logScope } = require('./logger');
+const logger = logScope('utilities');
 
-var filePath = path.join(__dirname, '.', 'music.json');
-var musicDataRaw = '{}';
-try {
-	musicDataRaw = fs.readFileSync(filePath);
-} catch (error) {
-	
+const getConfigData = () => {
+	try {
+		const fileName = process.env.MUSIC_FILE || 'musicExample.json';
+		const filePath = path.join(__dirname, '.', fileName);
+		let musicDataRaw = fs.readFileSync(filePath);
+		return JSON.parse(musicDataRaw);
+	} catch (error) {
+		logger.error("音源文件加载失败", error.message)
+	}
+	return null;
+} 
+
+const musicConfigData = getConfigData() || {};
+
+const tryGetMatchedData = (source, songId) => {
+	let matchedSongData = musicConfigData?.[source]?.[songId];
+	if(matchedSongData) {
+		logger.info(matchedSongData, `${songId} Has the matched source (${source})`);
+	}
+	return matchedSongData;
 }
 
-const musicMatchData = JSON.parse(musicDataRaw);
+const tryGetSelectSource = (songId) => {
+	let source = musicConfigData.source?.[songId];
+	if(source) {
+		logger.info(`${songId} selected source (${source})`);
+	}
+	return source;
+}
 
 const isHost = (url, host) => {
 	// FIXME: Due to #118, we can only check the url
@@ -37,5 +59,6 @@ const isHostWrapper = (url) => (host) => isHost(url, host);
 module.exports = {
 	isHost,
 	isHostWrapper,
-	musicMatchData
+	tryGetSelectSource,
+	tryGetMatchedData
 };

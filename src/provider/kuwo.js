@@ -2,11 +2,9 @@ const insure = require('./insure');
 const select = require('./select');
 const crypto = require('../crypto');
 const request = require('../request');
-const { logScope } = require('../logger');
-const { musicMatchData } = require('../utilities');
+const { tryGetMatchedData } = require('../utilities');
 const { getManagedCacheStorage } = require('../cache');
 
-const logger = logScope('provider/kuwo');
 const format = (song) => ({
 	id: song.musicrid.split('_').pop(),
 	name: song.name,
@@ -46,10 +44,9 @@ const search = (info) => {
 	// 		return Promise.reject()
 	// })
 	let songId = info.id;
-	if(musicMatchData?.kuwo?.[songId]) {
-		console.log('match exist kuwo', songId);
-		logger.debug(musicMatchData.kuwo[songId], 'match exist kuwo');
-		return musicMatchData.kuwo[songId].id;
+	let matchedSongData = tryGetMatchedData('kuwo', songId);
+	if(matchedSongData) {
+		return matchedSongData.id;
 	}
 
 	const keyword = encodeURIComponent(info.keyword.replace(' - ', ''));

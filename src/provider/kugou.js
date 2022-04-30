@@ -2,11 +2,9 @@ const insure = require('./insure');
 const select = require('./select');
 const crypto = require('../crypto');
 const request = require('../request');
-const { logScope } = require('../logger');
-const { musicMatchData } = require('../utilities');
+const { tryGetMatchedData } = require('../utilities');
 const { getManagedCacheStorage } = require('../cache');
 
-const logger = logScope('provider/kugou');
 const format = (song) => {
 	return {
 		// id: song.FileHash,
@@ -25,10 +23,9 @@ const format = (song) => {
 
 const search = (info) => {
 	let songId = info.id;
-	if(musicMatchData?.kugou?.[songId]) {
-		console.log('match exist kugou', songId);
-		logger.debug(musicMatchData.kugou[songId], 'match exist kugou');
-		return musicMatchData.kugou[songId];
+	let matchedSongData = tryGetMatchedData('kugou', songId);
+	if(matchedSongData) {
+		return matchedSongData;
 	}
 
 	const url =

@@ -1,6 +1,7 @@
 const insure = require('./insure');
 const select = require('./select');
 const request = require('../request');
+const { tryGetMatchedData } = require('../utilities');
 const { getManagedCacheStorage } = require('../cache');
 
 const headers = {
@@ -18,6 +19,11 @@ const format = (song) => ({
 });
 
 const search = (info) => {
+	let songId = info.id;
+	let matchedSongData = tryGetMatchedData('qq', songId);
+	if(matchedSongData) {
+		return matchedSongData.id;
+	}
 	const url =
 		'https://c.y.qq.com/soso/fcgi-bin/client_search_cp?' +
 		'ct=24&qqmusic_ver=1298&remoteplace=txt.yqq.center&' +
