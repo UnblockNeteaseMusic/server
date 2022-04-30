@@ -177,7 +177,7 @@ node app.js -o bilibili ytdlp
 
 
 ### 指定音源
-使用音源文件musicExample.json解决音源匹配错误问题，或使用环境变量MUSIC_FILE
+使用音源文件解决音源匹配错误问题，可使用环境变量MUSIC_FILE，参考格式：[musicExample.json](https://github.com/zmqcherish/UnblockNeteaseMusic/blob/enhanced/src/musicExample.json)
 
 
 ### 环境变量
