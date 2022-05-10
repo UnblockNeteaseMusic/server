@@ -175,11 +175,6 @@ node app.js -o bilibili ytdlp
 | B 站音乐                    | `bilibili`   | ✅       |                                                                                |
 | 第三方网易云 API            | `pyncmd`     |          |                                                                                |
 
-
-### 指定音源
-使用音源文件解决音源匹配错误问题，可使用环境变量MUSIC_FILE，参考格式：[musicExample.json](https://github.com/zmqcherish/UnblockNeteaseMusic/blob/enhanced/src/musicExample.json)
-
-
 ### 环境变量
 
 | 变量名称         | 类型 | 描述                                                                                              | 示例                                                             |
@@ -199,6 +194,12 @@ node app.js -o bilibili ytdlp
 | SIGN_CERT        | path | 自定义证书文件                                                                                    | `SIGN_CERT="./server.crt"`                                       |
 | SIGN_KEY         | path | 自定义密钥文件                                                                                    | `SIGN_KEY="./server.key"`                                        |
 | MUSIC_FILE         | path | 自定义歌曲源配置文件                                                                                    | `MUSIC_FILE="musicExample.json"`                                        |
+
+#### 指定音源 (`MUSIC_FILE`)
+
+您可以使用音源文件，手工设置音源的对应，来解决音源匹配错误问题。参考格式：[musicExample.json](https://github.com/UnblockNeteaseMusic/server/blob/enhanced/src/musicExample.json)。
+
+设置完成之后，请在 `MUSIC_FILE` 环境变数设置这个文件的路径。
 
 #### 日志等级 (`LOG_LEVEL`)
 
