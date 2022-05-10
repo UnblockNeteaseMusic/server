@@ -4,7 +4,11 @@ const {
 	PROVIDERS: providers,
 	DEFAULT_SOURCE: defaultSrc,
 } = require('../consts');
-const { isHostWrapper, tryGetMatchedData, tryGetSelectSource } = require('../utilities');
+const {
+	isHostWrapper,
+	tryGetMatchedData,
+	tryGetSelectSource,
+} = require('../utilities');
 const SongNotAvailable = require('../exceptions/SongNotAvailable');
 const RequestFailed = require('../exceptions/RequestFailed');
 const IncompleteAudioData = require('../exceptions/IncompleteAudioData');
@@ -57,13 +61,16 @@ async function getAudioFromSource(source, info) {
 
 async function match(id, source, data) {
 	let matchedSongData = tryGetMatchedData('main', id);
-	if(matchedSongData) {
+	if (matchedSongData) {
 		return matchedSongData;
 	}
-	
-	const candidate = (source || tryGetSelectSource(id) || global.source || defaultSrc).filter(
-		(name) => name in providers
-	);
+
+	const candidate = (
+		source ||
+		tryGetSelectSource(id) ||
+		global.source ||
+		defaultSrc
+	).filter((name) => name in providers);
 
 	const audioInfo = await find(id, data);
 	const audioData = await Promise.any(

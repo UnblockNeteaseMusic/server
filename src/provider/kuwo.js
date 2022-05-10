@@ -45,7 +45,7 @@ const search = (info) => {
 	// })
 	let songId = info.id;
 	let matchedSongData = tryGetMatchedData('kuwo', songId);
-	if(matchedSongData) {
+	if (matchedSongData) {
 		return matchedSongData.id;
 	}
 

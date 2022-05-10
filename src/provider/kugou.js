@@ -24,7 +24,7 @@ const format = (song) => {
 const search = (info) => {
 	let songId = info.id;
 	let matchedSongData = tryGetMatchedData('kugou', songId);
-	if(matchedSongData) {
+	if (matchedSongData) {
 		return matchedSongData;
 	}
 

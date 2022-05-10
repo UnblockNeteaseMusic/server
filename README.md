@@ -193,7 +193,7 @@ node app.js -o bilibili ytdlp
 | YOUTUBE_KEY      | str  | Youtube 音源的 Data API v3 Key                                                                    | `YOUTUBE_KEY="<your_data_api_key>"`                              |
 | SIGN_CERT        | path | 自定义证书文件                                                                                    | `SIGN_CERT="./server.crt"`                                       |
 | SIGN_KEY         | path | 自定义密钥文件                                                                                    | `SIGN_KEY="./server.key"`                                        |
-| MUSIC_FILE         | path | 自定义歌曲源配置文件                                                                                    | `MUSIC_FILE="musicExample.json"`                                        |
+| MUSIC_FILE       | path | 自定义歌曲源配置文件                                                                              | `MUSIC_FILE="musicExample.json"`                                 |
 
 #### 指定音源 (`MUSIC_FILE`)
 

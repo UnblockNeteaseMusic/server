@@ -20,7 +20,7 @@ const format = (song) => {
 const search = (info) => {
 	let songId = info.id;
 	let matchedSongData = tryGetMatchedData('bilibili', songId);
-	if(matchedSongData) {
+	if (matchedSongData) {
 		return matchedSongData.id;
 	}
 

@@ -17,28 +17,31 @@ const getConfigData = () => {
 		let musicDataRaw = fs.readFileSync(filePath);
 		return JSON.parse(musicDataRaw);
 	} catch (error) {
-		logger.error("音源文件加载失败", error.message)
+		logger.error('音源文件加载失败', error.message);
 	}
 	return null;
-} 
+};
 
 const musicConfigData = getConfigData() || {};
 
 const tryGetMatchedData = (source, songId) => {
 	let matchedSongData = musicConfigData?.[source]?.[songId];
-	if(matchedSongData) {
-		logger.info(matchedSongData, `${songId} Has the matched source (${source})`);
+	if (matchedSongData) {
+		logger.info(
+			matchedSongData,
+			`${songId} Has the matched source (${source})`
+		);
 	}
 	return matchedSongData;
-}
+};
 
 const tryGetSelectSource = (songId) => {
 	let source = musicConfigData.source?.[songId];
-	if(source) {
+	if (source) {
 		logger.info(`${songId} selected source (${source})`);
 	}
 	return source ? [source] : null;
-}
+};
 
 const isHost = (url, host) => {
 	// FIXME: Due to #118, we can only check the url
@@ -60,5 +63,5 @@ module.exports = {
 	isHost,
 	isHostWrapper,
 	tryGetSelectSource,
-	tryGetMatchedData
+	tryGetMatchedData,
 };
