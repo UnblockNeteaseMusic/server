@@ -10,6 +10,8 @@
 		"node": ">= 12"
 	},
 	"scripts": {
+		"start:dev": "cross-env LOG_LEVEL=debug node src/app.js -e https://music.163.com",
+		"start": "cross-env node src/app.js -e https://music.163.com",
 		"build": "webpack",
 		"pkg": "pkg . --out-path=dist/",
 		"test": "jest"
@@ -44,6 +46,7 @@
 		"@types/pino": "6.3.12",
 		"browserslist": "^4.20.3",
 		"core-js": "^3.22.4",
+		"cross-env": "^7.0.3",
 		"jest": "^28.1.0",
 		"pkg": "^5.6.0",
 		"prettier": "^2.6.2",
