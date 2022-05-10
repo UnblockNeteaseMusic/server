@@ -60,12 +60,12 @@ async function getAudioFromSource(source, info) {
 }
 
 async function match(id, source, data) {
-	let matchedSongData = tryGetMatchedData('main', id);
+	const matchedSongData = await tryGetMatchedData('main', id);
 	if (matchedSongData) return matchedSongData;
 
 	const candidate = (
 		source ||
-		tryGetSelectSource(id) ||
+		await tryGetSelectSource(id) ||
 		global.source ||
 		defaultSrc
 	).filter((name) => name in providers);

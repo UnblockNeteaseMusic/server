@@ -16,7 +16,7 @@ const format = (song) => ({
 		.map((name, index) => ({ id: index ? null : song.artistid, name })),
 });
 
-const search = (info) => {
+const search = async (info) => {
 	// const url =
 	// 	// 'http://search.kuwo.cn/r.s?' +
 	// 	// 'ft=music&itemset=web_2013&client=kt&' +
@@ -44,7 +44,7 @@ const search = (info) => {
 	// 		return Promise.reject()
 	// })
 	const songId = info.id;
-	const matchedSongData = tryGetMatchedData('kuwo', songId);
+	const matchedSongData = await tryGetMatchedData('kuwo', songId);
 	if (matchedSongData) return matchedSongData.id;
 
 	const keyword = encodeURIComponent(info.keyword.replace(' - ', ''));

@@ -18,9 +18,9 @@ const format = (song) => ({
 	artists: song.singer.map(({ mid, name }) => ({ id: mid, name })),
 });
 
-const search = (info) => {
+const search = async (info) => {
 	const songId = info.id;
-	const matchedSongData = tryGetMatchedData('qq', songId);
+	const matchedSongData = await tryGetMatchedData('qq', songId);
 	if (matchedSongData) return matchedSongData.id;
 
 	const url =

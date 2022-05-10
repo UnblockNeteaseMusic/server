@@ -21,9 +21,9 @@ const format = (song) => {
 	};
 };
 
-const search = (info) => {
+const search = async (info) => {
 	const songId = info.id;
-	const matchedSongData = tryGetMatchedData('kugou', songId);
+	const matchedSongData = await tryGetMatchedData('kugou', songId);
 	if (matchedSongData) return matchedSongData.id;
 
 	const url =

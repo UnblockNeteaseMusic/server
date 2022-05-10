@@ -15,9 +15,9 @@ const format = (song) => {
 	};
 };
 
-const search = (info) => {
+const search = async (info) => {
 	const songId = info.id;
-	const matchedSongData = tryGetMatchedData('bilibili', songId);
+	const matchedSongData = await tryGetMatchedData('bilibili', songId);
 	if (matchedSongData) return matchedSongData.id;
 
 	const url =

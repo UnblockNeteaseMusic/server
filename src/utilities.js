@@ -1,10 +1,5 @@
-/**
- * Does the hostname of `URL` equal `host`?
- *
- * @param url {string}
- * @param host {string}
- * @return {boolean}
- */
+// @ts-check
+
 const fs = require('fs');
 const path = require('path');
 const { logScope } = require('./logger');
@@ -21,36 +16,54 @@ const logger = logScope('utilities');
 /**
  * Retrieve the configuration of `musicExample.json`.
  *
- * @returns {MusicUriRecord | null}
+ * @returns {Promise<MusicUriRecord | {}>} If no `musicExample.json` found or invalid, returns `{}`.
  */
-const getConfigData = async () => {
+const _readConfigData = async () => {
 	try {
 		const fileName = process.env.MUSIC_FILE || 'musicExample.json';
 		const filePath = path.join(__dirname, '.', fileName);
 		const musicDataRaw = await fs.promises.readFile(filePath);
-		return JSON.parse(musicDataRaw);
+
+		return JSON.parse(musicDataRaw.toString("utf-8"));
 	} catch (error) {
 		logger.warn('Unable to load the musicExample data. Ignoring.', error.message);
 	}
-	return null;
-};
+
+	return {};
+}
 
 /**
  * The singleton music configuration data.
  *
- * If no `musicExample.json` found or invalid, it will be `{}`.
+ * If {@link getSingletonConfigData()} hasn't called, it will be `null`;
+ * otherwise, it will be the value returned by {@link _readConfigData()}
+ *
+ * @type {MusicUriRecord | null}
  */
-const musicConfigData = getConfigData() || {};
+let _musicConfigData = null;
+
+/**
+ * Retrieve the *singleton* configuration of `musicExample.json`.
+ *
+ * @returns {Promise<MusicUriRecord>}
+ */
+const getSingletonConfigData = async () => {
+	if (_musicConfigData === null) {
+		_musicConfigData = await _readConfigData();
+	}
+
+	return _musicConfigData;
+};
 
 /**
  * Try to get the matched data from {@link musicConfigData}.
  *
  * @param {string} source
  * @param {string} songId
- * @returns {MusicReplaceRecordEntryField | null}
+ * @returns {Promise<MusicReplaceRecordEntryField | null>}
  */
-const tryGetMatchedData = (source, songId) => {
-	let matchedSongData = musicConfigData?.[source]?.[songId];
+const tryGetMatchedData = async (source, songId) => {
+	let matchedSongData = (await getSingletonConfigData())[source]?.[songId];
 
 	if (matchedSongData) {
 		logger.info(
@@ -70,14 +83,21 @@ const tryGetMatchedData = (source, songId) => {
  * we return `[source]` so `select()` return that data directly; otherwise,
  * we return `null` to make `select()` to try other sources.
  */
-const tryGetSelectSource = (songId) => {
-	let source = musicConfigData.source?.[songId];
+const tryGetSelectSource = async (songId) => {
+	let source = (await getSingletonConfigData()).source?.[songId];
 	if (source) {
 		logger.info(`${songId} selected source (${source})`);
 	}
 	return source ? [source] : null;
 };
 
+/**
+ * Does the hostname of `URL` equal `host`?
+ *
+ * @param {string} url
+ * @param {string} host
+ * @return {boolean}
+ */
 const isHost = (url, host) => {
 	// FIXME: Due to #118, we can only check the url
 	// 		  by .includes(). You are welcome to fix
