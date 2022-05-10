@@ -43,11 +43,9 @@ const search = (info) => {
 	// 	else
 	// 		return Promise.reject()
 	// })
-	let songId = info.id;
-	let matchedSongData = tryGetMatchedData('kuwo', songId);
-	if (matchedSongData) {
-		return matchedSongData.id;
-	}
+	const songId = info.id;
+	const matchedSongData = tryGetMatchedData('kuwo', songId);
+	if (matchedSongData) return matchedSongData.id;
 
 	const keyword = encodeURIComponent(info.keyword.replace(' - ', ''));
 	const url = `http://www.kuwo.cn/api/www/search/searchMusicBykeyWord?key=${keyword}&pn=1&rn=30`;

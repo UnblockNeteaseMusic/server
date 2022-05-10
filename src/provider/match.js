@@ -61,9 +61,7 @@ async function getAudioFromSource(source, info) {
 
 async function match(id, source, data) {
 	let matchedSongData = tryGetMatchedData('main', id);
-	if (matchedSongData) {
-		return matchedSongData;
-	}
+	if (matchedSongData) return matchedSongData;
 
 	const candidate = (
 		source ||

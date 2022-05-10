@@ -22,11 +22,9 @@ const format = (song) => {
 };
 
 const search = (info) => {
-	let songId = info.id;
-	let matchedSongData = tryGetMatchedData('kugou', songId);
-	if (matchedSongData) {
-		return matchedSongData;
-	}
+	const songId = info.id;
+	const matchedSongData = tryGetMatchedData('kugou', songId);
+	if (matchedSongData) return matchedSongData.id;
 
 	const url =
 		// 'http://songsearch.kugou.com/song_search_v2?' +
