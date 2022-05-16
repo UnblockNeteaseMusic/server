@@ -1117,7 +1117,7 @@ __metadata:
     pino-pretty: ^7.6.1
     pkg: ^5.6.0
     prettier: ^2.6.2
-    swc-loader: ^0.2.0
+    swc-loader: ^0.2.1
     typescript: ^4.6.4
     webpack: ^5.72.0
     webpack-cli: ^4.9.2
@@ -4924,13 +4924,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"swc-loader@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "swc-loader@npm:0.2.0"
+"swc-loader@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "swc-loader@npm:0.2.1"
   peerDependencies:
     "@swc/core": ^1.2.147
     webpack: ">=2"
-  checksum: d424fb75f6d0f8a69088606147df606b6da8fed958f860f86f5f5029607798c1e229028ed31df7df4ec0d7d66dd83aa040bdaddf2764d0f16ad43d7c824bb0f2
+  checksum: 9e1b30beab6041dc117ef15dd621b7f357f2d1c52a67e83ec6659052ea6cf962abbd591256a9d2fedc7297f87d3fe4c4098e16e2e621c706ea58d49813548393
   languageName: node
   linkType: hard
 
