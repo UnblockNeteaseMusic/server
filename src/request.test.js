@@ -1,7 +1,6 @@
 const { CancelRequest } = require('./cancel');
 const request = require('./request');
 const RequestCancelled = require('./exceptions/RequestCancelled');
-const url = require('url');
 
 describe('request()', () => {
 	test('will throw RequestCancelled when the CancelRequest has been cancelled', async () => {
@@ -59,24 +58,26 @@ describe('request()', () => {
 		expect(body).toBeInstanceOf(Buffer);
 	}, 15000);
 
-	test('.json() should returns the deserialized data', async () => {
-		const response = await request(
-			'GET',
-			'https://api.opensource.org/licenses/'
-		);
-		const body = await response.json();
+	// FIXME: re-enable after api.opensource.org becomes online
+	//
+	// test('.json() should returns the deserialized data', async () => {
+	// 	const response = await request(
+	// 		'GET',
+	// 		'https://api.opensource.org/licenses/'
+	// 	);
+	// 	const body = await response.json();
 
-		expect(Array.isArray(body)).toBeTruthy();
-	}, 15000);
+	// 	expect(Array.isArray(body)).toBeTruthy();
+	// }, 15000);
 
-	test('.url should be the request URL', async () => {
-		const response = await request(
-			'GET',
-			'https://api.opensource.org/licenses/'
-		);
+	// test('.url should be the request URL', async () => {
+	// 	const response = await request(
+	// 		'GET',
+	// 		'https://api.opensource.org/licenses/'
+	// 	);
 
-		expect(response.url).toStrictEqual(
-			url.parse('https://api.opensource.org/licenses/')
-		);
-	}, 15000);
+	// 	expect(response.url).toStrictEqual(
+	// 		url.parse('https://api.opensource.org/licenses/')
+	// 	);
+	// }, 15000);
 });
