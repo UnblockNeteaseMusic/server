@@ -1,42 +1,42 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 410:
+/***/ 5180:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-__webpack_require__(7675);
-__webpack_require__(518);
-__webpack_require__(8133);
-__webpack_require__(3774);
-__webpack_require__(5430);
-__webpack_require__(8144);
-__webpack_require__(1768);
-__webpack_require__(4378);
-__webpack_require__(6472);
-__webpack_require__(2319);
-__webpack_require__(461);
-__webpack_require__(7255);
-__webpack_require__(6859);
-__webpack_require__(5431);
-__webpack_require__(9514);
-__webpack_require__(3588);
-__webpack_require__(1464);
-__webpack_require__(8079);
-__webpack_require__(8222);
-__webpack_require__(2114);
-__webpack_require__(925);
-__webpack_require__(5342);
-__webpack_require__(4575);
-__webpack_require__(5689);
-__webpack_require__(5912);
-__webpack_require__(1309);
-__webpack_require__(7009);
-__webpack_require__(9934);
-__webpack_require__(1879);
+__webpack_require__(4051);
+__webpack_require__(7109);
+__webpack_require__(7099);
+__webpack_require__(6245);
+__webpack_require__(2351);
+__webpack_require__(9834);
+__webpack_require__(9377);
+__webpack_require__(6614);
+__webpack_require__(8302);
+__webpack_require__(8090);
+__webpack_require__(9996);
+__webpack_require__(3937);
+__webpack_require__(9625);
+__webpack_require__(1485);
+__webpack_require__(9351);
+__webpack_require__(3597);
+__webpack_require__(7121);
+__webpack_require__(9742);
+__webpack_require__(7824);
+__webpack_require__(6916);
+__webpack_require__(3142);
+__webpack_require__(1710);
+__webpack_require__(1276);
+__webpack_require__(4072);
+__webpack_require__(7728);
+__webpack_require__(9748);
+__webpack_require__(7089);
+__webpack_require__(5111);
+__webpack_require__(3553);
 const { EventEmitter  } = __webpack_require__(2361);
-const { logScope  } = __webpack_require__(9362);
+const { logScope  } = __webpack_require__(3573);
 const logger = logScope('cache');
 const CacheStorageEvents = {
     CLEANUP: 'cs@cleanup'
@@ -64,8 +64,7 @@ const CacheStorageEvents = {
         if (id) this.id = id;
         // Register the CLEANUP event. It will clean up
         // the expired cache when emitting "CLEANUP" event.
-        this.on(CacheStorageEvents.CLEANUP, async ()=>this.removeExpiredCache()
-        );
+        this.on(CacheStorageEvents.CLEANUP, async ()=>this.removeExpiredCache());
     }
     /**
 	 * Get the absolute UNIX timestamp the cache will be ended.
@@ -151,8 +150,7 @@ const CacheStorageEvents = {
         return CacheStorageGroup.instance;
     }
     cleanup() {
-        this.cacheStorages.forEach((storage)=>storage.removeExpiredCache()
-        );
+        this.cacheStorages.forEach((storage)=>storage.removeExpiredCache());
     }
 }
 /**
@@ -185,7 +183,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 8138:
+/***/ 923:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -207,7 +205,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 9217:
+/***/ 7425:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -235,8 +233,7 @@ const cli = {
         flags = Array.isArray(flags) ? flags : [
             flags
         ];
-        addition.dest = addition.dest || flags.slice(-1)[0].toLowerCase().replace(/^-+/, '').replace(/-[a-z]/g, (character)=>character.slice(1).toUpperCase()
-        );
+        addition.dest = addition.dest || flags.slice(-1)[0].toLowerCase().replace(/^-+/, '').replace(/-[a-z]/g, (character)=>character.slice(1).toUpperCase());
         addition.help = addition.help || ({
             help: 'output usage information',
             version: 'output the version number'
@@ -248,16 +245,10 @@ const cli = {
         return cli;
     },
     parse: (argv)=>{
-        const positionals = cli._options.map((option, index)=>option.positional ? index : null
-        ).filter((index)=>index !== null
-        ), optionals = {};
-        cli._options.forEach((option, index)=>option.positional ? null : option.flags.forEach((flag)=>optionals[flag] = index
-            )
-        );
+        const positionals = cli._options.map((option, index)=>option.positional ? index : null).filter((index)=>index !== null), optionals = {};
+        cli._options.forEach((option, index)=>option.positional ? null : option.flags.forEach((flag)=>optionals[flag] = index));
         cli._program.name = cli._program.name || (__webpack_require__(1017).parse)(argv[1]).base;
-        const args = argv.slice(2).reduce((result, part)=>/^-[^-]/.test(part) ? result.concat(part.slice(1).split('').map((string)=>'-' + string
-            )) : result.concat(part)
-        , []);
+        const args = argv.slice(2).reduce((result, part)=>/^-[^-]/.test(part) ? result.concat(part.slice(1).split('').map((string)=>'-' + string)) : result.concat(part), []);
         let pointer = 0;
         while(pointer < args.length){
             let value = null;
@@ -278,8 +269,7 @@ const cli = {
             ].includes(action)) {
                 value = action === 'store_true';
             } else {
-                const gap = args.slice(pointer).findIndex((part)=>part in optionals
-                );
+                const gap = args.slice(pointer).findIndex((part)=>part in optionals);
                 const next = gap === -1 ? args.length : pointer + gap;
                 value = args.slice(pointer, next);
                 if (value.length === 0) {
@@ -296,18 +286,15 @@ const cli = {
             }
             cli[cli._options[index].dest] = value;
         }
-        if (positionals.length) error(`the following arguments are required: ${positionals.map((index)=>cli._options[index].flags[0]
-        ).join(', ')}`);
+        if (positionals.length) error(`the following arguments are required: ${positionals.map((index)=>cli._options[index].flags[0]).join(', ')}`);
         // cli._options.forEach(option => console.log(option.dest, cli[option.dest]))
         return cli;
     }
 };
-const pad = (length)=>new Array(length + 1).join(' ')
-;
+const pad = (length)=>new Array(length + 1).join(' ');
 const usage = ()=>{
     const options = cli._options.map((option)=>{
-        const flag = option.flags.sort((a, b)=>a.length - b.length
-        )[0];
+        const flag = option.flags.sort((a, b)=>a.length - b.length)[0];
         const name = option.metavar || option.dest;
         if (option.positional) {
             if (option.nargs === '+') return `${name} [${name} ...]`;
@@ -328,22 +315,18 @@ const usage = ()=>{
     const lines = [
         title
     ];
-    options.map((name)=>' ' + name
-    ).forEach((option)=>{
+    options.map((name)=>' ' + name).forEach((option)=>{
         lines[lines.length - 1].length + option.length < maximum ? lines[lines.length - 1] += option : lines.push(pad(title.length) + option);
     });
     console.log(lines.join('\n'));
 };
 const help = ()=>{
     usage();
-    const positionals = cli._options.filter((option)=>option.positional
-    ).map((option)=>[
+    const positionals = cli._options.filter((option)=>option.positional).map((option)=>[
             option.metavar || option.dest,
             option.help
-        ]
-    );
-    const optionals = cli._options.filter((option)=>!option.positional
-    ).map((option)=>{
+        ]);
+    const optionals = cli._options.filter((option)=>!option.positional).map((option)=>{
         const { flags  } = option;
         const name = option.metavar || option.dest;
         /** @type {string} */ let use;
@@ -352,25 +335,19 @@ const help = ()=>{
             'store_false',
             'help',
             'version'
-        ].includes(option.action)) use = flags.map((flag)=>`${flag}`
-        ).join(', ');
-        else if (option.nargs === '+') use = flags.map((flag)=>`${flag} ${name} [${name} ...]`
-        ).join(', ');
-        else use = flags.map((flag)=>`${flag} ${name}`
-        ).join(', ');
+        ].includes(option.action)) use = flags.map((flag)=>`${flag}`).join(', ');
+        else if (option.nargs === '+') use = flags.map((flag)=>`${flag} ${name} [${name} ...]`).join(', ');
+        else use = flags.map((flag)=>`${flag} ${name}`).join(', ');
         return [
             use,
             option.help
         ];
     });
-    let align = Math.max.apply(null, positionals.concat(optionals).map((option)=>option[0].length
-    ));
+    let align = Math.max.apply(null, positionals.concat(optionals).map((option)=>option[0].length));
     align = align > 30 ? 30 : align;
     const rest = cli.width - align - 4;
     const publish = (option)=>{
-        const slice = (string)=>Array.from(Array(Math.ceil(string.length / rest)).keys()).map((index)=>string.slice(index * rest, (index + 1) * rest)
-            ).join('\n' + pad(align + 4))
-        ;
+        const slice = (string)=>Array.from(Array(Math.ceil(string.length / rest)).keys()).map((index)=>string.slice(index * rest, (index + 1) * rest)).join('\n' + pad(align + 4));
         option[0].length < align ? console.log(`  ${option[0]}${pad(align - option[0].length)}  ${slice(option[1])}`) : console.log(`  ${option[0]}\n${pad(align + 4)}${slice(option[1])}`);
     };
     if (positionals.length) console.log('\npositional arguments:');
@@ -393,7 +370,7 @@ module.exports = cli;
 
 /***/ }),
 
-/***/ 2034:
+/***/ 4272:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -406,17 +383,17 @@ const DEFAULT_SOURCE = [
     'ytdlp'
 ];
 const PROVIDERS = {
-    qq: __webpack_require__(989),
-    kugou: __webpack_require__(4322),
-    kuwo: __webpack_require__(2761),
-    migu: __webpack_require__(9035),
-    joox: __webpack_require__(8164),
-    youtube: __webpack_require__(2079),
-    ytdownload: __webpack_require__(9385),
-    youtubedl: __webpack_require__(1863),
-    ytdlp: __webpack_require__(9409),
-    bilibili: __webpack_require__(5790),
-    pyncmd: __webpack_require__(3028)
+    qq: __webpack_require__(9226),
+    kugou: __webpack_require__(2981),
+    kuwo: __webpack_require__(4543),
+    migu: __webpack_require__(3692),
+    joox: __webpack_require__(5170),
+    youtube: __webpack_require__(6525),
+    ytdownload: __webpack_require__(8340),
+    youtubedl: __webpack_require__(6649),
+    ytdlp: __webpack_require__(1415),
+    bilibili: __webpack_require__(8957),
+    pyncmd: __webpack_require__(3606)
 };
 module.exports = {
     DEFAULT_SOURCE,
@@ -426,7 +403,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 20:
+/***/ 3077:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -452,10 +429,8 @@ const encrypt = (buffer, key)=>{
 };
 module.exports = {
     eapi: {
-        encrypt: (buffer)=>encrypt(buffer, eapiKey)
-        ,
-        decrypt: (buffer)=>decrypt(buffer, eapiKey)
-        ,
+        encrypt: (buffer)=>encrypt(buffer, eapiKey),
+        decrypt: (buffer)=>decrypt(buffer, eapiKey),
         encryptRequest: (url, object)=>{
             url = parse(url);
             const text = JSON.stringify(object);
@@ -471,10 +446,8 @@ module.exports = {
         }
     },
     linuxapi: {
-        encrypt: (buffer)=>encrypt(buffer, linuxapiKey)
-        ,
-        decrypt: (buffer)=>decrypt(buffer, linuxapiKey)
-        ,
+        encrypt: (buffer)=>encrypt(buffer, linuxapiKey),
+        decrypt: (buffer)=>decrypt(buffer, linuxapiKey),
         encryptRequest: (url, object)=>{
             url = parse(url);
             const text = JSON.stringify({
@@ -502,8 +475,7 @@ module.exports = {
                         result.slice(-1)[0],
                         password,
                         salt, 
-                    ])).digest())
-                , [
+                    ])).digest()), [
                     Buffer.alloc(0)
                 ]));
                 return {
@@ -530,39 +502,34 @@ module.exports = {
         }
     },
     base64: {
-        encode: (text, charset)=>Buffer.from(text, charset).toString('base64').replace(/\+/g, '-').replace(/\//g, '_')
-        ,
+        encode: (text, charset)=>Buffer.from(text, charset).toString('base64').replace(/\+/g, '-').replace(/\//g, '_'),
         decode: (text, charset)=>Buffer.from(text.replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString(charset)
     },
     uri: {
         retrieve: (id)=>{
             id = id.toString().trim();
             const key = '3go8&$8*3*3h0k(2)2';
-            const string = Array.from(Array(id.length).keys()).map((index)=>String.fromCharCode(id.charCodeAt(index) ^ key.charCodeAt(index % key.length))
-            ).join('');
+            const string = Array.from(Array(id.length).keys()).map((index)=>String.fromCharCode(id.charCodeAt(index) ^ key.charCodeAt(index % key.length))).join('');
             const result = crypto.createHash('md5').update(string).digest('base64').replace(/\//g, '_').replace(/\+/g, '-');
             return `http://p1.music.126.net/${result}/${id}`;
         }
     },
     md5: {
-        digest: (value)=>crypto.createHash('md5').update(value).digest('hex')
-        ,
+        digest: (value)=>crypto.createHash('md5').update(value).digest('hex'),
         pipe: (source)=>new Promise((resolve, reject)=>{
                 const digest = crypto.createHash('md5').setEncoding('hex');
-                source.pipe(digest).on('error', (error)=>reject(error)
-                ).once('finish', ()=>resolve(digest.read())
-                );
+                source.pipe(digest).on('error', (error)=>reject(error)).once('finish', ()=>resolve(digest.read()));
             })
     }
 };
 try {
-    module.exports.kuwoapi = __webpack_require__(3814);
+    module.exports.kuwoapi = __webpack_require__(2952);
 } catch (e) {}
 
 
 /***/ }),
 
-/***/ 3109:
+/***/ 8807:
 /***/ ((module) => {
 
 "use strict";
@@ -580,7 +547,7 @@ module.exports = IncompleteAudioData;
 
 /***/ }),
 
-/***/ 7128:
+/***/ 3532:
 /***/ ((module) => {
 
 "use strict";
@@ -598,7 +565,7 @@ module.exports = ProcessExitNotSuccessfully;
 
 /***/ }),
 
-/***/ 4962:
+/***/ 9312:
 /***/ ((module) => {
 
 "use strict";
@@ -616,7 +583,7 @@ module.exports = RequestCancelled;
 
 /***/ }),
 
-/***/ 4922:
+/***/ 4939:
 /***/ ((module) => {
 
 "use strict";
@@ -637,7 +604,7 @@ module.exports = RequestFailed;
 
 /***/ }),
 
-/***/ 9612:
+/***/ 2961:
 /***/ ((module) => {
 
 "use strict";
@@ -656,7 +623,7 @@ module.exports = SongNotAvailable;
 
 /***/ }),
 
-/***/ 8402:
+/***/ 1881:
 /***/ ((module) => {
 
 "use strict";
@@ -673,7 +640,7 @@ module.exports = YoutubeDlInvalidResponse;
 
 /***/ }),
 
-/***/ 6120:
+/***/ 3693:
 /***/ ((module) => {
 
 "use strict";
@@ -689,7 +656,7 @@ module.exports = YoutubeDlNotInstalled;
 
 /***/ }),
 
-/***/ 4487:
+/***/ 623:
 /***/ ((module) => {
 
 "use strict";
@@ -706,7 +673,7 @@ module.exports = YtDlpInvalidResponse;
 
 /***/ }),
 
-/***/ 4154:
+/***/ 8736:
 /***/ ((module) => {
 
 "use strict";
@@ -722,35 +689,35 @@ module.exports = YtDlpNotInstalled;
 
 /***/ }),
 
-/***/ 3162:
+/***/ 9618:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-__webpack_require__(5431);
-__webpack_require__(9514);
-__webpack_require__(3588);
-__webpack_require__(1464);
-__webpack_require__(8079);
-__webpack_require__(8222);
-__webpack_require__(2114);
-__webpack_require__(925);
-__webpack_require__(5342);
-__webpack_require__(4575);
-__webpack_require__(5689);
-__webpack_require__(5912);
-__webpack_require__(1309);
-__webpack_require__(7009);
-__webpack_require__(9934);
-__webpack_require__(1879);
+__webpack_require__(1485);
+__webpack_require__(9351);
+__webpack_require__(3597);
+__webpack_require__(7121);
+__webpack_require__(9742);
+__webpack_require__(7824);
+__webpack_require__(6916);
+__webpack_require__(3142);
+__webpack_require__(1710);
+__webpack_require__(1276);
+__webpack_require__(4072);
+__webpack_require__(7728);
+__webpack_require__(9748);
+__webpack_require__(7089);
+__webpack_require__(5111);
+__webpack_require__(3553);
 const parse = (__webpack_require__(7310).parse);
-const crypto = __webpack_require__(20);
-const request = __webpack_require__(1540);
-const match = __webpack_require__(1872);
+const crypto = __webpack_require__(3077);
+const request = __webpack_require__(3798);
+const match = __webpack_require__(3361);
 const querystring = __webpack_require__(3477);
-const { isHost  } = __webpack_require__(1134);
-const { getManagedCacheStorage  } = __webpack_require__(410);
-const { logScope  } = __webpack_require__(9362);
+const { isHost  } = __webpack_require__(1320);
+const { getManagedCacheStorage  } = __webpack_require__(5180);
+const { logScope  } = __webpack_require__(3573);
 const logger = logScope('hook');
 const cs = getManagedCacheStorage('hook');
 cs.aliveDuration = 7 * 24 * 60 * 60 * 1000;
@@ -824,21 +791,17 @@ const domainList = [
 ];
 hook.request.before = (ctx)=>{
     const { req  } = ctx;
-    req.url = (req.url.startsWith('http://') ? '' : (req.socket.encrypted ? 'https:' : 'http:') + '//' + (domainList.some((domain)=>(req.headers.host || '').endsWith(domain)
-    ) ? req.headers.host : null)) + req.url;
+    req.url = (req.url.startsWith('http://') ? '' : (req.socket.encrypted ? 'https:' : 'http:') + '//' + (domainList.some((domain)=>(req.headers.host || '').endsWith(domain)) ? req.headers.host : null)) + req.url;
     const url = parse(req.url);
     if ([
         url.hostname,
         req.headers.host
-    ].some((host)=>isHost(host, 'music.163.com')
-    )) ctx.decision = 'proxy';
+    ].some((host)=>isHost(host, 'music.163.com'))) ctx.decision = 'proxy';
     if ([
         url.hostname,
         req.headers.host
-    ].some((host)=>hook.target.host.has(host)
-    ) && req.method === 'POST' && (url.path === '/api/linux/forward' || url.path.startsWith('/eapi/'))) {
-        return request.read(req).then((body)=>req.body = body
-        ).then((body)=>{
+    ].some((host)=>hook.target.host.has(host)) && req.method === 'POST' && (url.path === '/api/linux/forward' || url.path.startsWith('/eapi/'))) {
+        return request.read(req).then((body)=>req.body = body).then((body)=>{
             if ('x-napm-retry' in req.headers) delete req.headers['x-napm-retry'];
             req.headers['X-Real-IP'] = '118.88.88.88';
             if (req.url.includes('stream')) return; // look living eapi can not be decrypted
@@ -863,8 +826,7 @@ hook.request.before = (ctx)=>{
                 // console.log(netease.path, netease.param)
                 if (netease.path === '/api/song/enhance/download/url') return pretendPlay(ctx);
             }
-        }).catch((error)=>error && logger.error(error, `A error occurred in hook.request.before when hooking ${req.url}.`)
-        );
+        }).catch((error)=>error && logger.error(error, `A error occurred in hook.request.before when hooking ${req.url}.`));
     } else if (hook.target.host.has(url.hostname) && (url.path.startsWith('/weapi/') || url.path.startsWith('/api/'))) {
         req.headers['X-Real-IP'] = '118.88.88.88';
         ctx.netease = {
@@ -897,10 +859,8 @@ hook.request.after = (ctx)=>{
     const { req , proxyRes , netease , package: pkg  } = ctx;
     if (req.headers.host === 'tyst.migu.cn' && proxyRes.headers['content-range'] && proxyRes.statusCode === 200) proxyRes.statusCode = 206;
     if (netease && hook.target.path.has(netease.path) && proxyRes.statusCode === 200) {
-        return request.read(proxyRes, true).then((buffer)=>buffer.length ? proxyRes.body = buffer : Promise.reject()
-        ).then((buffer)=>{
-            const patch = (string)=>string.replace(/([^\\]"\s*:\s*)(\d{16,})(\s*[}|,])/g, '$1"$2L"$3')
-            ; // for js precision
+        return request.read(proxyRes, true).then((buffer)=>buffer.length ? proxyRes.body = buffer : Promise.reject()).then((buffer)=>{
+            const patch = (string)=>string.replace(/([^\\]"\s*:\s*)(\d{16,})(\s*[}|,])/g, '$1"$2L"$3'); // for js precision
             try {
                 netease.encrypted = false;
                 netease.jsonBody = JSON.parse(patch(buffer.toString()));
@@ -944,9 +904,7 @@ hook.request.after = (ctx)=>{
                 'transfer-encoding',
                 'content-encoding',
                 'content-length'
-            ].filter((key)=>key in proxyRes.headers
-            ).forEach((key)=>delete proxyRes.headers[key]
-            );
+            ].filter((key)=>key in proxyRes.headers).forEach((key)=>delete proxyRes.headers[key]);
             const inject = (key, value)=>{
                 if (typeof value === 'object' && value != null) {
                     if ('cp' in value) value['cp'] = 1;
@@ -972,8 +930,7 @@ hook.request.after = (ctx)=>{
             let body = JSON.stringify(netease.jsonBody, inject);
             body = body.replace(/([^\\]"\s*:\s*)"(\d{16,})L"(\s*[}|,])/g, '$1$2$3'); // for js precision
             proxyRes.body = netease.encrypted ? crypto.eapi.encrypt(Buffer.from(body)) : body;
-        }).catch((error)=>error && logger.error(error, `A error occurred in hook.request.after when hooking ${req.url}.`)
-        );
+        }).catch((error)=>error && logger.error(error, `A error occurred in hook.request.after when hooking ${req.url}.`));
     } else if (pkg) {
         if (new Set([
             201,
@@ -983,8 +940,7 @@ hook.request.after = (ctx)=>{
             307,
             308
         ]).has(proxyRes.statusCode)) {
-            return request(req.method, parse(req.url).resolve(proxyRes.headers.location), req.headers).then((response)=>ctx.proxyRes = response
-            );
+            return request(req.method, parse(req.url).resolve(proxyRes.headers.location), req.headers).then((response)=>ctx.proxyRes = response);
         } else if (/p\d+c*\.music\.126\.net/.test(req.url)) {
             proxyRes.headers['content-type'] = 'audio/*';
         }
@@ -996,8 +952,7 @@ hook.connect.before = (ctx)=>{
     if ([
         url.hostname,
         req.headers.host
-    ].some((host)=>hook.target.host.has(host)
-    )) {
+    ].some((host)=>hook.target.host.has(host))) {
         if (parseInt(url.port) === 80) {
             req.url = `${global.address || 'localhost'}:${global.port[0]}`;
             req.local = true;
@@ -1047,25 +1002,20 @@ const tryCollect = (ctx)=>{
     const { req , netease  } = ctx;
     const { trackIds , pid , op  } = netease.param;
     const trackId = (Array.isArray(trackIds) ? trackIds : JSON.parse(trackIds))[0];
-    return request('POST', 'http://music.163.com/api/playlist/manipulate/tracks', req.headers, `trackIds=[${trackId},${trackId}]&pid=${pid}&op=${op}`).then((response)=>response.json()
-    ).then((jsonBody)=>{
+    return request('POST', 'http://music.163.com/api/playlist/manipulate/tracks', req.headers, `trackIds=[${trackId},${trackId}]&pid=${pid}&op=${op}`).then((response)=>response.json()).then((jsonBody)=>{
         netease.jsonBody = jsonBody;
-    }).catch((e)=>e && logger.error(e)
-    );
+    }).catch((e)=>e && logger.error(e));
 };
 const tryLike = (ctx)=>{
     const { req , netease  } = ctx;
     const { trackId  } = netease.param;
     let pid = 0, userId = 0;
-    return request('GET', 'http://music.163.com/api/v1/user/info', req.headers).then((response)=>response.json()
-    ).then((jsonBody)=>{
+    return request('GET', 'http://music.163.com/api/v1/user/info', req.headers).then((response)=>response.json()).then((jsonBody)=>{
         userId = jsonBody.userPoint.userId;
-        return request('GET', `http://music.163.com/api/user/playlist?uid=${userId}&limit=1`, req.headers).then((response)=>response.json()
-        );
+        return request('GET', `http://music.163.com/api/user/playlist?uid=${userId}&limit=1`, req.headers).then((response)=>response.json());
     }).then((jsonBody)=>{
         pid = jsonBody.playlist[0].id;
-        return request('POST', 'http://music.163.com/api/playlist/manipulate/tracks', req.headers, `trackIds=[${trackId},${trackId}]&pid=${pid}&op=add`).then((response)=>response.json()
-        );
+        return request('POST', 'http://music.163.com/api/playlist/manipulate/tracks', req.headers, `trackIds=[${trackId},${trackId}]&pid=${pid}&op=add`).then((response)=>response.json());
     }).then((jsonBody)=>{
         if (new Set([
             200,
@@ -1076,12 +1026,9 @@ const tryLike = (ctx)=>{
                 playlistId: pid
             };
         }
-    }).catch((e)=>e && logger.error(e)
-    );
+    }).catch((e)=>e && logger.error(e));
 };
-const computeHash = (task)=>request('GET', task.url).then((response)=>crypto.md5.pipe(response)
-    )
-;
+const computeHash = (task)=>request('GET', task.url).then((response)=>crypto.md5.pipe(response));
 const tryMatch = (ctx)=>{
     const { req , netease  } = ctx;
     const { jsonBody  } = netease;
@@ -1117,15 +1064,9 @@ const tryMatch = (ctx)=>{
                     const difference = Array.from([
                         base,
                         target
-                    ]).map((version)=>version.split('.').slice(0, 3).map((number)=>parseInt(number) || 0
-                        )
-                    ).reduce((aggregation, current)=>!aggregation.length ? current.map((element)=>[
+                    ]).map((version)=>version.split('.').slice(0, 3).map((number)=>parseInt(number) || 0)).reduce((aggregation, current)=>!aggregation.length ? current.map((element)=>[
                                 element
-                            ]
-                        ) : aggregation.map((element, index)=>element.concat(current[index])
-                        )
-                    , []).filter((pair)=>pair[0] !== pair[1]
-                    )[0];
+                            ]) : aggregation.map((element, index)=>element.concat(current[index])), []).filter((pair)=>pair[0] !== pair[1])[0];
                     return !difference || difference[0] <= difference[1];
                 };
                 const limit = {
@@ -1142,13 +1083,10 @@ const tryMatch = (ctx)=>{
                     const cookie = querystring.parse(req.headers.cookie.replace(/\s/g, ''), ';');
                     const os = header.os || cookie.os, version = header.appver || cookie.appver;
                     if (os in limit && newer(limit[os], version)) {
-                        return cs.cache(task, ()=>computeHash(task)
-                        ).then((value)=>item.md5 = value
-                        );
+                        return cs.cache(task, ()=>computeHash(task)).then((value)=>item.md5 = value);
                     }
                 } catch (e) {}
-            }).catch((e)=>e && logger.error(e)
-            );
+            }).catch((e)=>e && logger.error(e));
         } else if (item.code === 200 && netease.web) {
             item.url = item.url.replace(/(m\d+?)(?!c)\.music\.126\.net/, '$1c.music.126.net');
         }
@@ -1164,11 +1102,9 @@ const tryMatch = (ctx)=>{
         ];
     } else {
         target1 = netease.web ? 0 : parseInt(((Array.isArray(netease.param.ids) ? netease.param.ids : JSON.parse(netease.param.ids))[0] || 0).toString().replace('_0', '')); // reduce time cost
-        tasks = jsonBody.data.map((item)=>inject(item)
-        );
+        tasks = jsonBody.data.map((item)=>inject(item));
     }
-    return Promise.all(tasks).catch((e)=>e && logger.error(e)
-    );
+    return Promise.all(tasks).catch((e)=>e && logger.error(e));
 };
 const unblockSoundEffects = (obj)=>{
     logger.debug('unblockSoundEffects() has been triggered.');
@@ -1185,7 +1121,7 @@ module.exports = hook;
 
 /***/ }),
 
-/***/ 3814:
+/***/ 2952:
 /***/ ((module) => {
 
 "use strict";
@@ -1198,37 +1134,22 @@ module.exports = hook;
     const bN = BigInt(n);
     return {
         low: Number(bN),
-        valueOf: ()=>bN.valueOf()
-        ,
-        toString: ()=>bN.toString()
-        ,
-        not: ()=>Long(~bN)
-        ,
-        isNegative: ()=>bN < 0
-        ,
-        or: (x)=>Long(bN | BigInt(x))
-        ,
-        and: (x)=>Long(bN & BigInt(x))
-        ,
-        xor: (x)=>Long(bN ^ BigInt(x))
-        ,
-        equals: (x)=>bN === BigInt(x)
-        ,
-        multiply: (x)=>Long(bN * BigInt(x))
-        ,
-        shiftLeft: (x)=>Long(bN << BigInt(x))
-        ,
+        valueOf: ()=>bN.valueOf(),
+        toString: ()=>bN.toString(),
+        not: ()=>Long(~bN),
+        isNegative: ()=>bN < 0,
+        or: (x)=>Long(bN | BigInt(x)),
+        and: (x)=>Long(bN & BigInt(x)),
+        xor: (x)=>Long(bN ^ BigInt(x)),
+        equals: (x)=>bN === BigInt(x),
+        multiply: (x)=>Long(bN * BigInt(x)),
+        shiftLeft: (x)=>Long(bN << BigInt(x)),
         shiftRight: (x)=>Long(bN >> BigInt(x))
     };
 };
-const range = (n)=>Array.from(new Array(n).keys())
-;
-const power = (base, index)=>Array(index).fill(null).reduce((result)=>result.multiply(base)
-    , Long(1))
-;
-const LongArray = (...array)=>array.map((n)=>n === -1 ? Long(-1, -1) : Long(n)
-    )
-;
+const range = (n)=>Array.from(new Array(n).keys());
+const power = (base, index)=>Array(index).fill(null).reduce((result)=>result.multiply(base), Long(1));
+const LongArray = (...array)=>array.map((n)=>n === -1 ? Long(-1, -1) : Long(n));
 // EXPANSION
 const arrayE = LongArray(31, 0, 1, 2, 3, 4, -1, -1, 3, 4, 5, 6, 7, 8, -1, -1, 7, 8, 9, 10, 11, 12, -1, -1, 11, 12, 13, 14, 15, 16, -1, -1, 15, 16, 17, 18, 19, 20, -1, -1, 19, 20, 21, 22, 23, 24, -1, -1, 23, 24, 25, 26, 27, 28, -1, -1, 27, 28, 29, 30, 31, 30, -1, -1);
 // INITIAL_PERMUTATION
@@ -1255,8 +1176,7 @@ const arrayLs = [
     1
 ];
 const arrayLsMask = LongArray(0, 0x100001, 0x300003);
-const arrayMask = range(64).map((n)=>power(2, n)
-);
+const arrayMask = range(64).map((n)=>power(2, n));
 arrayMask[arrayMask.length - 1] = arrayMask[arrayMask.length - 1].multiply(-1);
 // PERMUTATION
 const arrayP = LongArray(15, 6, 19, 20, 28, 11, 27, 16, 0, 14, 22, 25, 4, 17, 30, 9, 1, 7, 23, 13, 31, 26, 2, 8, 18, 12, 29, 5, 21, 10, 3, 24);
@@ -1804,8 +1724,7 @@ const bitTransform = (arrInt, n, l)=>{
     return l2;
 };
 const DES64 = (longs, l)=>{
-    const pR = range(8).map(()=>Long(0)
-    );
+    const pR = range(8).map(()=>Long(0));
     const pSource = [
         Long(0),
         Long(0)
@@ -1860,20 +1779,17 @@ const crypt = (msg, key, mode)=>{
     });
     const j = Math.floor(msg.length / 8);
     // arrLong1 存放的是转换后的密钥块, 在解密时只需要把这个密钥块反转就行了
-    const arrLong1 = range(16).map(()=>Long(0)
-    );
+    const arrLong1 = range(16).map(()=>Long(0));
     subKeys(l, arrLong1, mode);
     // arrLong2 存放的是前部分的明文
-    const arrLong2 = range(j).map(()=>Long(0)
-    );
+    const arrLong2 = range(j).map(()=>Long(0));
     range(j).forEach((m)=>{
         range(8).forEach((n)=>{
             arrLong2[m] = Long(msg[n + m * 8]).shiftLeft(n * 8).or(arrLong2[m]);
         });
     });
     // 用于存放密文
-    const arrLong3 = range(Math.floor((1 + 8 * (j + 1)) / 8)).map(()=>Long(0)
-    );
+    const arrLong3 = range(Math.floor((1 + 8 * (j + 1)) / 8)).map(()=>Long(0));
     // 计算前部的数据块(除了最后一部分)
     range(j).forEach((i1)=>{
         arrLong3[i1] = DES64(arrLong1, arrLong2[i1]);
@@ -1887,8 +1803,7 @@ const crypt = (msg, key, mode)=>{
     // 计算多出的那一位(最后一位)
     if (arrByte1.length || mode === 0) arrLong3[j] = DES64(arrLong1, l2); // 解密不需要
     // 将密文转为字节型
-    const arrByte2 = range(8 * arrLong3.length).map(()=>0
-    );
+    const arrByte2 = range(8 * arrLong3.length).map(()=>0);
     let i4 = 0;
     arrLong3.forEach((l3)=>{
         range(8).forEach((i6)=>{
@@ -1899,12 +1814,9 @@ const crypt = (msg, key, mode)=>{
     return Buffer.from(arrByte2);
 };
 const SECRET_KEY = Buffer.from('ylzsxkwm');
-const encrypt = (msg)=>crypt(msg, SECRET_KEY, 0)
-;
-const decrypt = (msg)=>crypt(msg, SECRET_KEY, 1)
-;
-const encryptQuery = (query)=>encrypt(Buffer.from(query)).toString('base64')
-;
+const encrypt = (msg)=>crypt(msg, SECRET_KEY, 0);
+const decrypt = (msg)=>crypt(msg, SECRET_KEY, 1);
+const encryptQuery = (query)=>encrypt(Buffer.from(query)).toString('base64');
 module.exports = {
     encrypt,
     decrypt,
@@ -1914,7 +1826,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 9362:
+/***/ 3573:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -1951,15 +1863,15 @@ module.exports = {
 
 /***/ }),
 
-/***/ 5790:
+/***/ 8957:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-const { cacheStorage , CacheStorageGroup , getManagedCacheStorage ,  } = __webpack_require__(410);
-const insure = __webpack_require__(5577);
-const select = __webpack_require__(7088);
-const request = __webpack_require__(1540);
+const { cacheStorage , CacheStorageGroup , getManagedCacheStorage ,  } = __webpack_require__(5180);
+const insure = __webpack_require__(5535);
+const select = __webpack_require__(8575);
+const request = __webpack_require__(3798);
 const format = (song)=>{
     return {
         id: song.id,
@@ -1973,8 +1885,7 @@ const format = (song)=>{
 };
 const search = (info)=>{
     const url = 'https://api.bilibili.com/audio/music-service-c/s?' + 'search_type=music&page=1&pagesize=30&' + `keyword=${encodeURIComponent(info.keyword)}`;
-    return request('GET', url).then((response)=>response.json()
-    ).then((jsonBody)=>{
+    return request('GET', url).then((response)=>response.json()).then((jsonBody)=>{
         const list = jsonBody.data.result.map(format);
         const matched = select(list, info);
         return matched ? matched.id : Promise.reject();
@@ -1982,21 +1893,17 @@ const search = (info)=>{
 };
 const track = (id)=>{
     const url = 'https://www.bilibili.com/audio/music-service-c/web/url?rivilege=2&quality=2&' + 'sid=' + id;
-    return request('GET', url).then((response)=>response.json()
-    ).then((jsonBody)=>{
+    return request('GET', url).then((response)=>response.json()).then((jsonBody)=>{
         if (jsonBody.code === 0) {
             // bilibili music requires referer, connect do not support referer, so change to http
             return jsonBody.data.cdns[0].replace('https', 'http');
         } else {
             return Promise.reject();
         }
-    }).catch(()=>insure().bilibili.track(id)
-    );
+    }).catch(()=>insure().bilibili.track(id));
 };
 const cs = getManagedCacheStorage('provider/bilibili');
-const check = (info)=>cs.cache(info, ()=>search(info)
-    ).then(track)
-;
+const check = (info)=>cs.cache(info, ()=>search(info)).then(track);
 module.exports = {
     check,
     track
@@ -2005,26 +1912,22 @@ module.exports = {
 
 /***/ }),
 
-/***/ 3664:
+/***/ 5538:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-const request = __webpack_require__(1540);
-const { getManagedCacheStorage  } = __webpack_require__(410);
+const request = __webpack_require__(3798);
+const { getManagedCacheStorage  } = __webpack_require__(5180);
 const filter = (object, keys)=>Object.keys(object).reduce((result, key)=>Object.assign(result, keys.includes(key) && {
             [key]: object[key]
-        })
-    , {})
-;
+        }), {});
 // Object.keys(object).filter(key => !keys.includes(key)).forEach(key => delete object[key])
 const limit = (text)=>{
     const output = [
         text[0]
     ];
-    const length = ()=>output.reduce((sum, token)=>sum + token.length
-        , 0)
-    ;
+    const length = ()=>output.reduce((sum, token)=>sum + token.length, 0);
     text.slice(1).some((token)=>{
         if (length() > 15) return true;
         output.push(token);
@@ -2048,10 +1951,8 @@ const getFormatData = (data)=>{
         info.artists = data.artists.map((artist)=>filter(artist, [
                 'id',
                 'name'
-            ])
-        );
-        info.keyword = info.name + ' - ' + limit(info.artists.map((artist)=>artist.name
-        )).join(' / ');
+            ]));
+        info.keyword = info.name + ' - ' + limit(info.artists.map((artist)=>artist.name)).join(' / ');
         return info;
     } catch (err) {
         console.log('getFormatData err: ', err);
@@ -2064,8 +1965,7 @@ const find = (id, data)=>{
         return info.name ? Promise.resolve(info) : Promise.reject();
     } else {
         const url = 'https://music.163.com/api/song/detail?ids=[' + id + ']';
-        return request('GET', url).then((response)=>response.json()
-        ).then((jsonBody)=>{
+        return request('GET', url).then((response)=>response.json()).then((jsonBody)=>{
             if (jsonBody && jsonBody.songs && jsonBody.songs.length) {
                 const info = getFormatData(jsonBody.songs[0]);
                 return info.name ? info : Promise.reject();
@@ -2079,20 +1979,19 @@ module.exports = (id, data)=>{
     if (data) {
         return find(id, data);
     } else {
-        return cs.cache(id, ()=>find(id)
-        );
+        return cs.cache(id, ()=>find(id));
     }
 };
 
 
 /***/ }),
 
-/***/ 5577:
+/***/ 5535:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-const request = __webpack_require__(1540);
+const request = __webpack_require__(3798);
 module.exports = ()=>{
     const host = global.cnrelay; // 'http://localhost:9000'
     const proxy = new Proxy(()=>{}, {
@@ -2105,8 +2004,7 @@ module.exports = ()=>{
             const path = target.route.join('/');
             const query = typeof payload[0] === 'object' ? JSON.stringify(payload[0]) : payload[0];
             // if (path != 'qq/ticket') return Promise.reject()
-            return request('GET', `${host}/${path}?${encodeURIComponent(query)}`).then((response)=>response.body()
-            );
+            return request('GET', `${host}/${path}?${encodeURIComponent(query)}`).then((response)=>response.body());
         }
     });
     return proxy;
@@ -2115,16 +2013,16 @@ module.exports = ()=>{
 
 /***/ }),
 
-/***/ 8164:
+/***/ 5170:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-const insure = __webpack_require__(5577);
-const select = __webpack_require__(7088);
-const crypto = __webpack_require__(20);
-const request = __webpack_require__(1540);
-const { getManagedCacheStorage  } = __webpack_require__(410);
+const insure = __webpack_require__(5535);
+const select = __webpack_require__(8575);
+const crypto = __webpack_require__(3077);
+const request = __webpack_require__(3798);
+const { getManagedCacheStorage  } = __webpack_require__(5180);
 const headers = {
     origin: 'http://www.joox.com',
     referer: 'http://www.joox.com',
@@ -2151,15 +2049,13 @@ const format = (song)=>{
         artists: song.singer_list.map(({ id , name  })=>({
                 id,
                 name: decode(name || '')
-            })
-        )
+            }))
     };
 };
 const search = (info)=>{
     const keyword = fit(info);
     const url = 'http://api-jooxtt.sanook.com/web-fcgi-bin/web_search?' + 'country=hk&lang=zh_TW&' + 'search_input=' + encodeURIComponent(keyword) + '&sin=0&ein=30';
-    return request('GET', url, headers).then((response)=>response.body()
-    ).then((body)=>{
+    return request('GET', url, headers).then((response)=>response.body()).then((body)=>{
         const jsonBody = JSON.parse(body.replace(/'/g, '"'));
         const list = jsonBody.itemlist.map(format);
         const matched = select(list, info);
@@ -2168,18 +2064,14 @@ const search = (info)=>{
 };
 const track = (id)=>{
     const url = 'http://api.joox.com/web-fcgi-bin/web_get_songinfo?' + 'songid=' + id + '&country=hk&lang=zh_cn&from_type=-1&' + 'channel_id=-1&_=' + new Date().getTime();
-    return request('GET', url, headers).then((response)=>response.jsonp()
-    ).then((jsonBody)=>{
+    return request('GET', url, headers).then((response)=>response.jsonp()).then((jsonBody)=>{
         const songUrl = (jsonBody.r320Url || jsonBody.r192Url || jsonBody.mp3Url || jsonBody.m4aUrl).replace(/M\d00([\w]+).mp3/, 'M800$1.mp3');
         if (songUrl) return songUrl;
         else return Promise.reject();
-    }).catch(()=>insure().joox.track(id)
-    );
+    }).catch(()=>insure().joox.track(id));
 };
 const cs = getManagedCacheStorage('provider/joox');
-const check = (info)=>cs.cache(info, ()=>search(info)
-    ).then(track)
-;
+const check = (info)=>cs.cache(info, ()=>search(info)).then(track);
 module.exports = {
     check,
     track
@@ -2188,16 +2080,16 @@ module.exports = {
 
 /***/ }),
 
-/***/ 4322:
+/***/ 2981:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-const insure = __webpack_require__(5577);
-const select = __webpack_require__(7088);
-const crypto = __webpack_require__(20);
-const request = __webpack_require__(1540);
-const { getManagedCacheStorage  } = __webpack_require__(410);
+const insure = __webpack_require__(5535);
+const select = __webpack_require__(8575);
+const crypto = __webpack_require__(3077);
+const request = __webpack_require__(3798);
+const { getManagedCacheStorage  } = __webpack_require__(5180);
 const format = (song)=>{
     return {
         // id: song.FileHash,
@@ -2219,14 +2111,12 @@ const format = (song)=>{
 const search = (info)=>{
     const url = // 'http://songsearch.kugou.com/song_search_v2?' +
     'http://mobilecdn.kugou.com/api/v3/search/song?' + 'keyword=' + encodeURIComponent(info.keyword) + '&page=1&pagesize=10';
-    return request('GET', url).then((response)=>response.json()
-    ).then((jsonBody)=>{
+    return request('GET', url).then((response)=>response.json()).then((jsonBody)=>{
         // const list = jsonBody.data.lists.map(format)
         const list = jsonBody.data.info.map(format);
         const matched = select(list, info);
         return matched ? matched : Promise.reject();
-    }).catch(()=>insure().kugou.search(info)
-    );
+    }).catch(()=>insure().kugou.search(info));
 };
 const single = (song, format1)=>{
     const getHashId = ()=>{
@@ -2243,25 +2133,15 @@ const single = (song, format1)=>{
         return '';
     };
     const url = 'http://trackercdn.kugou.com/i/v2/?' + 'key=' + crypto.md5.digest(`${getHashId()}kgcloudv2`) + '&hash=' + getHashId() + '&' + 'appid=1005&pid=2&cmd=25&behavior=play&album_id=' + song.album.id;
-    return request('GET', url).then((response)=>response.json()
-    ).then((jsonBody)=>jsonBody.url[0] || Promise.reject()
-    );
+    return request('GET', url).then((response)=>response.json()).then((jsonBody)=>jsonBody.url[0] || Promise.reject());
 };
 const track = (song)=>Promise.all([
         'sqhash',
         'hqhash',
         'hash'
-    ].slice(select.ENABLE_FLAC ? 0 : 1).map((format2)=>single(song, format2).catch(()=>null
-        )
-    )).then((result)=>result.find((url)=>url
-        ) || Promise.reject()
-    ).catch(()=>insure().kugou.track(song)
-    )
-;
+    ].slice(select.ENABLE_FLAC ? 0 : 1).map((format2)=>single(song, format2).catch(()=>null))).then((result)=>result.find((url)=>url) || Promise.reject()).catch(()=>insure().kugou.track(song));
 const cs = getManagedCacheStorage('provider/kugou');
-const check = (info)=>cs.cache(info, ()=>search(info)
-    ).then(track)
-;
+const check = (info)=>cs.cache(info, ()=>search(info)).then(track);
 module.exports = {
     check,
     search
@@ -2270,16 +2150,16 @@ module.exports = {
 
 /***/ }),
 
-/***/ 2761:
+/***/ 4543:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-const insure = __webpack_require__(5577);
-const select = __webpack_require__(7088);
-const crypto = __webpack_require__(20);
-const request = __webpack_require__(1540);
-const { getManagedCacheStorage  } = __webpack_require__(410);
+const insure = __webpack_require__(5535);
+const select = __webpack_require__(8575);
+const crypto = __webpack_require__(3077);
+const request = __webpack_require__(3798);
+const { getManagedCacheStorage  } = __webpack_require__(5180);
 const format = (song)=>({
         id: song.musicrid.split('_').pop(),
         name: song.name,
@@ -2292,10 +2172,8 @@ const format = (song)=>({
         artists: song.artist.split('&').map((name, index)=>({
                 id: index ? null : song.artistid,
                 name
-            })
-        )
-    })
-;
+            }))
+    });
 const search = (info)=>{
     // const url =
     // 	// 'http://search.kuwo.cn/r.s?' +
@@ -2329,8 +2207,7 @@ const search = (info)=>{
         referer: `http://www.kuwo.cn/search/list?key=${keyword}`,
         csrf: token,
         cookie: `kw_token=${token}`
-    }).then((response)=>response.json()
-    ).then((jsonBody)=>{
+    }).then((response)=>response.json()).then((jsonBody)=>{
         if (jsonBody && typeof jsonBody === 'object' && 'code' in jsonBody && jsonBody.code !== 200) return Promise.reject();
         const list = jsonBody.data.list.map(format);
         const matched = select(list, info);
@@ -2345,17 +2222,13 @@ const track = (id)=>{
     // : 'http://www.kuwo.cn/url?format=mp3&response=url&type=convert_url3&br=320kmp3&rid=' + id // flac refuse
     return request('GET', url1, {
         'user-agent': 'okhttp/3.10.0'
-    }).then((response)=>response.body()
-    ).then((body)=>{
+    }).then((response)=>response.body()).then((body)=>{
         const url = (body.match(/http[^\s$"]+/) || [])[0];
         return url || Promise.reject();
-    }).catch(()=>insure().kuwo.track(id)
-    );
+    }).catch(()=>insure().kuwo.track(id));
 };
 const cs = getManagedCacheStorage('provider/kuwo');
-const check = (info)=>cs.cache(info, ()=>search(info)
-    ).then(track)
-;
+const check = (info)=>cs.cache(info, ()=>search(info)).then(track);
 module.exports = {
     check,
     track
@@ -2364,41 +2237,40 @@ module.exports = {
 
 /***/ }),
 
-/***/ 1872:
+/***/ 3361:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-__webpack_require__(7675);
-__webpack_require__(518);
-__webpack_require__(8133);
-__webpack_require__(3774);
-__webpack_require__(5430);
-__webpack_require__(8144);
-__webpack_require__(1768);
-__webpack_require__(4378);
-__webpack_require__(6472);
-__webpack_require__(2319);
-__webpack_require__(461);
-__webpack_require__(7255);
-__webpack_require__(6859);
-__webpack_require__(3649);
-const find = __webpack_require__(3664);
-const request = __webpack_require__(1540);
-const { PROVIDERS: providers , DEFAULT_SOURCE: defaultSrc ,  } = __webpack_require__(2034);
-const { isHostWrapper  } = __webpack_require__(1134);
-const SongNotAvailable = __webpack_require__(9612);
-const RequestFailed = __webpack_require__(4922);
-const IncompleteAudioData = __webpack_require__(3109);
-const { logScope  } = __webpack_require__(9362);
-const RequestCancelled = __webpack_require__(4962);
+__webpack_require__(4051);
+__webpack_require__(7109);
+__webpack_require__(7099);
+__webpack_require__(6245);
+__webpack_require__(2351);
+__webpack_require__(9834);
+__webpack_require__(9377);
+__webpack_require__(6614);
+__webpack_require__(8302);
+__webpack_require__(8090);
+__webpack_require__(9996);
+__webpack_require__(3937);
+__webpack_require__(9625);
+__webpack_require__(5126);
+const find = __webpack_require__(5538);
+const request = __webpack_require__(3798);
+const { PROVIDERS: providers , DEFAULT_SOURCE: defaultSrc ,  } = __webpack_require__(4272);
+const { isHostWrapper  } = __webpack_require__(1320);
+const SongNotAvailable = __webpack_require__(2961);
+const RequestFailed = __webpack_require__(4939);
+const IncompleteAudioData = __webpack_require__(8807);
+const { logScope  } = __webpack_require__(3573);
+const RequestCancelled = __webpack_require__(9312);
 const logger = logScope('provider/match');
 /**
  * Is this http request success?
  *
  * @param {number} code The HTTP status code.
- */ const isHttpResponseOk = (code)=>code >= 200 && code <= 299
-;
+ */ const isHttpResponseOk = (code)=>code >= 200 && code <= 299;
 /** @type {Map<string, string>} */ const headerReferer = new Map([
     [
         'bilivideo.com',
@@ -2436,8 +2308,7 @@ const logger = logScope('provider/match');
     return song;
 }
 async function match(id, source1, data) {
-    const candidate = (source1 || global.source || defaultSrc).filter((name)=>name in providers
-    );
+    const candidate = (source1 || global.source || defaultSrc).filter((name)=>name in providers);
     const audioInfo = await find(id, data);
     const audioData = await Promise.any(candidate.map(async (source)=>getAudioFromSource(source, audioInfo).catch((e)=>{
             if (e) {
@@ -2445,8 +2316,7 @@ async function match(id, source1, data) {
                 else logger.error(e);
             }
             throw e; // We just log it instead of resolving it.
-        })
-    ));
+        })));
     const { id: audioId , name: name1  } = audioInfo;
     const { url  } = audioData;
     logger.debug({
@@ -2616,8 +2486,7 @@ function decode(buffer) {
     if (buffer.slice(0, 4).toString() === 'fLaC') return 999;
     if (buffer.slice(0, 3).toString() === 'ID3') {
         pointer = 6;
-        const size = buffer.slice(pointer, pointer + 4).reduce((summation, value, index)=>summation + (value & 0x7f) << 7 * (3 - index)
-        , 0);
+        const size = buffer.slice(pointer, pointer + 4).reduce((summation, value, index)=>summation + (value & 0x7f) << 7 * (3 - index), 0);
         pointer = 10 + size;
     }
     const header = buffer.slice(pointer, pointer + 4);
@@ -2634,15 +2503,15 @@ module.exports = match;
 
 /***/ }),
 
-/***/ 9035:
+/***/ 3692:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-const insure = __webpack_require__(5577);
-const select = __webpack_require__(7088);
-const request = __webpack_require__(1540);
-const { getManagedCacheStorage  } = __webpack_require__(410);
+const insure = __webpack_require__(5535);
+const select = __webpack_require__(8575);
+const request = __webpack_require__(3798);
+const { getManagedCacheStorage  } = __webpack_require__(5180);
 const format = (song)=>{
     return {
         id: song.id,
@@ -2652,22 +2521,19 @@ const format = (song)=>{
         resources: song.newRateFormats.map((detail)=>({
                 formatType: detail.formatType,
                 url: encodeURI(detail.url || detail.androidUrl)
-            })
-        )
+            }))
     };
 };
 const search = (info)=>{
     const url = 'https://pd.musicapp.migu.cn/MIGUM3.0/v1.0/content/search_all.do?' + '&ua=Android_migu&version=5.0.1&pageNo=1&pageSize=10&text=' + encodeURIComponent(info.keyword) + '&searchSwitch=' + '{"song":1,"album":0,"singer":0,"tagSong":0,"mvSong":0,"songlist":0,"bestShow":1}';
-    return request('GET', url).then((response)=>response.json()
-    ).then((jsonBody)=>{
+    return request('GET', url).then((response)=>response.json()).then((jsonBody)=>{
         const list = ((jsonBody || {}).songResultData.result || []).map(format);
         const matched = select(list, info);
         return matched ? matched.resources : Promise.reject();
     });
 };
 const single = (resources, format1)=>{
-    const song1 = resources.find((song)=>song.url && song.formatType === format1
-    );
+    const song1 = resources.find((song)=>song.url && song.formatType === format1);
     if (song1) {
         const playUrl = new URL(song1.url);
         playUrl.protocol = 'http';
@@ -2680,16 +2546,9 @@ const track = (resources)=>Promise.all([
         'SQ',
         'HQ',
         'PQ'
-    ].slice(select.ENABLE_FLAC ? 0 : 2).map((format2)=>single(resources, format2)
-    )).then((result)=>result.find((url)=>url
-        ) || Promise.reject()
-    ).catch(()=>insure().migu.track(resources)
-    )
-;
+    ].slice(select.ENABLE_FLAC ? 0 : 2).map((format2)=>single(resources, format2))).then((result)=>result.find((url)=>url) || Promise.reject()).catch(()=>insure().migu.track(resources));
 const cs = getManagedCacheStorage('provider/migu');
-const check = (info)=>cs.cache(info, ()=>search(info)
-    ).then(track)
-;
+const check = (info)=>cs.cache(info, ()=>search(info)).then(track);
 module.exports = {
     check,
     track
@@ -2698,32 +2557,28 @@ module.exports = {
 
 /***/ }),
 
-/***/ 3028:
+/***/ 3606:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-const select = __webpack_require__(7088);
-const request = __webpack_require__(1540);
-const { getManagedCacheStorage  } = __webpack_require__(410);
+const select = __webpack_require__(8575);
+const request = __webpack_require__(3798);
+const { getManagedCacheStorage  } = __webpack_require__(5180);
 const track = (info)=>{
     const url = 'https://service-ghlrryee-1308098780.gz.apigw.tencentcs.com/release/pyncmd/track/GetTrackAudio?song_ids=' + info.id + '&bitrate=' + [
         '999000',
         '320000'
     ].slice(select.ENABLE_FLAC ? 0 : 1, select.ENABLE_FLAC ? 1 : 2);
-    return request('GET', url).then((response)=>response.json()
-    ).then((jsonBody)=>{
+    return request('GET', url).then((response)=>response.json()).then((jsonBody)=>{
         if (jsonBody && typeof jsonBody === 'object' && 'code' in jsonBody && jsonBody.code !== 200) return Promise.reject();
-        const matched = jsonBody.data.find((song)=>song.id === info.id
-        );
+        const matched = jsonBody.data.find((song)=>song.id === info.id);
         if (matched && matched.url) return matched.url;
         return Promise.reject();
     });
 };
 const cs = getManagedCacheStorage('provider/pyncmd');
-const check = (info)=>cs.cache(info, ()=>track(info)
-    )
-;
+const check = (info)=>cs.cache(info, ()=>track(info));
 module.exports = {
     check
 };
@@ -2731,15 +2586,15 @@ module.exports = {
 
 /***/ }),
 
-/***/ 989:
+/***/ 9226:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-const insure = __webpack_require__(5577);
-const select = __webpack_require__(7088);
-const request = __webpack_require__(1540);
-const { getManagedCacheStorage  } = __webpack_require__(410);
+const insure = __webpack_require__(5535);
+const select = __webpack_require__(8575);
+const request = __webpack_require__(3798);
+const { getManagedCacheStorage  } = __webpack_require__(5180);
 const headers = {
     origin: 'http://y.qq.com/',
     referer: 'http://y.qq.com/',
@@ -2759,14 +2614,11 @@ const format = (song)=>({
         artists: song.singer.map(({ mid , name  })=>({
                 id: mid,
                 name
-            })
-        )
-    })
-;
+            }))
+    });
 const search = (info)=>{
     const url = 'https://c.y.qq.com/soso/fcgi-bin/client_search_cp?' + 'ct=24&qqmusic_ver=1298&remoteplace=txt.yqq.center&' + 't=0&aggr=1&cr=1&catZhida=1&lossless=0&flag_qc=0&p=1&n=20&w=' + encodeURIComponent(info.keyword) + '&' + 'g_tk=5381&jsonpCallback=MusicJsonCallback10005317669353331&loginUin=0&hostUin=0&' + 'format=jsonp&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0';
-    return request('GET', url).then((response)=>response.jsonp()
-    ).then((jsonBody)=>{
+    return request('GET', url).then((response)=>response.jsonp()).then((jsonBody)=>{
         const list = jsonBody.data.song.list.map(format);
         const matched = select(list, info);
         return matched ? matched.id : Promise.reject();
@@ -2795,8 +2647,7 @@ const single = (id, format1)=>{
             }
         }
     }));
-    return request('GET', url, headers).then((response)=>response.json()
-    ).then((jsonBody)=>{
+    return request('GET', url, headers).then((response)=>response.json()).then((jsonBody)=>{
         const { sip , midurlinfo  } = jsonBody.req_0.data;
         return midurlinfo[0].purl ? sip[0] + midurlinfo[0].purl : Promise.reject();
     });
@@ -2816,17 +2667,10 @@ const track = (id)=>{
             'M500',
             '.mp3'
         ], 
-    ].slice(headers.cookie || typeof window !== 'undefined' ? select.ENABLE_FLAC ? 0 : 1 : 2).map((format2)=>single(id, format2).catch(()=>null
-        )
-    )).then((result)=>result.find((url)=>url
-        ) || Promise.reject()
-    ).catch(()=>insure().qq.track(id)
-    );
+    ].slice(headers.cookie || typeof window !== 'undefined' ? select.ENABLE_FLAC ? 0 : 1 : 2).map((format2)=>single(id, format2).catch(()=>null))).then((result)=>result.find((url)=>url) || Promise.reject()).catch(()=>insure().qq.track(id));
 };
 const cs = getManagedCacheStorage('provider/qq');
-const check = (info)=>cs.cache(info, ()=>search(info)
-    ).then(track)
-;
+const check = (info)=>cs.cache(info, ()=>search(info)).then(track);
 module.exports = {
     check,
     track
@@ -2835,7 +2679,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 7088:
+/***/ 8575:
 /***/ ((module) => {
 
 "use strict";
@@ -2843,8 +2687,7 @@ module.exports = {
 module.exports = (list, info)=>{
     const { duration  } = info;
     const song1 = list.slice(0, 5) // 挑前5个结果
-    .find((song)=>song.duration && Math.abs(song.duration - duration) < 5 * 1e3
-    ); // 第一个时长相差5s (5000ms) 之内的结果
+    .find((song)=>song.duration && Math.abs(song.duration - duration) < 5 * 1e3); // 第一个时长相差5s (5000ms) 之内的结果
     if (song1) return song1;
     else return list[0]; // 没有就播放第一条
 };
@@ -2853,16 +2696,16 @@ module.exports.ENABLE_FLAC = (process.env.ENABLE_FLAC || '').toLowerCase() === '
 
 /***/ }),
 
-/***/ 1863:
+/***/ 6649:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-const { getManagedCacheStorage  } = __webpack_require__(410);
-const { logScope  } = __webpack_require__(9362);
-const YoutubeDlInvalidResponse = __webpack_require__(8402);
-const YoutubeDlNotInstalled = __webpack_require__(6120);
-const { spawnStdout  } = __webpack_require__(318);
+const { getManagedCacheStorage  } = __webpack_require__(5180);
+const { logScope  } = __webpack_require__(3573);
+const YoutubeDlInvalidResponse = __webpack_require__(1881);
+const YoutubeDlNotInstalled = __webpack_require__(3693);
+const { spawnStdout  } = __webpack_require__(4514);
 /**
  * The arguments to pass to youtube-dl
  *
@@ -2878,12 +2721,9 @@ const { spawnStdout  } = __webpack_require__(318);
         '140',
         '--dump-json',
         query
-    ]
-;
-/** @param {string} id */ const byId = (id)=>`https://www.youtube.com/watch?v=${id}`
-;
-/** @param {string} keyword */ const byKeyword = (keyword)=>`ytsearch1:${keyword}`
-;
+    ];
+/** @param {string} id */ const byId = (id)=>`https://www.youtube.com/watch?v=${id}`;
+/** @param {string} keyword */ const byKeyword = (keyword)=>`ytsearch1:${keyword}`;
 const logger = logScope('provider/youtube-dl');
 /**
  * Checking if youtube-dl is available,
@@ -2911,12 +2751,10 @@ const track = async (id)=>{
     return url;
 };
 const cs = getManagedCacheStorage('youtube-dl');
-const check = (info)=>cs.cache(info, ()=>search(info)
-    ).then(track).catch((e)=>{
+const check = (info)=>cs.cache(info, ()=>search(info)).then(track).catch((e)=>{
         if (e) logger.error(e);
         throw e;
-    })
-;
+    });
 module.exports = {
     check,
     track
@@ -2925,32 +2763,29 @@ module.exports = {
 
 /***/ }),
 
-/***/ 2079:
+/***/ 6525:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-const request = __webpack_require__(1540);
-const { getManagedCacheStorage  } = __webpack_require__(410);
+const request = __webpack_require__(3798);
+const { getManagedCacheStorage  } = __webpack_require__(5180);
 const parse = (query)=>(query || '').split('&').reduce((result, item)=>{
         const splitItem = item.split('=').map(decodeURIComponent);
         return Object.assign({}, result, {
             [splitItem[0]]: splitItem[1]
         });
-    }, {})
-;
+    }, {});
 const cs = getManagedCacheStorage('provider/youtube');
 // const proxy = require('url').parse('http://127.0.0.1:1080')
 const proxy = undefined;
 const key = process.env.YOUTUBE_KEY || null; // YouTube Data API v3
 const signature = (id = '-tKVN2mAKRI')=>{
     const url = `https://www.youtube.com/watch?v=${id}`;
-    return request('GET', url, {}, null, proxy).then((response)=>response.body()
-    ).then((body)=>{
+    return request('GET', url, {}, null, proxy).then((response)=>response.body()).then((body)=>{
         let assets = /"WEB_PLAYER_CONTEXT_CONFIG_ID_KEVLAR_VERTICAL_LANDING_PAGE_PROMO":{[^}]+}/.exec(body)[0];
         assets = JSON.parse(`{${assets}}}`).WEB_PLAYER_CONTEXT_CONFIG_ID_KEVLAR_VERTICAL_LANDING_PAGE_PROMO;
-        return request('GET', 'https://youtube.com' + assets.jsUrl, {}, null, proxy).then((response)=>response.body()
-        );
+        return request('GET', 'https://youtube.com' + assets.jsUrl, {}, null, proxy).then((response)=>response.body());
     }).then((body)=>{
         const [, funcArg, funcBody] = /function\((\w+)\)\s*{([^}]+split\(""\)[^}]+join\(""\))};/.exec(body);
         const helperName = /;(.+?)\..+?\(/.exec(funcBody)[1];
@@ -2964,8 +2799,7 @@ const apiSearch = (info)=>{
     const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(info.keyword)}&type=video&key=${key}`;
     return request('GET', url, {
         accept: 'application/json'
-    }, null, proxy).then((response)=>response.json()
-    ).then((jsonBody)=>{
+    }, null, proxy).then((response)=>response.json()).then((jsonBody)=>{
         const matched = jsonBody.items[0];
         if (matched) return matched.id.videoId;
         else return Promise.reject();
@@ -2973,8 +2807,7 @@ const apiSearch = (info)=>{
 };
 const search = (info)=>{
     const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(info.keyword)}`;
-    return request('GET', url, {}, null, proxy).then((response)=>response.body()
-    ).then((body)=>{
+    return request('GET', url, {}, null, proxy).then((response)=>response.body()).then((body)=>{
         const initialData = JSON.parse(body.match(/ytInitialData\s*=\s*([^;]+);/)[1]);
         const matched = initialData.contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents[0].itemSectionRenderer.contents[0];
         if (matched) return matched.videoRenderer.videoId;
@@ -2998,25 +2831,19 @@ const track = (id)=>{
 	 * }`;
 	 */ const url = `https://www.youtube.com/watch?v=${id}`;
     return(// request('POST', url, json_header, json_body, proxy)
-    request('GET', url, {}, null, proxy).then((response)=>response.body()
-    )// .then((body) => JSON.parse(body).streamingData)
-    .then((body)=>JSON.parse(body.match(/ytInitialPlayerResponse\s*=\s*{[^]+};\s*var\s*meta/)[0].replace(/;var meta/, '').replace(/ytInitialPlayerResponse = /, '')).streamingData
-    ).then((streamingData)=>{
-        const stream = streamingData.formats.concat(streamingData.adaptiveFormats).find((format)=>format.itag === 140
-        );
+    request('GET', url, {}, null, proxy).then((response)=>response.body())// .then((body) => JSON.parse(body).streamingData)
+    .then((body)=>JSON.parse(body.match(/ytInitialPlayerResponse\s*=\s*{[^]+};\s*var\s*meta/)[0].replace(/;var meta/, '').replace(/ytInitialPlayerResponse = /, '')).streamingData).then((streamingData)=>{
+        const stream = streamingData.formats.concat(streamingData.adaptiveFormats).find((format)=>format.itag === 140);
         // .filter(format => [249, 250, 140, 251].includes(format.itag)) // NetaseMusic PC client do not support webm format
         // .sort((a, b) => b.bitrate - a.bitrate)[0]
         const target = parse(stream.signatureCipher);
-        return stream.url || (target.sp.includes('sig') ? cs.cache('YOUTUBE_SIGNATURE', ()=>signature()
-        , Date.now() + 24 * 60 * 60 * 1000).then((sign)=>target.url + '&sig=' + sign(target.s)
-        ) : target.url);
+        return stream.url || (target.sp.includes('sig') ? cs.cache('YOUTUBE_SIGNATURE', ()=>signature(), Date.now() + 24 * 60 * 60 * 1000).then((sign)=>target.url + '&sig=' + sign(target.s)) : target.url);
     }));
 };
 const check = (info)=>cs.cache(info, ()=>{
         if (key) return apiSearch(info);
         return search(info);
-    }).then(track)
-;
+    }).then(track);
 module.exports = {
     check,
     track
@@ -3025,16 +2852,16 @@ module.exports = {
 
 /***/ }),
 
-/***/ 9409:
+/***/ 1415:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-const { getManagedCacheStorage  } = __webpack_require__(410);
-const { logScope  } = __webpack_require__(9362);
-const { spawnStdout  } = __webpack_require__(318);
-const YtDlpInvalidResponse = __webpack_require__(4487);
-const YtDlpNotInstalled = __webpack_require__(4154);
+const { getManagedCacheStorage  } = __webpack_require__(5180);
+const { logScope  } = __webpack_require__(3573);
+const { spawnStdout  } = __webpack_require__(4514);
+const YtDlpInvalidResponse = __webpack_require__(623);
+const YtDlpNotInstalled = __webpack_require__(8736);
 /**
  * The arguments to pass to yt-dlp
  *
@@ -3050,12 +2877,9 @@ const YtDlpNotInstalled = __webpack_require__(4154);
         '140',
         '--dump-json',
         query
-    ]
-;
-/** @param {string} id */ const byId = (id)=>`https://www.youtube.com/watch?v=${id}`
-;
-/** @param {string} keyword */ const byKeyword = (keyword)=>`ytsearch1:${keyword}`
-;
+    ];
+/** @param {string} id */ const byId = (id)=>`https://www.youtube.com/watch?v=${id}`;
+/** @param {string} keyword */ const byKeyword = (keyword)=>`ytsearch1:${keyword}`;
 const logger = logScope('provider/yt-dlp');
 /**
  * Checking if yt-dlp is available,
@@ -3083,12 +2907,10 @@ const track = async (id)=>{
     return url;
 };
 const cs = getManagedCacheStorage('yt-dlp');
-const check = (info)=>cs.cache(info, ()=>search(info)
-    ).then(track).catch((e)=>{
+const check = (info)=>cs.cache(info, ()=>search(info)).then(track).catch((e)=>{
         if (e) logger.error(e);
         throw e;
-    })
-;
+    });
 module.exports = {
     check,
     track
@@ -3097,13 +2919,13 @@ module.exports = {
 
 /***/ }),
 
-/***/ 9385:
+/***/ 8340:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-const request = __webpack_require__(1540);
-const { getManagedCacheStorage  } = __webpack_require__(410);
+const request = __webpack_require__(3798);
+const { getManagedCacheStorage  } = __webpack_require__(5180);
 // const proxy = require('url').parse('http://127.0.0.1:1080')
 const proxy = undefined;
 const key = process.env.YOUTUBE_KEY || null; // YouTube Data API v3
@@ -3111,8 +2933,7 @@ const apiSearch = (info)=>{
     const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(info.keyword)}&type=video&key=${key}`;
     return request('GET', url, {
         accept: 'application/json'
-    }, null, proxy).then((response)=>response.json()
-    ).then((jsonBody)=>{
+    }, null, proxy).then((response)=>response.json()).then((jsonBody)=>{
         const matched = jsonBody.items[0];
         if (matched) return matched.id.videoId;
         else return Promise.reject();
@@ -3120,8 +2941,7 @@ const apiSearch = (info)=>{
 };
 const search = (info)=>{
     const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(info.keyword)}`;
-    return request('GET', url, {}, null, proxy).then((response)=>response.body()
-    ).then((body)=>{
+    return request('GET', url, {}, null, proxy).then((response)=>response.body()).then((body)=>{
         const initialData = JSON.parse(body.match(/ytInitialData\s*=\s*([^;]+);/)[1]);
         const matched = initialData.contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents[0].itemSectionRenderer.contents[0];
         if (matched) return matched.videoRenderer.videoId;
@@ -3131,8 +2951,7 @@ const search = (info)=>{
 const track = (id)=>{
     const url = `https://www.yt-download.org/api/button/mp3/${id}`;
     const regex = /<a[^>]*href=["']([^"']*)["']/;
-    return request('GET', url, {}, null, proxy).then((response)=>response.body()
-    ).then((body)=>{
+    return request('GET', url, {}, null, proxy).then((response)=>response.body()).then((body)=>{
         var matched = body.match(regex);
         return matched ? matched[1] : Promise.reject();
     });
@@ -3141,8 +2960,7 @@ const cs = getManagedCacheStorage('provider/yt-download');
 const check = (info)=>cs.cache(info, ()=>{
         if (key) return apiSearch(info);
         return search(info);
-    }).then(track)
-;
+    }).then(track);
 module.exports = {
     check,
     track
@@ -3151,7 +2969,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 1540:
+/***/ 3798:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -3159,17 +2977,15 @@ module.exports = {
 const zlib = __webpack_require__(9796);
 const http = __webpack_require__(3685);
 const https = __webpack_require__(5687);
-const ON_CANCEL = __webpack_require__(8138);
-const RequestCancelled = __webpack_require__(4962);
-const { logScope  } = __webpack_require__(9362);
+const ON_CANCEL = __webpack_require__(923);
+const RequestCancelled = __webpack_require__(9312);
+const { logScope  } = __webpack_require__(3573);
 const parse = (__webpack_require__(7310).parse);
 const format = (__webpack_require__(7310).format);
 const logger = logScope('request');
 const timeoutThreshold = 10 * 1000;
-const translate = (host)=>(global.hosts || {})[host] || host
-;
-const create = (url, proxy)=>(((typeof proxy === 'undefined' ? global.proxy : proxy) || url).protocol === 'https:' ? https : http).request
-;
+const translate = (host)=>(global.hosts || {})[host] || host;
+const create = (url, proxy)=>(((typeof proxy === 'undefined' ? global.proxy : proxy) || url).protocol === 'https:' ? https : http).request;
 const configure = (method, url, headers, proxy)=>{
     headers = headers || {};
     proxy = typeof proxy === 'undefined' ? global.proxy : proxy;
@@ -3183,8 +2999,7 @@ const configure = (method, url, headers, proxy)=>{
                 'user-agent'
             ].includes(key) && {
                 [key]: headers[key]
-            })
-        , {});
+            }), {});
     } else {
         options.method = method;
         options.headers = headers;
@@ -3241,8 +3056,7 @@ const configure = (method, url, headers, proxy)=>{
                 url: format(url)
             }, `The request timed out, or the requester didn't handle the response.`);
             destroyClientRequest();
-        }).on('response', (response)=>resolve(response)
-        ).on('connect', (_, socket)=>{
+        }).on('response', (response)=>resolve(response)).on('connect', (_, socket)=>{
             logger.debug('received CONNECT, continuing with https.request()...');
             https.request({
                 method: method,
@@ -3250,11 +3064,8 @@ const configure = (method, url, headers, proxy)=>{
                 headers: options._headers,
                 socket: socket,
                 agent: false
-            }).on('response', (response)=>resolve(response)
-            ).on('error', (error)=>reject(error)
-            ).end(body);
-        }).on('error', (error)=>reject(error)
-        ).end(options.method.toUpperCase() === 'CONNECT' ? undefined : body);
+            }).on('response', (response)=>resolve(response)).on('error', (error)=>reject(error)).end(body);
+        }).on('error', (error)=>reject(error)).end(options.method.toUpperCase() === 'CONNECT' ? undefined : body);
     }).then(/** @param {http.IncomingMessage} response */ (response)=>{
         var ref;
         if ((ref = cancelRequest === null || cancelRequest === void 0 ? void 0 : cancelRequest.cancelled) !== null && ref !== void 0 ? ref : false) return Promise.reject(new RequestCancelled(format(url)));
@@ -3273,34 +3084,24 @@ const configure = (method, url, headers, proxy)=>{
         }
         return Object.assign(response, {
             url,
-            body: (raw)=>read(response, raw)
-            ,
-            json: ()=>json(response)
-            ,
+            body: (raw)=>read(response, raw),
+            json: ()=>json(response),
             jsonp: ()=>jsonp(response)
         });
     });
 };
 const read = (connect, raw)=>new Promise((resolve, reject)=>{
         const chunks = [];
-        connect.on('data', (chunk)=>chunks.push(chunk)
-        ).on('end', ()=>resolve(Buffer.concat(chunks))
-        ).on('error', (error)=>reject(error)
-        );
+        connect.on('data', (chunk)=>chunks.push(chunk)).on('end', ()=>resolve(Buffer.concat(chunks))).on('error', (error)=>reject(error));
     }).then((buffer)=>{
         buffer = buffer.length && [
             'gzip',
             'deflate'
         ].includes(connect.headers['content-encoding']) ? zlib.unzipSync(buffer) : buffer;
         return raw ? buffer : buffer.toString();
-    })
-;
-const json = (connect)=>read(connect, false).then((body)=>JSON.parse(body)
-    )
-;
-const jsonp = (connect)=>read(connect, false).then((body)=>JSON.parse(body.slice(body.indexOf('(') + 1, -')'.length))
-    )
-;
+    });
+const json = (connect)=>read(connect, false).then((body)=>JSON.parse(body));
+const jsonp = (connect)=>read(connect, false).then((body)=>JSON.parse(body.slice(body.indexOf('(') + 1, -')'.length)));
 request.read = read;
 request.create = create;
 request.translate = translate;
@@ -3310,7 +3111,7 @@ module.exports = request;
 
 /***/ }),
 
-/***/ 9059:
+/***/ 3375:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -3319,12 +3120,12 @@ const fs = __webpack_require__(7147);
 const net = __webpack_require__(1808);
 const path = __webpack_require__(1017);
 const parse = (__webpack_require__(7310).parse);
-const { logScope  } = __webpack_require__(9362);
+const { logScope  } = __webpack_require__(3573);
 const logger = logScope('server');
-const sni = __webpack_require__(4826);
-const hook = __webpack_require__(3162);
-const request = __webpack_require__(1540);
-const { isHost  } = __webpack_require__(1134);
+const sni = __webpack_require__(6924);
+const hook = __webpack_require__(9618);
+const request = __webpack_require__(3798);
+const { isHost  } = __webpack_require__(1320);
 const proxy = {
     core: {
         mitm: (req, res)=>{
@@ -3335,8 +3136,7 @@ const proxy = {
                 });
                 res.end(`
 					function FindProxyForURL(url, host) {
-						if (${Array.from(hook.target.host).map((host)=>`host == '${host}'`
-                ).join(' || ')}) {
+						if (${Array.from(hook.target.host).map((host)=>`host == '${host}'`).join(' || ')}) {
 							return 'PROXY ${url.hostname}:${url.port || 80}'
 						}
 						return 'DIRECT'
@@ -3347,16 +3147,7 @@ const proxy = {
                     res,
                     req
                 };
-                Promise.resolve().then(()=>proxy.protect(ctx)
-                ).then(()=>proxy.authenticate(ctx)
-                ).then(()=>hook.request.before(ctx)
-                ).then(()=>proxy.filter(ctx)
-                ).then(()=>proxy.log(ctx)
-                ).then(()=>proxy.mitm.request(ctx)
-                ).then(()=>hook.request.after(ctx)
-                ).then(()=>proxy.mitm.response(ctx)
-                ).catch(()=>proxy.mitm.close(ctx)
-                );
+                Promise.resolve().then(()=>proxy.protect(ctx)).then(()=>proxy.authenticate(ctx)).then(()=>hook.request.before(ctx)).then(()=>proxy.filter(ctx)).then(()=>proxy.log(ctx)).then(()=>proxy.mitm.request(ctx)).then(()=>hook.request.after(ctx)).then(()=>proxy.mitm.response(ctx)).catch(()=>proxy.mitm.close(ctx));
             }
         },
         tunnel: (req, socket, head)=>{
@@ -3365,17 +3156,7 @@ const proxy = {
                 socket,
                 head
             };
-            Promise.resolve().then(()=>proxy.protect(ctx)
-            ).then(()=>proxy.authenticate(ctx)
-            ).then(()=>hook.connect.before(ctx)
-            ).then(()=>proxy.filter(ctx)
-            ).then(()=>proxy.log(ctx)
-            ).then(()=>proxy.tunnel.connect(ctx)
-            ).then(()=>proxy.tunnel.dock(ctx)
-            ).then(()=>hook.negotiate.before(ctx)
-            ).then(()=>proxy.tunnel.pipe(ctx)
-            ).catch(()=>proxy.tunnel.close(ctx)
-            );
+            Promise.resolve().then(()=>proxy.protect(ctx)).then(()=>proxy.authenticate(ctx)).then(()=>hook.connect.before(ctx)).then(()=>proxy.filter(ctx)).then(()=>proxy.log(ctx)).then(()=>proxy.tunnel.connect(ctx)).then(()=>proxy.tunnel.dock(ctx)).then(()=>hook.negotiate.before(ctx)).then(()=>proxy.tunnel.pipe(ctx)).catch(()=>proxy.tunnel.close(ctx));
         }
     },
     abort: (socket)=>{
@@ -3384,12 +3165,9 @@ const proxy = {
     },
     protect: (ctx)=>{
         const { req , res , socket  } = ctx;
-        if (req) req.on('error', ()=>proxy.abort(req.socket, 'req')
-        );
-        if (res) res.on('error', ()=>proxy.abort(res.socket, 'res')
-        );
-        if (socket) socket.on('error', ()=>proxy.abort(socket, 'socket')
-        );
+        if (req) req.on('error', ()=>proxy.abort(req.socket, 'req'));
+        if (res) res.on('error', ()=>proxy.abort(res.socket, 'res'));
+        if (socket) socket.on('error', ()=>proxy.abort(socket, 'socket'));
     },
     log: (ctx)=>{
         const { req , socket , decision  } = ctx;
@@ -3418,8 +3196,7 @@ const proxy = {
     filter: (ctx)=>{
         if (ctx.decision || ctx.req.local) return;
         const url = parse((ctx.socket ? 'https://' : '') + ctx.req.url);
-        const match = (pattern)=>url.href.search(new RegExp(pattern, 'g')) !== -1
-        ;
+        const match = (pattern)=>url.href.search(new RegExp(pattern, 'g')) !== -1;
         try {
             const allow = server.whitelist.some(match);
             const deny = server.blacklist.some(match);
@@ -3444,16 +3221,12 @@ const proxy = {
                 }
                 const url = parse(req.url);
                 const options1 = request.configure(req.method, url, req.headers);
-                ctx.proxyReq = request.create(url)(options1).on('response', (proxyRes)=>resolve(ctx.proxyRes = proxyRes)
-                ).on('error', (error)=>reject(ctx.error = error)
-                );
+                ctx.proxyReq = request.create(url)(options1).on('response', (proxyRes)=>resolve(ctx.proxyRes = proxyRes)).on('error', (error)=>reject(ctx.error = error));
                 req.readable ? req.pipe(ctx.proxyReq) : ctx.proxyReq.end(req.body);
-            })
-        ,
+            }),
         response: (ctx)=>{
             const { res , proxyRes  } = ctx;
-            proxyRes.on('error', ()=>proxy.abort(proxyRes.socket, 'proxyRes')
-            );
+            proxyRes.on('error', ()=>proxy.abort(proxyRes.socket, 'proxyRes'));
             res.writeHead(proxyRes.statusCode, proxyRes.headers);
             proxyRes.readable ? proxyRes.pipe(res) : res.end(proxyRes.body);
         },
@@ -3468,32 +3241,22 @@ const proxy = {
                 const url = parse('https://' + req.url);
                 if (global.proxy && !req.local) {
                     const options2 = request.configure(req.method, url, req.headers);
-                    request.create(proxy)(options2).on('connect', (_, proxySocket)=>resolve(ctx.proxySocket = proxySocket)
-                    ).on('error', (error)=>reject(ctx.error = error)
-                    ).end();
+                    request.create(proxy)(options2).on('connect', (_, proxySocket)=>resolve(ctx.proxySocket = proxySocket)).on('error', (error)=>reject(ctx.error = error)).end();
                 } else {
-                    const proxySocket = net.connect(url.port || 443, request.translate(url.hostname)).on('connect', ()=>resolve(ctx.proxySocket = proxySocket)
-                    ).on('error', (error)=>reject(ctx.error = error)
-                    );
+                    const proxySocket = net.connect(url.port || 443, request.translate(url.hostname)).on('connect', ()=>resolve(ctx.proxySocket = proxySocket)).on('error', (error)=>reject(ctx.error = error));
                 }
-            })
-        ,
+            }),
         dock: (ctx)=>new Promise((resolve)=>{
                 const { req , head , socket  } = ctx;
                 socket.once('data', (data)=>resolve(ctx.head = Buffer.concat([
                         head,
                         data
-                    ]))
-                ).write(`HTTP/${req.httpVersion} 200 Connection established\r\n\r\n`);
-            }).then((data)=>ctx.socket.sni = sni(data)
-            ).catch((e)=>e && logger.error(e)
-            )
-        ,
+                    ]))).write(`HTTP/${req.httpVersion} 200 Connection established\r\n\r\n`);
+            }).then((data)=>ctx.socket.sni = sni(data)).catch((e)=>e && logger.error(e)),
         pipe: (ctx)=>{
             if (ctx.decision === 'blank') return Promise.reject(ctx.error = ctx.decision);
             const { head , socket , proxySocket  } = ctx;
-            proxySocket.on('error', ()=>proxy.abort(ctx.proxySocket, 'proxySocket')
-            );
+            proxySocket.on('error', ()=>proxy.abort(ctx.proxySocket, 'proxySocket'));
             proxySocket.write(head);
             socket.pipe(proxySocket);
             proxySocket.pipe(socket);
@@ -3524,7 +3287,7 @@ module.exports = server;
 
 /***/ }),
 
-/***/ 4826:
+/***/ 6924:
 /***/ ((module) => {
 
 "use strict";
@@ -3533,8 +3296,7 @@ module.exports = server;
 module.exports = (data)=>{
     let end = data.length;
     let pointer = 5 + 1 + 3 + 2 + 32;
-    const nan = (number = pointer)=>isNaN(number)
-    ;
+    const nan = (number = pointer)=>isNaN(number);
     if (pointer + 1 > end || nan()) return null;
     pointer += 1 + data[pointer];
     if (pointer + 2 > end || nan()) return null;
@@ -3577,14 +3339,14 @@ module.exports = (data)=>{
 
 /***/ }),
 
-/***/ 318:
+/***/ 4514:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 const child_process = __webpack_require__(2081);
-const { logScope  } = __webpack_require__(9362);
-const ProcessExitNotSuccessfully = __webpack_require__(7128);
+const { logScope  } = __webpack_require__(3573);
+const ProcessExitNotSuccessfully = __webpack_require__(3532);
 const logger = logScope('spawn');
 /**
  * @typedef {{stdout: Buffer, stderr: Buffer}} ExecutionResult
@@ -3609,8 +3371,7 @@ const logger = logScope('spawn');
             // Users should acknowledge what command is executing.
             logger.info(`running ${cmd} ${args.join(' ')}`);
         });
-        spawn.on('error', (error)=>reject(error)
-        );
+        spawn.on('error', (error)=>reject(error));
         spawn.on('close', (code)=>{
             if (code !== 0) reject(new ProcessExitNotSuccessfully(cmd, code));
             else {
@@ -3637,7 +3398,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 1134:
+/***/ 1320:
 /***/ ((module) => {
 
 "use strict";
@@ -3660,8 +3421,7 @@ module.exports = {
  * @param url {string}
  * @return {(host: string) => boolean}
  * @see isHost
- */ const isHostWrapper = (url)=>(host)=>isHost(url, host)
-;
+ */ const isHostWrapper = (url)=>(host)=>isHost(url, host);
 module.exports = {
     isHost,
     isHostWrapper
@@ -11611,12 +11371,12 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
-/***/ 8023:
+/***/ 1654:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var global = __webpack_require__(2537);
-var isCallable = __webpack_require__(5645);
-var tryToString = __webpack_require__(2286);
+var global = __webpack_require__(960);
+var isCallable = __webpack_require__(1648);
+var tryToString = __webpack_require__(7711);
 
 var TypeError = global.TypeError;
 
@@ -11629,12 +11389,12 @@ module.exports = function (argument) {
 
 /***/ }),
 
-/***/ 3247:
+/***/ 8817:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var global = __webpack_require__(2537);
-var isConstructor = __webpack_require__(6393);
-var tryToString = __webpack_require__(2286);
+var global = __webpack_require__(960);
+var isConstructor = __webpack_require__(3763);
+var tryToString = __webpack_require__(7711);
 
 var TypeError = global.TypeError;
 
@@ -11647,11 +11407,11 @@ module.exports = function (argument) {
 
 /***/ }),
 
-/***/ 8031:
+/***/ 1290:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var global = __webpack_require__(2537);
-var isObject = __webpack_require__(480);
+var global = __webpack_require__(960);
+var isObject = __webpack_require__(4116);
 
 var String = global.String;
 var TypeError = global.TypeError;
@@ -11665,12 +11425,12 @@ module.exports = function (argument) {
 
 /***/ }),
 
-/***/ 5269:
+/***/ 4854:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var toIndexedObject = __webpack_require__(6035);
-var toAbsoluteIndex = __webpack_require__(9116);
-var lengthOfArrayLike = __webpack_require__(2783);
+var toIndexedObject = __webpack_require__(1461);
+var toAbsoluteIndex = __webpack_require__(219);
+var lengthOfArrayLike = __webpack_require__(7727);
 
 // `Array.prototype.{ indexOf, includes }` methods implementation
 var createMethod = function (IS_INCLUDES) {
@@ -11704,10 +11464,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ 1249:
+/***/ 1274:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var uncurryThis = __webpack_require__(9164);
+var uncurryThis = __webpack_require__(3839);
 
 var toString = uncurryThis({}.toString);
 var stringSlice = uncurryThis(''.slice);
@@ -11719,14 +11479,14 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 151:
+/***/ 2559:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var global = __webpack_require__(2537);
-var TO_STRING_TAG_SUPPORT = __webpack_require__(4633);
-var isCallable = __webpack_require__(5645);
-var classofRaw = __webpack_require__(1249);
-var wellKnownSymbol = __webpack_require__(7867);
+var global = __webpack_require__(960);
+var TO_STRING_TAG_SUPPORT = __webpack_require__(7941);
+var isCallable = __webpack_require__(1648);
+var classofRaw = __webpack_require__(1274);
+var wellKnownSymbol = __webpack_require__(6692);
 
 var TO_STRING_TAG = wellKnownSymbol('toStringTag');
 var Object = global.Object;
@@ -11756,14 +11516,14 @@ module.exports = TO_STRING_TAG_SUPPORT ? classofRaw : function (it) {
 
 /***/ }),
 
-/***/ 290:
+/***/ 3162:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var call = __webpack_require__(794);
-var aCallable = __webpack_require__(8023);
-var anObject = __webpack_require__(8031);
+var call = __webpack_require__(3151);
+var aCallable = __webpack_require__(1654);
+var anObject = __webpack_require__(1290);
 
 // https://github.com/tc39/collection-methods
 module.exports = function addAll(/* ...elements */) {
@@ -11778,14 +11538,14 @@ module.exports = function addAll(/* ...elements */) {
 
 /***/ }),
 
-/***/ 5543:
+/***/ 2796:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var call = __webpack_require__(794);
-var aCallable = __webpack_require__(8023);
-var anObject = __webpack_require__(8031);
+var call = __webpack_require__(3151);
+var aCallable = __webpack_require__(1654);
+var anObject = __webpack_require__(1290);
 
 // https://github.com/tc39/collection-methods
 module.exports = function deleteAll(/* ...elements */) {
@@ -11803,13 +11563,13 @@ module.exports = function deleteAll(/* ...elements */) {
 
 /***/ }),
 
-/***/ 3334:
+/***/ 4974:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var hasOwn = __webpack_require__(1126);
-var ownKeys = __webpack_require__(2937);
-var getOwnPropertyDescriptorModule = __webpack_require__(4095);
-var definePropertyModule = __webpack_require__(2983);
+var hasOwn = __webpack_require__(3467);
+var ownKeys = __webpack_require__(2835);
+var getOwnPropertyDescriptorModule = __webpack_require__(1279);
+var definePropertyModule = __webpack_require__(7539);
 
 module.exports = function (target, source, exceptions) {
   var keys = ownKeys(source);
@@ -11826,12 +11586,12 @@ module.exports = function (target, source, exceptions) {
 
 /***/ }),
 
-/***/ 7950:
+/***/ 5311:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var DESCRIPTORS = __webpack_require__(6495);
-var definePropertyModule = __webpack_require__(2983);
-var createPropertyDescriptor = __webpack_require__(3597);
+var DESCRIPTORS = __webpack_require__(4339);
+var definePropertyModule = __webpack_require__(7539);
+var createPropertyDescriptor = __webpack_require__(9192);
 
 module.exports = DESCRIPTORS ? function (object, key, value) {
   return definePropertyModule.f(object, key, createPropertyDescriptor(1, value));
@@ -11843,7 +11603,7 @@ module.exports = DESCRIPTORS ? function (object, key, value) {
 
 /***/ }),
 
-/***/ 3597:
+/***/ 9192:
 /***/ ((module) => {
 
 module.exports = function (bitmap, value) {
@@ -11858,42 +11618,56 @@ module.exports = function (bitmap, value) {
 
 /***/ }),
 
-/***/ 7548:
+/***/ 2421:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var global = __webpack_require__(2537);
-var isCallable = __webpack_require__(5645);
-var createNonEnumerableProperty = __webpack_require__(7950);
-var makeBuiltIn = __webpack_require__(1266);
-var setGlobal = __webpack_require__(5879);
+var isCallable = __webpack_require__(1648);
+var createNonEnumerableProperty = __webpack_require__(5311);
+var makeBuiltIn = __webpack_require__(4587);
+var defineGlobalProperty = __webpack_require__(704);
 
 module.exports = function (O, key, value, options) {
-  var unsafe = options ? !!options.unsafe : false;
-  var simple = options ? !!options.enumerable : false;
-  var noTargetGet = options ? !!options.noTargetGet : false;
-  var name = options && options.name !== undefined ? options.name : key;
+  if (!options) options = {};
+  var simple = options.enumerable;
+  var name = options.name !== undefined ? options.name : key;
   if (isCallable(value)) makeBuiltIn(value, name, options);
-  if (O === global) {
+  if (options.global) {
     if (simple) O[key] = value;
-    else setGlobal(key, value);
-    return O;
-  } else if (!unsafe) {
-    delete O[key];
-  } else if (!noTargetGet && O[key]) {
-    simple = true;
-  }
-  if (simple) O[key] = value;
-  else createNonEnumerableProperty(O, key, value);
-  return O;
+    else defineGlobalProperty(key, value);
+  } else {
+    if (!options.unsafe) delete O[key];
+    else if (O[key]) simple = true;
+    if (simple) O[key] = value;
+    else createNonEnumerableProperty(O, key, value);
+  } return O;
 };
 
 
 /***/ }),
 
-/***/ 6495:
+/***/ 704:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var fails = __webpack_require__(3999);
+var global = __webpack_require__(960);
+
+// eslint-disable-next-line es-x/no-object-defineproperty -- safe
+var defineProperty = Object.defineProperty;
+
+module.exports = function (key, value) {
+  try {
+    defineProperty(global, key, { value: value, configurable: true, writable: true });
+  } catch (error) {
+    global[key] = value;
+  } return value;
+};
+
+
+/***/ }),
+
+/***/ 4339:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var fails = __webpack_require__(2913);
 
 // Detect IE8's incomplete defineProperty implementation
 module.exports = !fails(function () {
@@ -11904,11 +11678,11 @@ module.exports = !fails(function () {
 
 /***/ }),
 
-/***/ 9653:
+/***/ 9070:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var global = __webpack_require__(2537);
-var isObject = __webpack_require__(480);
+var global = __webpack_require__(960);
+var isObject = __webpack_require__(4116);
 
 var document = global.document;
 // typeof document.createElement is 'object' in old IE
@@ -11921,21 +11695,21 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 8412:
+/***/ 7159:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var getBuiltIn = __webpack_require__(4599);
+var getBuiltIn = __webpack_require__(5048);
 
 module.exports = getBuiltIn('navigator', 'userAgent') || '';
 
 
 /***/ }),
 
-/***/ 4951:
+/***/ 3890:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var global = __webpack_require__(2537);
-var userAgent = __webpack_require__(8412);
+var global = __webpack_require__(960);
+var userAgent = __webpack_require__(7159);
 
 var process = global.process;
 var Deno = global.Deno;
@@ -11965,7 +11739,7 @@ module.exports = version;
 
 /***/ }),
 
-/***/ 8329:
+/***/ 847:
 /***/ ((module) => {
 
 // IE8- don't enum bug keys
@@ -11982,31 +11756,31 @@ module.exports = [
 
 /***/ }),
 
-/***/ 9527:
+/***/ 1302:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var global = __webpack_require__(2537);
-var getOwnPropertyDescriptor = (__webpack_require__(4095).f);
-var createNonEnumerableProperty = __webpack_require__(7950);
-var defineBuiltIn = __webpack_require__(7548);
-var setGlobal = __webpack_require__(5879);
-var copyConstructorProperties = __webpack_require__(3334);
-var isForced = __webpack_require__(2333);
+var global = __webpack_require__(960);
+var getOwnPropertyDescriptor = (__webpack_require__(1279).f);
+var createNonEnumerableProperty = __webpack_require__(5311);
+var defineBuiltIn = __webpack_require__(2421);
+var defineGlobalProperty = __webpack_require__(704);
+var copyConstructorProperties = __webpack_require__(4974);
+var isForced = __webpack_require__(5207);
 
 /*
-  options.target      - name of the target object
-  options.global      - target is the global object
-  options.stat        - export as static methods of target
-  options.proto       - export as prototype methods of target
-  options.real        - real prototype method for the `pure` version
-  options.forced      - export even if the native feature is available
-  options.bind        - bind methods to the target, required for the `pure` version
-  options.wrap        - wrap constructors to preventing global pollution, required for the `pure` version
-  options.unsafe      - use the simple assignment of property instead of delete + defineProperty
-  options.sham        - add a flag to not completely full polyfills
-  options.enumerable  - export as enumerable property
-  options.noTargetGet - prevent calling a getter on target
-  options.name        - the .name of the function if it does not match the key
+  options.target         - name of the target object
+  options.global         - target is the global object
+  options.stat           - export as static methods of target
+  options.proto          - export as prototype methods of target
+  options.real           - real prototype method for the `pure` version
+  options.forced         - export even if the native feature is available
+  options.bind           - bind methods to the target, required for the `pure` version
+  options.wrap           - wrap constructors to preventing global pollution, required for the `pure` version
+  options.unsafe         - use the simple assignment of property instead of delete + defineProperty
+  options.sham           - add a flag to not completely full polyfills
+  options.enumerable     - export as enumerable property
+  options.dontCallGetSet - prevent calling a getter on target
+  options.name           - the .name of the function if it does not match the key
 */
 module.exports = function (options, source) {
   var TARGET = options.target;
@@ -12016,13 +11790,13 @@ module.exports = function (options, source) {
   if (GLOBAL) {
     target = global;
   } else if (STATIC) {
-    target = global[TARGET] || setGlobal(TARGET, {});
+    target = global[TARGET] || defineGlobalProperty(TARGET, {});
   } else {
     target = (global[TARGET] || {}).prototype;
   }
   if (target) for (key in source) {
     sourceProperty = source[key];
-    if (options.noTargetGet) {
+    if (options.dontCallGetSet) {
       descriptor = getOwnPropertyDescriptor(target, key);
       targetProperty = descriptor && descriptor.value;
     } else targetProperty = target[key];
@@ -12043,7 +11817,7 @@ module.exports = function (options, source) {
 
 /***/ }),
 
-/***/ 3999:
+/***/ 2913:
 /***/ ((module) => {
 
 module.exports = function (exec) {
@@ -12057,12 +11831,12 @@ module.exports = function (exec) {
 
 /***/ }),
 
-/***/ 1189:
+/***/ 5909:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var uncurryThis = __webpack_require__(9164);
-var aCallable = __webpack_require__(8023);
-var NATIVE_BIND = __webpack_require__(642);
+var uncurryThis = __webpack_require__(3839);
+var aCallable = __webpack_require__(1654);
+var NATIVE_BIND = __webpack_require__(16);
 
 var bind = uncurryThis(uncurryThis.bind);
 
@@ -12077,10 +11851,10 @@ module.exports = function (fn, that) {
 
 /***/ }),
 
-/***/ 642:
+/***/ 16:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var fails = __webpack_require__(3999);
+var fails = __webpack_require__(2913);
 
 module.exports = !fails(function () {
   // eslint-disable-next-line es-x/no-function-prototype-bind -- safe
@@ -12092,10 +11866,10 @@ module.exports = !fails(function () {
 
 /***/ }),
 
-/***/ 794:
+/***/ 3151:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var NATIVE_BIND = __webpack_require__(642);
+var NATIVE_BIND = __webpack_require__(16);
 
 var call = Function.prototype.call;
 
@@ -12106,11 +11880,11 @@ module.exports = NATIVE_BIND ? call.bind(call) : function () {
 
 /***/ }),
 
-/***/ 8760:
+/***/ 3284:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var DESCRIPTORS = __webpack_require__(6495);
-var hasOwn = __webpack_require__(1126);
+var DESCRIPTORS = __webpack_require__(4339);
+var hasOwn = __webpack_require__(3467);
 
 var FunctionPrototype = Function.prototype;
 // eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
@@ -12130,10 +11904,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ 9164:
+/***/ 3839:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var NATIVE_BIND = __webpack_require__(642);
+var NATIVE_BIND = __webpack_require__(16);
 
 var FunctionPrototype = Function.prototype;
 var bind = FunctionPrototype.bind;
@@ -12151,11 +11925,11 @@ module.exports = NATIVE_BIND ? function (fn) {
 
 /***/ }),
 
-/***/ 4599:
+/***/ 5048:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var global = __webpack_require__(2537);
-var isCallable = __webpack_require__(5645);
+var global = __webpack_require__(960);
+var isCallable = __webpack_require__(1648);
 
 var aFunction = function (argument) {
   return isCallable(argument) ? argument : undefined;
@@ -12168,13 +11942,13 @@ module.exports = function (namespace, method) {
 
 /***/ }),
 
-/***/ 2022:
+/***/ 4150:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var classof = __webpack_require__(151);
-var getMethod = __webpack_require__(1864);
-var Iterators = __webpack_require__(5341);
-var wellKnownSymbol = __webpack_require__(7867);
+var classof = __webpack_require__(2559);
+var getMethod = __webpack_require__(1865);
+var Iterators = __webpack_require__(7544);
+var wellKnownSymbol = __webpack_require__(6692);
 
 var ITERATOR = wellKnownSymbol('iterator');
 
@@ -12187,15 +11961,15 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 3929:
+/***/ 6366:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var global = __webpack_require__(2537);
-var call = __webpack_require__(794);
-var aCallable = __webpack_require__(8023);
-var anObject = __webpack_require__(8031);
-var tryToString = __webpack_require__(2286);
-var getIteratorMethod = __webpack_require__(2022);
+var global = __webpack_require__(960);
+var call = __webpack_require__(3151);
+var aCallable = __webpack_require__(1654);
+var anObject = __webpack_require__(1290);
+var tryToString = __webpack_require__(7711);
+var getIteratorMethod = __webpack_require__(4150);
 
 var TypeError = global.TypeError;
 
@@ -12208,10 +11982,10 @@ module.exports = function (argument, usingIterator) {
 
 /***/ }),
 
-/***/ 6954:
+/***/ 8050:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var call = __webpack_require__(794);
+var call = __webpack_require__(3151);
 
 module.exports = function (it) {
   // eslint-disable-next-line es-x/no-map -- safe
@@ -12221,10 +11995,10 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 1864:
+/***/ 1865:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var aCallable = __webpack_require__(8023);
+var aCallable = __webpack_require__(1654);
 
 // `GetMethod` abstract operation
 // https://tc39.es/ecma262/#sec-getmethod
@@ -12236,10 +12010,10 @@ module.exports = function (V, P) {
 
 /***/ }),
 
-/***/ 6350:
+/***/ 249:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var call = __webpack_require__(794);
+var call = __webpack_require__(3151);
 
 module.exports = function (it) {
   // eslint-disable-next-line es-x/no-set -- safe
@@ -12249,7 +12023,7 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 2537:
+/***/ 960:
 /***/ ((module) => {
 
 var check = function (it) {
@@ -12270,11 +12044,11 @@ module.exports =
 
 /***/ }),
 
-/***/ 1126:
+/***/ 3467:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var uncurryThis = __webpack_require__(9164);
-var toObject = __webpack_require__(6198);
+var uncurryThis = __webpack_require__(3839);
+var toObject = __webpack_require__(5583);
 
 var hasOwnProperty = uncurryThis({}.hasOwnProperty);
 
@@ -12288,7 +12062,7 @@ module.exports = Object.hasOwn || function hasOwn(it, key) {
 
 /***/ }),
 
-/***/ 6978:
+/***/ 5702:
 /***/ ((module) => {
 
 module.exports = {};
@@ -12296,12 +12070,12 @@ module.exports = {};
 
 /***/ }),
 
-/***/ 7454:
+/***/ 3865:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var DESCRIPTORS = __webpack_require__(6495);
-var fails = __webpack_require__(3999);
-var createElement = __webpack_require__(9653);
+var DESCRIPTORS = __webpack_require__(4339);
+var fails = __webpack_require__(2913);
+var createElement = __webpack_require__(9070);
 
 // Thanks to IE8 for its funny defineProperty
 module.exports = !DESCRIPTORS && !fails(function () {
@@ -12314,13 +12088,13 @@ module.exports = !DESCRIPTORS && !fails(function () {
 
 /***/ }),
 
-/***/ 155:
+/***/ 2169:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var global = __webpack_require__(2537);
-var uncurryThis = __webpack_require__(9164);
-var fails = __webpack_require__(3999);
-var classof = __webpack_require__(1249);
+var global = __webpack_require__(960);
+var uncurryThis = __webpack_require__(3839);
+var fails = __webpack_require__(2913);
+var classof = __webpack_require__(1274);
 
 var Object = global.Object;
 var split = uncurryThis(''.split);
@@ -12337,12 +12111,12 @@ module.exports = fails(function () {
 
 /***/ }),
 
-/***/ 5042:
+/***/ 1962:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var uncurryThis = __webpack_require__(9164);
-var isCallable = __webpack_require__(5645);
-var store = __webpack_require__(6936);
+var uncurryThis = __webpack_require__(3839);
+var isCallable = __webpack_require__(1648);
+var store = __webpack_require__(4573);
 
 var functionToString = uncurryThis(Function.toString);
 
@@ -12358,18 +12132,18 @@ module.exports = store.inspectSource;
 
 /***/ }),
 
-/***/ 8706:
+/***/ 4951:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var NATIVE_WEAK_MAP = __webpack_require__(8811);
-var global = __webpack_require__(2537);
-var uncurryThis = __webpack_require__(9164);
-var isObject = __webpack_require__(480);
-var createNonEnumerableProperty = __webpack_require__(7950);
-var hasOwn = __webpack_require__(1126);
-var shared = __webpack_require__(6936);
-var sharedKey = __webpack_require__(8337);
-var hiddenKeys = __webpack_require__(6978);
+var NATIVE_WEAK_MAP = __webpack_require__(2716);
+var global = __webpack_require__(960);
+var uncurryThis = __webpack_require__(3839);
+var isObject = __webpack_require__(4116);
+var createNonEnumerableProperty = __webpack_require__(5311);
+var hasOwn = __webpack_require__(3467);
+var shared = __webpack_require__(4573);
+var sharedKey = __webpack_require__(1312);
+var hiddenKeys = __webpack_require__(5702);
 
 var OBJECT_ALREADY_INITIALIZED = 'Object already initialized';
 var TypeError = global.TypeError;
@@ -12434,11 +12208,11 @@ module.exports = {
 
 /***/ }),
 
-/***/ 8982:
+/***/ 9478:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var wellKnownSymbol = __webpack_require__(7867);
-var Iterators = __webpack_require__(5341);
+var wellKnownSymbol = __webpack_require__(6692);
+var Iterators = __webpack_require__(7544);
 
 var ITERATOR = wellKnownSymbol('iterator');
 var ArrayPrototype = Array.prototype;
@@ -12451,7 +12225,7 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 5645:
+/***/ 1648:
 /***/ ((module) => {
 
 // `IsCallable` abstract operation
@@ -12463,15 +12237,15 @@ module.exports = function (argument) {
 
 /***/ }),
 
-/***/ 6393:
+/***/ 3763:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var uncurryThis = __webpack_require__(9164);
-var fails = __webpack_require__(3999);
-var isCallable = __webpack_require__(5645);
-var classof = __webpack_require__(151);
-var getBuiltIn = __webpack_require__(4599);
-var inspectSource = __webpack_require__(5042);
+var uncurryThis = __webpack_require__(3839);
+var fails = __webpack_require__(2913);
+var isCallable = __webpack_require__(1648);
+var classof = __webpack_require__(2559);
+var getBuiltIn = __webpack_require__(5048);
+var inspectSource = __webpack_require__(1962);
 
 var noop = function () { /* empty */ };
 var empty = [];
@@ -12522,11 +12296,11 @@ module.exports = !construct || fails(function () {
 
 /***/ }),
 
-/***/ 2333:
+/***/ 5207:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var fails = __webpack_require__(3999);
-var isCallable = __webpack_require__(5645);
+var fails = __webpack_require__(2913);
+var isCallable = __webpack_require__(1648);
 
 var replacement = /#|\.prototype\./;
 
@@ -12551,10 +12325,10 @@ module.exports = isForced;
 
 /***/ }),
 
-/***/ 480:
+/***/ 4116:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var isCallable = __webpack_require__(5645);
+var isCallable = __webpack_require__(1648);
 
 module.exports = function (it) {
   return typeof it == 'object' ? it !== null : isCallable(it);
@@ -12563,7 +12337,7 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 7805:
+/***/ 773:
 /***/ ((module) => {
 
 module.exports = false;
@@ -12571,14 +12345,14 @@ module.exports = false;
 
 /***/ }),
 
-/***/ 2852:
+/***/ 6370:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var global = __webpack_require__(2537);
-var getBuiltIn = __webpack_require__(4599);
-var isCallable = __webpack_require__(5645);
-var isPrototypeOf = __webpack_require__(2845);
-var USE_SYMBOL_AS_UID = __webpack_require__(5335);
+var global = __webpack_require__(960);
+var getBuiltIn = __webpack_require__(5048);
+var isCallable = __webpack_require__(1648);
+var isPrototypeOf = __webpack_require__(8616);
+var USE_SYMBOL_AS_UID = __webpack_require__(8589);
 
 var Object = global.Object;
 
@@ -12592,20 +12366,20 @@ module.exports = USE_SYMBOL_AS_UID ? function (it) {
 
 /***/ }),
 
-/***/ 2771:
+/***/ 6983:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var global = __webpack_require__(2537);
-var bind = __webpack_require__(1189);
-var call = __webpack_require__(794);
-var anObject = __webpack_require__(8031);
-var tryToString = __webpack_require__(2286);
-var isArrayIteratorMethod = __webpack_require__(8982);
-var lengthOfArrayLike = __webpack_require__(2783);
-var isPrototypeOf = __webpack_require__(2845);
-var getIterator = __webpack_require__(3929);
-var getIteratorMethod = __webpack_require__(2022);
-var iteratorClose = __webpack_require__(2159);
+var global = __webpack_require__(960);
+var bind = __webpack_require__(5909);
+var call = __webpack_require__(3151);
+var anObject = __webpack_require__(1290);
+var tryToString = __webpack_require__(7711);
+var isArrayIteratorMethod = __webpack_require__(9478);
+var lengthOfArrayLike = __webpack_require__(7727);
+var isPrototypeOf = __webpack_require__(8616);
+var getIterator = __webpack_require__(6366);
+var getIteratorMethod = __webpack_require__(4150);
+var iteratorClose = __webpack_require__(3922);
 
 var TypeError = global.TypeError;
 
@@ -12665,12 +12439,12 @@ module.exports = function (iterable, unboundFunction, options) {
 
 /***/ }),
 
-/***/ 2159:
+/***/ 3922:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var call = __webpack_require__(794);
-var anObject = __webpack_require__(8031);
-var getMethod = __webpack_require__(1864);
+var call = __webpack_require__(3151);
+var anObject = __webpack_require__(1290);
+var getMethod = __webpack_require__(1865);
 
 module.exports = function (iterator, kind, value) {
   var innerResult, innerError;
@@ -12695,7 +12469,7 @@ module.exports = function (iterator, kind, value) {
 
 /***/ }),
 
-/***/ 5341:
+/***/ 7544:
 /***/ ((module) => {
 
 module.exports = {};
@@ -12703,10 +12477,10 @@ module.exports = {};
 
 /***/ }),
 
-/***/ 2783:
+/***/ 7727:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var toLength = __webpack_require__(6227);
+var toLength = __webpack_require__(6024);
 
 // `LengthOfArrayLike` abstract operation
 // https://tc39.es/ecma262/#sec-lengthofarraylike
@@ -12717,21 +12491,23 @@ module.exports = function (obj) {
 
 /***/ }),
 
-/***/ 1266:
+/***/ 4587:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var fails = __webpack_require__(3999);
-var isCallable = __webpack_require__(5645);
-var hasOwn = __webpack_require__(1126);
-var defineProperty = (__webpack_require__(2983).f);
-var CONFIGURABLE_FUNCTION_NAME = (__webpack_require__(8760).CONFIGURABLE);
-var inspectSource = __webpack_require__(5042);
-var InternalStateModule = __webpack_require__(8706);
+var fails = __webpack_require__(2913);
+var isCallable = __webpack_require__(1648);
+var hasOwn = __webpack_require__(3467);
+var DESCRIPTORS = __webpack_require__(4339);
+var CONFIGURABLE_FUNCTION_NAME = (__webpack_require__(3284).CONFIGURABLE);
+var inspectSource = __webpack_require__(1962);
+var InternalStateModule = __webpack_require__(4951);
 
 var enforceInternalState = InternalStateModule.enforce;
 var getInternalState = InternalStateModule.get;
+// eslint-disable-next-line es-x/no-object-defineproperty -- safe
+var defineProperty = Object.defineProperty;
 
-var CONFIGURABLE_LENGTH = !fails(function () {
+var CONFIGURABLE_LENGTH = DESCRIPTORS && !fails(function () {
   return defineProperty(function () { /* empty */ }, 'length', { value: 8 }).length !== 8;
 });
 
@@ -12749,6 +12525,12 @@ var makeBuiltIn = module.exports = function (value, name, options) {
   if (CONFIGURABLE_LENGTH && options && hasOwn(options, 'arity') && value.length !== options.arity) {
     defineProperty(value, 'length', { value: options.arity });
   }
+  try {
+    if (options && hasOwn(options, 'constructor') && options.constructor) {
+      if (DESCRIPTORS) defineProperty(value, 'prototype', { writable: false });
+    // in V8 ~ Chrome 53, prototypes of some methods, like `Array.prototype.values`, are non-writable
+    } else if (value.prototype) value.prototype = undefined;
+  } catch (error) { /* empty */ }
   var state = enforceInternalState(value);
   if (!hasOwn(state, 'source')) {
     state.source = TEMPLATE.join(typeof name == 'string' ? name : '');
@@ -12764,12 +12546,29 @@ Function.prototype.toString = makeBuiltIn(function toString() {
 
 /***/ }),
 
-/***/ 3724:
+/***/ 1411:
+/***/ ((module) => {
+
+var ceil = Math.ceil;
+var floor = Math.floor;
+
+// `Math.trunc` method
+// https://tc39.es/ecma262/#sec-math.trunc
+// eslint-disable-next-line es-x/no-math-trunc -- safe
+module.exports = Math.trunc || function trunc(x) {
+  var n = +x;
+  return (n > 0 ? floor : ceil)(n);
+};
+
+
+/***/ }),
+
+/***/ 4511:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 /* eslint-disable es-x/no-symbol -- required for testing */
-var V8_VERSION = __webpack_require__(4951);
-var fails = __webpack_require__(3999);
+var V8_VERSION = __webpack_require__(3890);
+var fails = __webpack_require__(2913);
 
 // eslint-disable-next-line es-x/no-object-getownpropertysymbols -- required for testing
 module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
@@ -12784,12 +12583,12 @@ module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
 
 /***/ }),
 
-/***/ 8811:
+/***/ 2716:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var global = __webpack_require__(2537);
-var isCallable = __webpack_require__(5645);
-var inspectSource = __webpack_require__(5042);
+var global = __webpack_require__(960);
+var isCallable = __webpack_require__(1648);
+var inspectSource = __webpack_require__(1962);
 
 var WeakMap = global.WeakMap;
 
@@ -12798,12 +12597,12 @@ module.exports = isCallable(WeakMap) && /native code/.test(inspectSource(WeakMap
 
 /***/ }),
 
-/***/ 6685:
+/***/ 6236:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var aCallable = __webpack_require__(8023);
+var aCallable = __webpack_require__(1654);
 
 var PromiseCapability = function (C) {
   var resolve, reject;
@@ -12825,15 +12624,15 @@ module.exports.f = function (C) {
 
 /***/ }),
 
-/***/ 2983:
+/***/ 7539:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-var global = __webpack_require__(2537);
-var DESCRIPTORS = __webpack_require__(6495);
-var IE8_DOM_DEFINE = __webpack_require__(7454);
-var V8_PROTOTYPE_DEFINE_BUG = __webpack_require__(941);
-var anObject = __webpack_require__(8031);
-var toPropertyKey = __webpack_require__(265);
+var global = __webpack_require__(960);
+var DESCRIPTORS = __webpack_require__(4339);
+var IE8_DOM_DEFINE = __webpack_require__(3865);
+var V8_PROTOTYPE_DEFINE_BUG = __webpack_require__(9821);
+var anObject = __webpack_require__(1290);
+var toPropertyKey = __webpack_require__(7160);
 
 var TypeError = global.TypeError;
 // eslint-disable-next-line es-x/no-object-defineproperty -- safe
@@ -12876,17 +12675,17 @@ exports.f = DESCRIPTORS ? V8_PROTOTYPE_DEFINE_BUG ? function defineProperty(O, P
 
 /***/ }),
 
-/***/ 4095:
+/***/ 1279:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-var DESCRIPTORS = __webpack_require__(6495);
-var call = __webpack_require__(794);
-var propertyIsEnumerableModule = __webpack_require__(4812);
-var createPropertyDescriptor = __webpack_require__(3597);
-var toIndexedObject = __webpack_require__(6035);
-var toPropertyKey = __webpack_require__(265);
-var hasOwn = __webpack_require__(1126);
-var IE8_DOM_DEFINE = __webpack_require__(7454);
+var DESCRIPTORS = __webpack_require__(4339);
+var call = __webpack_require__(3151);
+var propertyIsEnumerableModule = __webpack_require__(7844);
+var createPropertyDescriptor = __webpack_require__(9192);
+var toIndexedObject = __webpack_require__(1461);
+var toPropertyKey = __webpack_require__(7160);
+var hasOwn = __webpack_require__(3467);
+var IE8_DOM_DEFINE = __webpack_require__(3865);
 
 // eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
 var $getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
@@ -12905,11 +12704,11 @@ exports.f = DESCRIPTORS ? $getOwnPropertyDescriptor : function getOwnPropertyDes
 
 /***/ }),
 
-/***/ 3286:
+/***/ 2945:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-var internalObjectKeys = __webpack_require__(1623);
-var enumBugKeys = __webpack_require__(8329);
+var internalObjectKeys = __webpack_require__(3037);
+var enumBugKeys = __webpack_require__(847);
 
 var hiddenKeys = enumBugKeys.concat('length', 'prototype');
 
@@ -12923,7 +12722,7 @@ exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
 
 /***/ }),
 
-/***/ 4474:
+/***/ 1365:
 /***/ ((__unused_webpack_module, exports) => {
 
 // eslint-disable-next-line es-x/no-object-getownpropertysymbols -- safe
@@ -12932,24 +12731,24 @@ exports.f = Object.getOwnPropertySymbols;
 
 /***/ }),
 
-/***/ 2845:
+/***/ 8616:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var uncurryThis = __webpack_require__(9164);
+var uncurryThis = __webpack_require__(3839);
 
 module.exports = uncurryThis({}.isPrototypeOf);
 
 
 /***/ }),
 
-/***/ 1623:
+/***/ 3037:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var uncurryThis = __webpack_require__(9164);
-var hasOwn = __webpack_require__(1126);
-var toIndexedObject = __webpack_require__(6035);
-var indexOf = (__webpack_require__(5269).indexOf);
-var hiddenKeys = __webpack_require__(6978);
+var uncurryThis = __webpack_require__(3839);
+var hasOwn = __webpack_require__(3467);
+var toIndexedObject = __webpack_require__(1461);
+var indexOf = (__webpack_require__(4854).indexOf);
+var hiddenKeys = __webpack_require__(5702);
 
 var push = uncurryThis([].push);
 
@@ -12969,7 +12768,7 @@ module.exports = function (object, names) {
 
 /***/ }),
 
-/***/ 4812:
+/***/ 7844:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -12991,13 +12790,13 @@ exports.f = NASHORN_BUG ? function propertyIsEnumerable(V) {
 
 /***/ }),
 
-/***/ 5195:
+/***/ 6428:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var global = __webpack_require__(2537);
-var call = __webpack_require__(794);
-var isCallable = __webpack_require__(5645);
-var isObject = __webpack_require__(480);
+var global = __webpack_require__(960);
+var call = __webpack_require__(3151);
+var isCallable = __webpack_require__(1648);
+var isObject = __webpack_require__(4116);
 
 var TypeError = global.TypeError;
 
@@ -13014,14 +12813,14 @@ module.exports = function (input, pref) {
 
 /***/ }),
 
-/***/ 2937:
+/***/ 2835:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var getBuiltIn = __webpack_require__(4599);
-var uncurryThis = __webpack_require__(9164);
-var getOwnPropertyNamesModule = __webpack_require__(3286);
-var getOwnPropertySymbolsModule = __webpack_require__(4474);
-var anObject = __webpack_require__(8031);
+var getBuiltIn = __webpack_require__(5048);
+var uncurryThis = __webpack_require__(3839);
+var getOwnPropertyNamesModule = __webpack_require__(2945);
+var getOwnPropertySymbolsModule = __webpack_require__(1365);
+var anObject = __webpack_require__(1290);
 
 var concat = uncurryThis([].concat);
 
@@ -13035,7 +12834,7 @@ module.exports = getBuiltIn('Reflect', 'ownKeys') || function ownKeys(it) {
 
 /***/ }),
 
-/***/ 3263:
+/***/ 4061:
 /***/ ((module) => {
 
 module.exports = function (exec) {
@@ -13049,10 +12848,10 @@ module.exports = function (exec) {
 
 /***/ }),
 
-/***/ 1824:
+/***/ 8813:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var global = __webpack_require__(2537);
+var global = __webpack_require__(960);
 
 var TypeError = global.TypeError;
 
@@ -13066,7 +12865,7 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 9991:
+/***/ 6214:
 /***/ ((module) => {
 
 // `SameValueZero` abstract operation
@@ -13079,30 +12878,11 @@ module.exports = function (x, y) {
 
 /***/ }),
 
-/***/ 5879:
+/***/ 1312:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var global = __webpack_require__(2537);
-
-// eslint-disable-next-line es-x/no-object-defineproperty -- safe
-var defineProperty = Object.defineProperty;
-
-module.exports = function (key, value) {
-  try {
-    defineProperty(global, key, { value: value, configurable: true, writable: true });
-  } catch (error) {
-    global[key] = value;
-  } return value;
-};
-
-
-/***/ }),
-
-/***/ 8337:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var shared = __webpack_require__(5349);
-var uid = __webpack_require__(1867);
+var shared = __webpack_require__(8321);
+var uid = __webpack_require__(7118);
 
 var keys = shared('keys');
 
@@ -13113,45 +12893,45 @@ module.exports = function (key) {
 
 /***/ }),
 
-/***/ 6936:
+/***/ 4573:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var global = __webpack_require__(2537);
-var setGlobal = __webpack_require__(5879);
+var global = __webpack_require__(960);
+var defineGlobalProperty = __webpack_require__(704);
 
 var SHARED = '__core-js_shared__';
-var store = global[SHARED] || setGlobal(SHARED, {});
+var store = global[SHARED] || defineGlobalProperty(SHARED, {});
 
 module.exports = store;
 
 
 /***/ }),
 
-/***/ 5349:
+/***/ 8321:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var IS_PURE = __webpack_require__(7805);
-var store = __webpack_require__(6936);
+var IS_PURE = __webpack_require__(773);
+var store = __webpack_require__(4573);
 
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.22.4',
+  version: '3.22.7',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.22.4/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.22.7/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
 
 /***/ }),
 
-/***/ 5484:
+/***/ 7740:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var anObject = __webpack_require__(8031);
-var aConstructor = __webpack_require__(3247);
-var wellKnownSymbol = __webpack_require__(7867);
+var anObject = __webpack_require__(1290);
+var aConstructor = __webpack_require__(8817);
+var wellKnownSymbol = __webpack_require__(6692);
 
 var SPECIES = wellKnownSymbol('species');
 
@@ -13166,10 +12946,10 @@ module.exports = function (O, defaultConstructor) {
 
 /***/ }),
 
-/***/ 9116:
+/***/ 219:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var toIntegerOrInfinity = __webpack_require__(4297);
+var toIntegerOrInfinity = __webpack_require__(6499);
 
 var max = Math.max;
 var min = Math.min;
@@ -13185,12 +12965,12 @@ module.exports = function (index, length) {
 
 /***/ }),
 
-/***/ 6035:
+/***/ 1461:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 // toObject with fallback for non-array-like ES3 strings
-var IndexedObject = __webpack_require__(155);
-var requireObjectCoercible = __webpack_require__(1824);
+var IndexedObject = __webpack_require__(2169);
+var requireObjectCoercible = __webpack_require__(8813);
 
 module.exports = function (it) {
   return IndexedObject(requireObjectCoercible(it));
@@ -13199,27 +12979,26 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 4297:
-/***/ ((module) => {
+/***/ 6499:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var ceil = Math.ceil;
-var floor = Math.floor;
+var trunc = __webpack_require__(1411);
 
 // `ToIntegerOrInfinity` abstract operation
 // https://tc39.es/ecma262/#sec-tointegerorinfinity
 module.exports = function (argument) {
   var number = +argument;
-  // eslint-disable-next-line no-self-compare -- safe
-  return number !== number || number === 0 ? 0 : (number > 0 ? floor : ceil)(number);
+  // eslint-disable-next-line no-self-compare -- NaN check
+  return number !== number || number === 0 ? 0 : trunc(number);
 };
 
 
 /***/ }),
 
-/***/ 6227:
+/***/ 6024:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var toIntegerOrInfinity = __webpack_require__(4297);
+var toIntegerOrInfinity = __webpack_require__(6499);
 
 var min = Math.min;
 
@@ -13232,11 +13011,11 @@ module.exports = function (argument) {
 
 /***/ }),
 
-/***/ 6198:
+/***/ 5583:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var global = __webpack_require__(2537);
-var requireObjectCoercible = __webpack_require__(1824);
+var global = __webpack_require__(960);
+var requireObjectCoercible = __webpack_require__(8813);
 
 var Object = global.Object;
 
@@ -13249,16 +13028,16 @@ module.exports = function (argument) {
 
 /***/ }),
 
-/***/ 560:
+/***/ 6646:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var global = __webpack_require__(2537);
-var call = __webpack_require__(794);
-var isObject = __webpack_require__(480);
-var isSymbol = __webpack_require__(2852);
-var getMethod = __webpack_require__(1864);
-var ordinaryToPrimitive = __webpack_require__(5195);
-var wellKnownSymbol = __webpack_require__(7867);
+var global = __webpack_require__(960);
+var call = __webpack_require__(3151);
+var isObject = __webpack_require__(4116);
+var isSymbol = __webpack_require__(6370);
+var getMethod = __webpack_require__(1865);
+var ordinaryToPrimitive = __webpack_require__(6428);
+var wellKnownSymbol = __webpack_require__(6692);
 
 var TypeError = global.TypeError;
 var TO_PRIMITIVE = wellKnownSymbol('toPrimitive');
@@ -13282,11 +13061,11 @@ module.exports = function (input, pref) {
 
 /***/ }),
 
-/***/ 265:
+/***/ 7160:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var toPrimitive = __webpack_require__(560);
-var isSymbol = __webpack_require__(2852);
+var toPrimitive = __webpack_require__(6646);
+var isSymbol = __webpack_require__(6370);
 
 // `ToPropertyKey` abstract operation
 // https://tc39.es/ecma262/#sec-topropertykey
@@ -13298,10 +13077,10 @@ module.exports = function (argument) {
 
 /***/ }),
 
-/***/ 4633:
+/***/ 7941:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var wellKnownSymbol = __webpack_require__(7867);
+var wellKnownSymbol = __webpack_require__(6692);
 
 var TO_STRING_TAG = wellKnownSymbol('toStringTag');
 var test = {};
@@ -13313,11 +13092,11 @@ module.exports = String(test) === '[object z]';
 
 /***/ }),
 
-/***/ 2623:
+/***/ 8531:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var global = __webpack_require__(2537);
-var classof = __webpack_require__(151);
+var global = __webpack_require__(960);
+var classof = __webpack_require__(2559);
 
 var String = global.String;
 
@@ -13329,10 +13108,10 @@ module.exports = function (argument) {
 
 /***/ }),
 
-/***/ 2286:
+/***/ 7711:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var global = __webpack_require__(2537);
+var global = __webpack_require__(960);
 
 var String = global.String;
 
@@ -13347,10 +13126,10 @@ module.exports = function (argument) {
 
 /***/ }),
 
-/***/ 1867:
+/***/ 7118:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var uncurryThis = __webpack_require__(9164);
+var uncurryThis = __webpack_require__(3839);
 
 var id = 0;
 var postfix = Math.random();
@@ -13363,11 +13142,11 @@ module.exports = function (key) {
 
 /***/ }),
 
-/***/ 5335:
+/***/ 8589:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 /* eslint-disable es-x/no-symbol -- required for testing */
-var NATIVE_SYMBOL = __webpack_require__(3724);
+var NATIVE_SYMBOL = __webpack_require__(4511);
 
 module.exports = NATIVE_SYMBOL
   && !Symbol.sham
@@ -13376,11 +13155,11 @@ module.exports = NATIVE_SYMBOL
 
 /***/ }),
 
-/***/ 941:
+/***/ 9821:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var DESCRIPTORS = __webpack_require__(6495);
-var fails = __webpack_require__(3999);
+var DESCRIPTORS = __webpack_require__(4339);
+var fails = __webpack_require__(2913);
 
 // V8 ~ Chrome 36-
 // https://bugs.chromium.org/p/v8/issues/detail?id=3334
@@ -13395,15 +13174,15 @@ module.exports = DESCRIPTORS && fails(function () {
 
 /***/ }),
 
-/***/ 7867:
+/***/ 6692:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var global = __webpack_require__(2537);
-var shared = __webpack_require__(5349);
-var hasOwn = __webpack_require__(1126);
-var uid = __webpack_require__(1867);
-var NATIVE_SYMBOL = __webpack_require__(3724);
-var USE_SYMBOL_AS_UID = __webpack_require__(5335);
+var global = __webpack_require__(960);
+var shared = __webpack_require__(8321);
+var hasOwn = __webpack_require__(3467);
+var uid = __webpack_require__(7118);
+var NATIVE_SYMBOL = __webpack_require__(4511);
+var USE_SYMBOL_AS_UID = __webpack_require__(8589);
 
 var WellKnownSymbolsStore = shared('wks');
 var Symbol = global.Symbol;
@@ -13426,18 +13205,18 @@ module.exports = function (name) {
 
 /***/ }),
 
-/***/ 3649:
+/***/ 5126:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var call = __webpack_require__(794);
-var aCallable = __webpack_require__(8023);
-var getBuiltIn = __webpack_require__(4599);
-var newPromiseCapabilityModule = __webpack_require__(6685);
-var perform = __webpack_require__(3263);
-var iterate = __webpack_require__(2771);
+var $ = __webpack_require__(1302);
+var call = __webpack_require__(3151);
+var aCallable = __webpack_require__(1654);
+var getBuiltIn = __webpack_require__(5048);
+var newPromiseCapabilityModule = __webpack_require__(6236);
+var perform = __webpack_require__(4061);
+var iterate = __webpack_require__(6983);
 
 var PROMISE_ANY_ERROR = 'No one promise resolved';
 
@@ -13481,13 +13260,13 @@ $({ target: 'Promise', stat: true }, {
 
 /***/ }),
 
-/***/ 7675:
+/***/ 4051:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var deleteAll = __webpack_require__(5543);
+var $ = __webpack_require__(1302);
+var deleteAll = __webpack_require__(2796);
 
 // `Map.prototype.deleteAll` method
 // https://github.com/tc39/proposal-collection-methods
@@ -13498,16 +13277,16 @@ $({ target: 'Map', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
-/***/ 518:
+/***/ 7109:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var anObject = __webpack_require__(8031);
-var bind = __webpack_require__(1189);
-var getMapIterator = __webpack_require__(6954);
-var iterate = __webpack_require__(2771);
+var $ = __webpack_require__(1302);
+var anObject = __webpack_require__(1290);
+var bind = __webpack_require__(5909);
+var getMapIterator = __webpack_require__(8050);
+var iterate = __webpack_require__(6983);
 
 // `Map.prototype.every` method
 // https://github.com/tc39/proposal-collection-methods
@@ -13525,20 +13304,20 @@ $({ target: 'Map', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
-/***/ 8133:
+/***/ 7099:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var getBuiltIn = __webpack_require__(4599);
-var bind = __webpack_require__(1189);
-var call = __webpack_require__(794);
-var aCallable = __webpack_require__(8023);
-var anObject = __webpack_require__(8031);
-var speciesConstructor = __webpack_require__(5484);
-var getMapIterator = __webpack_require__(6954);
-var iterate = __webpack_require__(2771);
+var $ = __webpack_require__(1302);
+var getBuiltIn = __webpack_require__(5048);
+var bind = __webpack_require__(5909);
+var call = __webpack_require__(3151);
+var aCallable = __webpack_require__(1654);
+var anObject = __webpack_require__(1290);
+var speciesConstructor = __webpack_require__(7740);
+var getMapIterator = __webpack_require__(8050);
+var iterate = __webpack_require__(6983);
 
 // `Map.prototype.filter` method
 // https://github.com/tc39/proposal-collection-methods
@@ -13559,16 +13338,16 @@ $({ target: 'Map', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
-/***/ 5430:
+/***/ 2351:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var anObject = __webpack_require__(8031);
-var bind = __webpack_require__(1189);
-var getMapIterator = __webpack_require__(6954);
-var iterate = __webpack_require__(2771);
+var $ = __webpack_require__(1302);
+var anObject = __webpack_require__(1290);
+var bind = __webpack_require__(5909);
+var getMapIterator = __webpack_require__(8050);
+var iterate = __webpack_require__(6983);
 
 // `Map.prototype.findKey` method
 // https://github.com/tc39/proposal-collection-methods
@@ -13586,16 +13365,16 @@ $({ target: 'Map', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
-/***/ 3774:
+/***/ 6245:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var anObject = __webpack_require__(8031);
-var bind = __webpack_require__(1189);
-var getMapIterator = __webpack_require__(6954);
-var iterate = __webpack_require__(2771);
+var $ = __webpack_require__(1302);
+var anObject = __webpack_require__(1290);
+var bind = __webpack_require__(5909);
+var getMapIterator = __webpack_require__(8050);
+var iterate = __webpack_require__(6983);
 
 // `Map.prototype.find` method
 // https://github.com/tc39/proposal-collection-methods
@@ -13613,16 +13392,16 @@ $({ target: 'Map', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
-/***/ 8144:
+/***/ 9834:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var anObject = __webpack_require__(8031);
-var getMapIterator = __webpack_require__(6954);
-var sameValueZero = __webpack_require__(9991);
-var iterate = __webpack_require__(2771);
+var $ = __webpack_require__(1302);
+var anObject = __webpack_require__(1290);
+var getMapIterator = __webpack_require__(8050);
+var sameValueZero = __webpack_require__(6214);
+var iterate = __webpack_require__(6983);
 
 // `Map.prototype.includes` method
 // https://github.com/tc39/proposal-collection-methods
@@ -13637,15 +13416,15 @@ $({ target: 'Map', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
-/***/ 1768:
+/***/ 9377:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var anObject = __webpack_require__(8031);
-var getMapIterator = __webpack_require__(6954);
-var iterate = __webpack_require__(2771);
+var $ = __webpack_require__(1302);
+var anObject = __webpack_require__(1290);
+var getMapIterator = __webpack_require__(8050);
+var iterate = __webpack_require__(6983);
 
 // `Map.prototype.keyOf` method
 // https://github.com/tc39/proposal-collection-methods
@@ -13660,20 +13439,20 @@ $({ target: 'Map', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
-/***/ 4378:
+/***/ 6614:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var getBuiltIn = __webpack_require__(4599);
-var bind = __webpack_require__(1189);
-var call = __webpack_require__(794);
-var aCallable = __webpack_require__(8023);
-var anObject = __webpack_require__(8031);
-var speciesConstructor = __webpack_require__(5484);
-var getMapIterator = __webpack_require__(6954);
-var iterate = __webpack_require__(2771);
+var $ = __webpack_require__(1302);
+var getBuiltIn = __webpack_require__(5048);
+var bind = __webpack_require__(5909);
+var call = __webpack_require__(3151);
+var aCallable = __webpack_require__(1654);
+var anObject = __webpack_require__(1290);
+var speciesConstructor = __webpack_require__(7740);
+var getMapIterator = __webpack_require__(8050);
+var iterate = __webpack_require__(6983);
 
 // `Map.prototype.mapKeys` method
 // https://github.com/tc39/proposal-collection-methods
@@ -13694,20 +13473,20 @@ $({ target: 'Map', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
-/***/ 6472:
+/***/ 8302:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var getBuiltIn = __webpack_require__(4599);
-var bind = __webpack_require__(1189);
-var call = __webpack_require__(794);
-var aCallable = __webpack_require__(8023);
-var anObject = __webpack_require__(8031);
-var speciesConstructor = __webpack_require__(5484);
-var getMapIterator = __webpack_require__(6954);
-var iterate = __webpack_require__(2771);
+var $ = __webpack_require__(1302);
+var getBuiltIn = __webpack_require__(5048);
+var bind = __webpack_require__(5909);
+var call = __webpack_require__(3151);
+var aCallable = __webpack_require__(1654);
+var anObject = __webpack_require__(1290);
+var speciesConstructor = __webpack_require__(7740);
+var getMapIterator = __webpack_require__(8050);
+var iterate = __webpack_require__(6983);
 
 // `Map.prototype.mapValues` method
 // https://github.com/tc39/proposal-collection-methods
@@ -13728,15 +13507,15 @@ $({ target: 'Map', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
-/***/ 2319:
+/***/ 8090:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var aCallable = __webpack_require__(8023);
-var anObject = __webpack_require__(8031);
-var iterate = __webpack_require__(2771);
+var $ = __webpack_require__(1302);
+var aCallable = __webpack_require__(1654);
+var anObject = __webpack_require__(1290);
+var iterate = __webpack_require__(6983);
 
 // `Map.prototype.merge` method
 // https://github.com/tc39/proposal-collection-methods
@@ -13757,17 +13536,17 @@ $({ target: 'Map', proto: true, real: true, arity: 1, forced: true }, {
 
 /***/ }),
 
-/***/ 461:
+/***/ 9996:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var global = __webpack_require__(2537);
-var anObject = __webpack_require__(8031);
-var aCallable = __webpack_require__(8023);
-var getMapIterator = __webpack_require__(6954);
-var iterate = __webpack_require__(2771);
+var $ = __webpack_require__(1302);
+var global = __webpack_require__(960);
+var anObject = __webpack_require__(1290);
+var aCallable = __webpack_require__(1654);
+var getMapIterator = __webpack_require__(8050);
+var iterate = __webpack_require__(6983);
 
 var TypeError = global.TypeError;
 
@@ -13796,16 +13575,16 @@ $({ target: 'Map', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
-/***/ 7255:
+/***/ 3937:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var anObject = __webpack_require__(8031);
-var bind = __webpack_require__(1189);
-var getMapIterator = __webpack_require__(6954);
-var iterate = __webpack_require__(2771);
+var $ = __webpack_require__(1302);
+var anObject = __webpack_require__(1290);
+var bind = __webpack_require__(5909);
+var getMapIterator = __webpack_require__(8050);
+var iterate = __webpack_require__(6983);
 
 // `Set.prototype.some` method
 // https://github.com/tc39/proposal-collection-methods
@@ -13823,16 +13602,16 @@ $({ target: 'Map', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
-/***/ 6859:
+/***/ 9625:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var global = __webpack_require__(2537);
-var call = __webpack_require__(794);
-var anObject = __webpack_require__(8031);
-var aCallable = __webpack_require__(8023);
+var $ = __webpack_require__(1302);
+var global = __webpack_require__(960);
+var call = __webpack_require__(3151);
+var anObject = __webpack_require__(1290);
+var aCallable = __webpack_require__(1654);
 
 var TypeError = global.TypeError;
 
@@ -13859,13 +13638,13 @@ $({ target: 'Map', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
-/***/ 5431:
+/***/ 1485:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var addAll = __webpack_require__(290);
+var $ = __webpack_require__(1302);
+var addAll = __webpack_require__(3162);
 
 // `Set.prototype.addAll` method
 // https://github.com/tc39/proposal-collection-methods
@@ -13876,13 +13655,13 @@ $({ target: 'Set', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
-/***/ 9514:
+/***/ 9351:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var deleteAll = __webpack_require__(5543);
+var $ = __webpack_require__(1302);
+var deleteAll = __webpack_require__(2796);
 
 // `Set.prototype.deleteAll` method
 // https://github.com/tc39/proposal-collection-methods
@@ -13893,18 +13672,18 @@ $({ target: 'Set', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
-/***/ 3588:
+/***/ 3597:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var getBuiltIn = __webpack_require__(4599);
-var call = __webpack_require__(794);
-var aCallable = __webpack_require__(8023);
-var anObject = __webpack_require__(8031);
-var speciesConstructor = __webpack_require__(5484);
-var iterate = __webpack_require__(2771);
+var $ = __webpack_require__(1302);
+var getBuiltIn = __webpack_require__(5048);
+var call = __webpack_require__(3151);
+var aCallable = __webpack_require__(1654);
+var anObject = __webpack_require__(1290);
+var speciesConstructor = __webpack_require__(7740);
+var iterate = __webpack_require__(6983);
 
 // `Set.prototype.difference` method
 // https://github.com/tc39/proposal-set-methods
@@ -13923,16 +13702,16 @@ $({ target: 'Set', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
-/***/ 1464:
+/***/ 7121:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var anObject = __webpack_require__(8031);
-var bind = __webpack_require__(1189);
-var getSetIterator = __webpack_require__(6350);
-var iterate = __webpack_require__(2771);
+var $ = __webpack_require__(1302);
+var anObject = __webpack_require__(1290);
+var bind = __webpack_require__(5909);
+var getSetIterator = __webpack_require__(249);
+var iterate = __webpack_require__(6983);
 
 // `Set.prototype.every` method
 // https://github.com/tc39/proposal-collection-methods
@@ -13950,20 +13729,20 @@ $({ target: 'Set', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
-/***/ 8079:
+/***/ 9742:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var getBuiltIn = __webpack_require__(4599);
-var call = __webpack_require__(794);
-var aCallable = __webpack_require__(8023);
-var anObject = __webpack_require__(8031);
-var bind = __webpack_require__(1189);
-var speciesConstructor = __webpack_require__(5484);
-var getSetIterator = __webpack_require__(6350);
-var iterate = __webpack_require__(2771);
+var $ = __webpack_require__(1302);
+var getBuiltIn = __webpack_require__(5048);
+var call = __webpack_require__(3151);
+var aCallable = __webpack_require__(1654);
+var anObject = __webpack_require__(1290);
+var bind = __webpack_require__(5909);
+var speciesConstructor = __webpack_require__(7740);
+var getSetIterator = __webpack_require__(249);
+var iterate = __webpack_require__(6983);
 
 // `Set.prototype.filter` method
 // https://github.com/tc39/proposal-collection-methods
@@ -13984,16 +13763,16 @@ $({ target: 'Set', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
-/***/ 8222:
+/***/ 7824:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var anObject = __webpack_require__(8031);
-var bind = __webpack_require__(1189);
-var getSetIterator = __webpack_require__(6350);
-var iterate = __webpack_require__(2771);
+var $ = __webpack_require__(1302);
+var anObject = __webpack_require__(1290);
+var bind = __webpack_require__(5909);
+var getSetIterator = __webpack_require__(249);
+var iterate = __webpack_require__(6983);
 
 // `Set.prototype.find` method
 // https://github.com/tc39/proposal-collection-methods
@@ -14011,18 +13790,18 @@ $({ target: 'Set', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
-/***/ 2114:
+/***/ 6916:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var getBuiltIn = __webpack_require__(4599);
-var call = __webpack_require__(794);
-var aCallable = __webpack_require__(8023);
-var anObject = __webpack_require__(8031);
-var speciesConstructor = __webpack_require__(5484);
-var iterate = __webpack_require__(2771);
+var $ = __webpack_require__(1302);
+var getBuiltIn = __webpack_require__(5048);
+var call = __webpack_require__(3151);
+var aCallable = __webpack_require__(1654);
+var anObject = __webpack_require__(1290);
+var speciesConstructor = __webpack_require__(7740);
+var iterate = __webpack_require__(6983);
 
 // `Set.prototype.intersection` method
 // https://github.com/tc39/proposal-set-methods
@@ -14042,16 +13821,16 @@ $({ target: 'Set', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
-/***/ 925:
+/***/ 3142:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var call = __webpack_require__(794);
-var aCallable = __webpack_require__(8023);
-var anObject = __webpack_require__(8031);
-var iterate = __webpack_require__(2771);
+var $ = __webpack_require__(1302);
+var call = __webpack_require__(3151);
+var aCallable = __webpack_require__(1654);
+var anObject = __webpack_require__(1290);
+var iterate = __webpack_require__(6983);
 
 // `Set.prototype.isDisjointFrom` method
 // https://tc39.github.io/proposal-set-methods/#Set.prototype.isDisjointFrom
@@ -14068,19 +13847,19 @@ $({ target: 'Set', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
-/***/ 5342:
+/***/ 1710:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var getBuiltIn = __webpack_require__(4599);
-var call = __webpack_require__(794);
-var aCallable = __webpack_require__(8023);
-var isCallable = __webpack_require__(5645);
-var anObject = __webpack_require__(8031);
-var getIterator = __webpack_require__(3929);
-var iterate = __webpack_require__(2771);
+var $ = __webpack_require__(1302);
+var getBuiltIn = __webpack_require__(5048);
+var call = __webpack_require__(3151);
+var aCallable = __webpack_require__(1654);
+var isCallable = __webpack_require__(1648);
+var anObject = __webpack_require__(1290);
+var getIterator = __webpack_require__(6366);
+var iterate = __webpack_require__(6983);
 
 // `Set.prototype.isSubsetOf` method
 // https://tc39.github.io/proposal-set-methods/#Set.prototype.isSubsetOf
@@ -14102,16 +13881,16 @@ $({ target: 'Set', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
-/***/ 4575:
+/***/ 1276:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var call = __webpack_require__(794);
-var aCallable = __webpack_require__(8023);
-var anObject = __webpack_require__(8031);
-var iterate = __webpack_require__(2771);
+var $ = __webpack_require__(1302);
+var call = __webpack_require__(3151);
+var aCallable = __webpack_require__(1654);
+var anObject = __webpack_require__(1290);
+var iterate = __webpack_require__(6983);
 
 // `Set.prototype.isSupersetOf` method
 // https://tc39.github.io/proposal-set-methods/#Set.prototype.isSupersetOf
@@ -14128,17 +13907,17 @@ $({ target: 'Set', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
-/***/ 5689:
+/***/ 4072:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var uncurryThis = __webpack_require__(9164);
-var anObject = __webpack_require__(8031);
-var toString = __webpack_require__(2623);
-var getSetIterator = __webpack_require__(6350);
-var iterate = __webpack_require__(2771);
+var $ = __webpack_require__(1302);
+var uncurryThis = __webpack_require__(3839);
+var anObject = __webpack_require__(1290);
+var toString = __webpack_require__(8531);
+var getSetIterator = __webpack_require__(249);
+var iterate = __webpack_require__(6983);
 
 var arrayJoin = uncurryThis([].join);
 var push = [].push;
@@ -14159,20 +13938,20 @@ $({ target: 'Set', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
-/***/ 5912:
+/***/ 7728:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var getBuiltIn = __webpack_require__(4599);
-var bind = __webpack_require__(1189);
-var call = __webpack_require__(794);
-var aCallable = __webpack_require__(8023);
-var anObject = __webpack_require__(8031);
-var speciesConstructor = __webpack_require__(5484);
-var getSetIterator = __webpack_require__(6350);
-var iterate = __webpack_require__(2771);
+var $ = __webpack_require__(1302);
+var getBuiltIn = __webpack_require__(5048);
+var bind = __webpack_require__(5909);
+var call = __webpack_require__(3151);
+var aCallable = __webpack_require__(1654);
+var anObject = __webpack_require__(1290);
+var speciesConstructor = __webpack_require__(7740);
+var getSetIterator = __webpack_require__(249);
+var iterate = __webpack_require__(6983);
 
 // `Set.prototype.map` method
 // https://github.com/tc39/proposal-collection-methods
@@ -14193,17 +13972,17 @@ $({ target: 'Set', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
-/***/ 1309:
+/***/ 9748:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var global = __webpack_require__(2537);
-var aCallable = __webpack_require__(8023);
-var anObject = __webpack_require__(8031);
-var getSetIterator = __webpack_require__(6350);
-var iterate = __webpack_require__(2771);
+var $ = __webpack_require__(1302);
+var global = __webpack_require__(960);
+var aCallable = __webpack_require__(1654);
+var anObject = __webpack_require__(1290);
+var getSetIterator = __webpack_require__(249);
+var iterate = __webpack_require__(6983);
 
 var TypeError = global.TypeError;
 
@@ -14232,16 +14011,16 @@ $({ target: 'Set', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
-/***/ 7009:
+/***/ 7089:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var anObject = __webpack_require__(8031);
-var bind = __webpack_require__(1189);
-var getSetIterator = __webpack_require__(6350);
-var iterate = __webpack_require__(2771);
+var $ = __webpack_require__(1302);
+var anObject = __webpack_require__(1290);
+var bind = __webpack_require__(5909);
+var getSetIterator = __webpack_require__(249);
+var iterate = __webpack_require__(6983);
 
 // `Set.prototype.some` method
 // https://github.com/tc39/proposal-collection-methods
@@ -14259,18 +14038,18 @@ $({ target: 'Set', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
-/***/ 9934:
+/***/ 5111:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var getBuiltIn = __webpack_require__(4599);
-var call = __webpack_require__(794);
-var aCallable = __webpack_require__(8023);
-var anObject = __webpack_require__(8031);
-var speciesConstructor = __webpack_require__(5484);
-var iterate = __webpack_require__(2771);
+var $ = __webpack_require__(1302);
+var getBuiltIn = __webpack_require__(5048);
+var call = __webpack_require__(3151);
+var aCallable = __webpack_require__(1654);
+var anObject = __webpack_require__(1290);
+var speciesConstructor = __webpack_require__(7740);
+var iterate = __webpack_require__(6983);
 
 // `Set.prototype.symmetricDifference` method
 // https://github.com/tc39/proposal-set-methods
@@ -14290,17 +14069,17 @@ $({ target: 'Set', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
-/***/ 1879:
+/***/ 3553:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var $ = __webpack_require__(9527);
-var getBuiltIn = __webpack_require__(4599);
-var aCallable = __webpack_require__(8023);
-var anObject = __webpack_require__(8031);
-var speciesConstructor = __webpack_require__(5484);
-var iterate = __webpack_require__(2771);
+var $ = __webpack_require__(1302);
+var getBuiltIn = __webpack_require__(5048);
+var aCallable = __webpack_require__(1654);
+var anObject = __webpack_require__(1290);
+var speciesConstructor = __webpack_require__(7740);
+var iterate = __webpack_require__(6983);
 
 // `Set.prototype.union` method
 // https://github.com/tc39/proposal-set-methods
@@ -16240,7 +16019,7 @@ module.exports = JSON.parse('{"name":"pino","version":"6.14.0","description":"su
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"@unblockneteasemusic/server","version":"0.27.0-rc.6","description":"Revive unavailable songs for Netease Cloud Music","main":"src/provider/match.js","bin":{"unblockneteasemusic":"./precompiled/app.js"},"engines":{"node":">= 12"},"scripts":{"start:dev":"cross-env LOG_LEVEL=debug node src/app.js -e https://music.163.com","start":"cross-env node src/app.js -e https://music.163.com","build":"webpack","pkg":"pkg . --out-path=dist/","test":"jest"},"pkg":{"assets":["server.key","server.crt"],"targets":["node16-linux-arm64","node16-win-arm64","node16-linux-x64","node16-win-x64"],"outputPath":"dist"},"repository":{"type":"git","url":"https://github.com/UnblockNeteaseMusic/server.git"},"author":"nondanee, 1715173329, pan93412","license":"LGPL-3.0-only","dependencies":{"node-windows":"^1.0.0-beta.7","pino":"6.14.0","pino-pretty":"^7.6.1"},"devDependencies":{"@swc/core":"^1.2.181","@types/node":"^17.0.31","@types/pino":"6.3.12","browserslist":"^4.20.3","core-js":"^3.22.4","cross-env":"^7.0.3","jest":"^28.1.0","pkg":"^5.6.0","prettier":"^2.6.2","swc-loader":"^0.2.0","typescript":"^4.6.4","webpack":"^5.72.0","webpack-cli":"^4.9.2"},"resolutions":{"minimist":"^1.2.6"},"publishConfig":{"access":"public"},"packageManager":"yarn@3.1.1"}');
+module.exports = JSON.parse('{"name":"@unblockneteasemusic/server","version":"0.27.0-rc.6","description":"Revive unavailable songs for Netease Cloud Music","main":"src/provider/match.js","bin":{"unblockneteasemusic":"./precompiled/app.js"},"engines":{"node":">= 12"},"scripts":{"start:dev":"cross-env LOG_LEVEL=debug node src/app.js -e https://music.163.com","start":"cross-env node src/app.js -e https://music.163.com","build":"webpack","pkg":"pkg . --out-path=dist/","test":"jest"},"pkg":{"assets":["server.key","server.crt"],"targets":["node16-linux-arm64","node16-win-arm64","node16-linux-x64","node16-win-x64"],"outputPath":"dist"},"repository":{"type":"git","url":"https://github.com/UnblockNeteaseMusic/server.git"},"author":"nondanee, 1715173329, pan93412","license":"LGPL-3.0-only","dependencies":{"node-windows":"=1.0.0-beta.6","pino":"6.14.0","pino-pretty":"^7.6.1"},"devDependencies":{"@swc/core":"^1.2.196","@types/node":"^17.0.35","@types/pino":"6.3.12","browserslist":"^4.20.3","core-js":"^3.22.7","cross-env":"^7.0.3","jest":"^28.1.0","pkg":"^5.7.0","prettier":"^2.6.2","swc-loader":"^0.2.1","typescript":"^4.7.2","webpack":"^5.72.1","webpack-cli":"^4.9.2"},"resolutions":{"minimist":"^1.2.6"},"publishConfig":{"access":"public"},"packageManager":"yarn@3.1.1"}');
 
 /***/ })
 
@@ -16277,7 +16056,7 @@ var __webpack_exports__ = {};
 "use strict";
 
 const packageJson = __webpack_require__(4147);
-const config = (__webpack_require__(9217).program)({
+const config = (__webpack_require__(7425).program)({
     name: packageJson.name.replace(/@.+\//, ''),
     version: packageJson.version
 }).option([
@@ -16347,10 +16126,8 @@ const config = (__webpack_require__(9217).program)({
     action: 'help'
 }).parse(process.argv);
 global.address = config.address;
-config.port = (config.port || '8080:8081').split(':').map((string)=>parseInt(string)
-);
-const invalid = (value)=>isNaN(value) || value < 1 || value > 65535
-;
+config.port = (config.port || '8080:8081').split(':').map((string)=>parseInt(string));
+const invalid = (value)=>isNaN(value) || value < 1 || value > 65535;
 if (config.port.some(invalid)) {
     console.log('Port must be a number higher than 0 and lower than 65535.');
     process.exit(1);
@@ -16368,14 +16145,12 @@ if (config.forceHost && (__webpack_require__(1808).isIP)(config.forceHost) === 0
     process.exit(1);
 }
 if (config.matchOrder) {
-    const provider = Object.keys((__webpack_require__(2034).PROVIDERS));
+    const provider = Object.keys((__webpack_require__(4272).PROVIDERS));
     const candidate = config.matchOrder;
-    if (candidate.some((key, index)=>index != candidate.indexOf(key)
-    )) {
+    if (candidate.some((key, index)=>index != candidate.indexOf(key))) {
         console.log('Please check the duplication in match order.');
         process.exit(1);
-    } else if (candidate.some((key)=>!provider.includes(key)
-    )) {
+    } else if (candidate.some((key)=>!provider.includes(key))) {
         console.log('Please check the availability of match sources.');
         process.exit(1);
     }
@@ -16385,21 +16160,19 @@ if (config.token && !/\S+:\S+/.test(config.token)) {
     console.log('Please check the authentication token.');
     process.exit(1);
 }
-const { logScope  } = __webpack_require__(9362);
+const { logScope  } = __webpack_require__(3573);
 const parse = (__webpack_require__(7310).parse);
-const hook = __webpack_require__(3162);
-const server = __webpack_require__(9059);
-const { CacheStorageGroup  } = __webpack_require__(410);
+const hook = __webpack_require__(9618);
+const server = __webpack_require__(3375);
+const { CacheStorageGroup  } = __webpack_require__(5180);
 const logger = logScope('app');
-const random = (array)=>array[Math.floor(Math.random() * array.length)]
-;
+const random = (array)=>array[Math.floor(Math.random() * array.length)];
 const target = Array.from(hook.target.host);
 global.port = config.port;
 global.proxy = config.proxyUrl ? parse(config.proxyUrl) : null;
 global.hosts = target.reduce((result, host)=>Object.assign(result, {
         [host]: config.forceHost
-    })
-, {});
+    }), {});
 server.whitelist = [
     '://[\\w.]*music\\.126\\.net',
     '://[\\w.]*vod\\.126\\.net'
@@ -16413,22 +16186,9 @@ if (config.endpoint) server.whitelist.push(escape(config.endpoint));
 // hosts['httpdns.n.netease.com'] = random(['59.111.179.213', '59.111.179.214'])
 const dns = (host)=>new Promise((resolve, reject)=>(__webpack_require__(9523).lookup)(host, {
             all: true
-        }, (error, records)=>error ? reject(error) : resolve(records.map((record)=>record.address
-            ))
-        )
-    )
-;
-const httpdns = (host)=>__webpack_require__(1540)('POST', 'http://music.httpdns.c.163.com/d', {}, host).then((response)=>response.json()
-    ).then((jsonBody)=>jsonBody.dns.reduce((result, domain)=>result.concat(domain.ips)
-        , [])
-    )
-;
-const httpdns2 = (host)=>__webpack_require__(1540)('GET', 'http://httpdns.n.netease.com/httpdns/v2/d?domain=' + host).then((response)=>response.json()
-    ).then((jsonBody)=>Object.keys(jsonBody.data).map((key)=>jsonBody.data[key]
-        ).reduce((result, value)=>result.concat(value.ip || [])
-        , [])
-    )
-;
+        }, (error, records)=>error ? reject(error) : resolve(records.map((record)=>record.address))));
+const httpdns = (host)=>__webpack_require__(3798)('POST', 'http://music.httpdns.c.163.com/d', {}, host).then((response)=>response.json()).then((jsonBody)=>jsonBody.dns.reduce((result, domain)=>result.concat(domain.ips), []));
+const httpdns2 = (host)=>__webpack_require__(3798)('GET', 'http://httpdns.n.netease.com/httpdns/v2/d?domain=' + host).then((response)=>response.json()).then((jsonBody)=>Object.keys(jsonBody.data).map((key)=>jsonBody.data[key]).reduce((result, value)=>result.concat(value.ip || []), []));
 // Allow enabling HTTPDNS queries with `ENABLE_HTTPDNS=true`
 // It seems broken - BETTER TO NOT ENABLE IT!
 const dnsSource = process.env.ENABLE_HTTPDNS === 'true' ? [
@@ -16440,21 +16200,16 @@ const csgInstance = CacheStorageGroup.getInstance();
 setInterval(()=>{
     csgInstance.cleanup();
 }, 15 * 60 * 1000);
-Promise.all(dnsSource.map((query)=>query(target.join(','))
-).concat(target.map(dns))).then((result)=>{
+Promise.all(dnsSource.map((query)=>query(target.join(','))).concat(target.map(dns))).then((result)=>{
     const { host  } = hook.target;
-    result.forEach((array)=>array.forEach(host.add, host)
-    );
+    result.forEach((array)=>array.forEach(host.add, host));
     server.whitelist = server.whitelist.concat(Array.from(host).map(escape));
     const log = (type)=>logger.info(`${[
             'HTTP',
             'HTTPS'
-        ][type]} Server running @ http://${address || '0.0.0.0'}:${port[type]}`)
-    ;
-    if (port[0]) server.http.listen(port[0], address).once('listening', ()=>log(0)
-    );
-    if (port[1]) server.https.listen(port[1], address).once('listening', ()=>log(1)
-    );
+        ][type]} Server running @ http://${address || '0.0.0.0'}:${port[type]}`);
+    if (port[0]) server.http.listen(port[0], address).once('listening', ()=>log(0));
+    if (port[1]) server.https.listen(port[1], address).once('listening', ()=>log(1));
     if (cnrelay) logger.info(`CNRelay: ${cnrelay}`);
 }).catch((error)=>{
     console.log(error);
