@@ -1008,10 +1008,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^17.0.40":
-  version: 17.0.40
-  resolution: "@types/node@npm:17.0.40"
-  checksum: e3b2fe876672fbe4be84ce17773944eb2f5eaba50e2c6c0536bdf6d4972ed6488581580581f154183fdc8f2d56fa42a42e3d6e83b9b71ee25adea16a84765e92
+"@types/node@npm:*, @types/node@npm:^17.0.41":
+  version: 17.0.41
+  resolution: "@types/node@npm:17.0.41"
+  checksum: ddaf9e7decb487850a9bbfeb670b41c9d35c5b1597c4c4f889419b65042d776e9041ed533c7afc1bac30cad1e9dcfd984085b4a35312efe8ea5eaf0bd36a8191
   languageName: node
   linkType: hard
 
@@ -1081,7 +1081,7 @@ __metadata:
   resolution: "@unblockneteasemusic/server@workspace:."
   dependencies:
     "@swc/core": ^1.2.197
-    "@types/node": ^17.0.40
+    "@types/node": ^17.0.41
     "@types/pino": 6.3.12
     browserslist: ^4.20.3
     core-js: ^3.22.8
