@@ -1571,7 +1571,7 @@ const select = __webpack_require__(2822);
 const request = __webpack_require__(5262);
 const { getManagedCacheStorage  } = __webpack_require__(9220);
 const track = (info)=>{
-    const url = 'https://service-ghlrryee-1308098780.gz.apigw.tencentcs.com/release/pyncmd/track/GetTrackAudio?song_ids=' + info.id + '&bitrate=' + [
+    const url = 'https://pyncmd.vercel.app/api/pyncm?module=track&method=GetTrackAudio&song_ids=' + info.id + '&bitrate=' + [
         '999000',
         '320000'
     ].slice(select.ENABLE_FLAC ? 0 : 1, select.ENABLE_FLAC ? 1 : 2);
