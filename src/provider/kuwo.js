@@ -43,7 +43,7 @@ const search = (info) => {
 	// 		return Promise.reject()
 	// })
 
-	const keyword = encodeURIComponent(info.keyword.replace(' - ', ''));
+	const keyword = encodeURIComponent(info.keyword.replace(' - ', ' '));
 	const url = `http://www.kuwo.cn/api/www/search/searchMusicBykeyWord?key=${keyword}&pn=1&rn=30`;
 
 	const token = Math.random().toString(16).slice(-11).toUpperCase();
