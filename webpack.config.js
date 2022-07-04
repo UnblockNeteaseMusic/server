@@ -1,4 +1,4 @@
-const TerserPlugin = require("terser-webpack-plugin");
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
 	target: 'node',
@@ -35,10 +35,10 @@ module.exports = {
 					mangle: false,
 					format: {
 						semicolons: false,
-					}
+					},
 					// https://github.com/webpack-contrib/terser-webpack-plugin#terseroptions
 				},
-			  }),
-		]
+			}),
+		],
 	},
 };
