@@ -45,7 +45,7 @@
 		"@types/node": "^18.0.1",
 		"@types/pino": "6.3.12",
 		"browserslist": "^4.21.1",
-		"core-js": "^3.23.3",
+		"core-js": "^3.23.4",
 		"cross-env": "^7.0.3",
 		"jest": "^28.1.2",
 		"pkg": "^5.7.0",
