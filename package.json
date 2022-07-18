@@ -48,7 +48,7 @@
 		"core-js": "^3.23.3",
 		"cross-env": "^7.0.3",
 		"jest": "^28.1.2",
-		"pkg": "^5.7.0",
+		"pkg": "^5.8.0",
 		"prettier": "^2.7.1",
 		"swc-loader": "^0.2.3",
 		"terser-webpack-plugin": "^5.3.3",
