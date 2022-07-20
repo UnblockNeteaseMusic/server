@@ -4,8 +4,11 @@ on:
     push:
         branches:
             - 'enhanced'
-        paths-ignore:
-            - '**.md'
+        paths:
+            - '.github/workflows/push-docker.yml'
+            - 'precompiled/**'
+            - 'server.crt'
+            - 'server.key'
 
     release:
         types:
@@ -26,26 +29,26 @@ jobs:
         steps:
             # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
             - name: Checkout
-              uses: actions/checkout@v2
+              uses: actions/checkout@v3
 
             - name: Get the current tag name
               uses: olegtarasov/get-tag@v2.1
               id: tagName
 
             - name: Set up QEMU
-              uses: docker/setup-qemu-action@v1
+              uses: docker/setup-qemu-action@v2
 
             - name: Set up Docker Buildx
-              uses: docker/setup-buildx-action@v1
+              uses: docker/setup-buildx-action@v2
 
             - name: Login to DockerHub
-              uses: docker/login-action@v1
+              uses: docker/login-action@v2
               with:
                   username: ${{ secrets.DOCKERHUB_USERNAME }}
                   password: ${{ secrets.DOCKERHUB_TOKEN }}
 
             - name: Build and push the latest version
-              uses: docker/build-push-action@v2
+              uses: docker/build-push-action@v3
               if: github.event_name != 'release'
               with:
                   context: .
@@ -56,7 +59,7 @@ jobs:
                   cache-to: type=gha,mode=max
 
             - name: Build and push the released version
-              uses: docker/build-push-action@v2
+              uses: docker/build-push-action@v3
               if: github.event_name == 'release'
               with:
                   context: .

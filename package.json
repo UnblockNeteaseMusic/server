@@ -1,13 +1,18 @@
 {
 	"name": "@unblockneteasemusic/server",
-	"version": "v0.27.0-beta.4",
+	"version": "0.27.0-rc.6",
 	"description": "Revive unavailable songs for Netease Cloud Music",
 	"main": "src/provider/match.js",
 	"bin": {
 		"unblockneteasemusic": "./precompiled/app.js"
 	},
+	"engines": {
+		"node": ">= 12"
+	},
 	"scripts": {
-		"build": "rollup -c",
+		"start:dev": "cross-env LOG_LEVEL=debug node src/app.js -e https://music.163.com",
+		"start": "cross-env node src/app.js -e https://music.163.com",
+		"build": "webpack",
 		"pkg": "pkg . --out-path=dist/",
 		"test": "jest"
 	},
@@ -17,40 +22,45 @@
 			"server.crt"
 		],
 		"targets": [
-			"node14-linux-arm64",
-			"node14-win-arm64",
-			"node14-linux-x64",
-			"node14-win-x64"
+			"node16-linux-arm64",
+			"node16-win-arm64",
+			"node16-linux-x64",
+			"node16-win-x64"
 		],
 		"outputPath": "dist"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/1715173329/UnblockNeteaseMusic.git"
+		"url": "https://github.com/UnblockNeteaseMusic/server.git"
 	},
 	"author": "nondanee, 1715173329, pan93412",
 	"license": "LGPL-3.0-only",
 	"dependencies": {
-		"long": "^4.0.0",
-		"node-windows": "^1.0.0-beta.6"
+		"node-windows": "=1.0.0-beta.6",
+		"pino": "6.14.0",
+		"pino-pretty": "^7.6.1"
 	},
-	"private": true,
 	"devDependencies": {
-		"@babel/core": "^7.15.5",
-		"@babel/preset-env": "^7.15.6",
-		"@rollup/plugin-babel": "^5.3.0",
-		"@rollup/plugin-commonjs": "^21.0.0",
-		"@rollup/plugin-json": "^4.1.0",
-		"@rollup/plugin-node-resolve": "^13.0.5",
-		"@rollup/plugin-replace": "^3.0.0",
-		"@types/node": "^16.10.2",
-		"@types/pino": "^6.3.11",
-		"core-js": "3",
-		"jest": "^27.2.4",
-		"pino": "^6.13.3",
-		"pino-pretty": "^7.0.1",
-		"pkg": "^5.3.3",
-		"prettier": "^2.4.1",
-		"rollup": "^2.58.0"
-	}
+		"@swc/core": "^1.2.208",
+		"@types/node": "^18.0.1",
+		"@types/pino": "6.3.12",
+		"browserslist": "^4.21.1",
+		"core-js": "^3.23.3",
+		"cross-env": "^7.0.3",
+		"jest": "^28.1.2",
+		"pkg": "^5.7.0",
+		"prettier": "^2.7.1",
+		"swc-loader": "^0.2.3",
+		"terser-webpack-plugin": "^5.3.3",
+		"typescript": "^4.7.4",
+		"webpack": "^5.73.0",
+		"webpack-cli": "^4.10.0"
+	},
+	"resolutions": {
+		"minimist": "^1.2.6"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"packageManager": "yarn@3.1.1"
 }

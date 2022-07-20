@@ -37,6 +37,7 @@ hook.target.host = new Set([
 	'interface3.music.163.com',
 	'apm.music.163.com',
 	'apm3.music.163.com',
+	'musicupload.netease.com', // support uploading
 	// 'mam.netease.com',
 	// 'api.iplay.163.com', // look living
 	// 'ac.dun.163yun.com',
@@ -64,6 +65,7 @@ hook.target.path = new Set([
 	'/api/song/enhance/privilege',
 	'/batch',
 	'/api/batch',
+	'/api/listen/together/privilege/get',
 	'/api/v1/search/get',
 	'/api/v1/search/song/get',
 	'/api/search/complex/get',
@@ -73,7 +75,6 @@ hook.target.path = new Set([
 	'/api/v1/play/record',
 	'/api/playlist/v4/detail',
 	'/api/v1/radio/get',
-	'/api/v1/discovery/recommend/songs',
 	'/api/v1/discovery/recommend/songs',
 	'/api/usertool/sound/mobile/promote',
 	'/api/usertool/sound/mobile/theme',
@@ -252,18 +253,27 @@ hook.request.after = (ctx) => {
 									'/api/music-vip-membership/client/vip/info'
 								];
 							if (info) {
-								const expireTime = info.data.now + 31622400000;
-								info.data.redVipLevel = 7;
-								info.data.redVipAnnualCount = 1;
+								try {
+									const expireTime =
+										info.data.now + 31622400000;
+									info.data.redVipLevel = 7;
+									info.data.redVipAnnualCount = 1;
 
-								info.data.musicPackage.expireTime = expireTime;
-								info.data.musicPackage.vipCode = 230;
+									info.data.musicPackage.expireTime =
+										expireTime;
+									info.data.musicPackage.vipCode = 230;
 
-								info.data.associator.expireTime = expireTime;
+									info.data.associator.expireTime =
+										expireTime;
 
-								netease.jsonBody[
-									'/api/music-vip-membership/client/vip/info'
-								] = info;
+									netease.jsonBody[
+										'/api/music-vip-membership/client/vip/info'
+									] = info;
+								} catch (error) {
+									logger.debug(
+										'Unable to apply the local VIP.'
+									);
+								}
 							}
 						}
 					}
@@ -294,20 +304,38 @@ hook.request.after = (ctx) => {
 
 				const inject = (key, value) => {
 					if (typeof value === 'object' && value != null) {
+						if ('cp' in value) value['cp'] = 1;
+						if (
+							'dl' in value &&
+							'downloadMaxbr' in value &&
+							value['dl'] < value['downloadMaxbr']
+						)
+							value['dl'] = value['downloadMaxbr'];
 						if ('fee' in value) value['fee'] = 0;
 						if (
-							'st' in value &&
 							'pl' in value &&
-							'dl' in value &&
-							'subp' in value
-						) {
+							'playMaxbr' in value &&
+							value['pl'] < value['playMaxbr']
+						)
+							value['pl'] = value['playMaxbr'];
+						if ('sp' in value && 'st' in value && 'subp' in value) {
 							// batch modify
+							value['sp'] = 7;
 							value['st'] = 0;
 							value['subp'] = 1;
-							value['pl'] =
-								value['pl'] === 0 ? 320000 : value['pl'];
-							value['dl'] =
-								value['dl'] === 0 ? 320000 : value['dl'];
+						}
+						if (
+							'start' in value &&
+							'end' in value &&
+							'playable' in value &&
+							'unplayableType' in value &&
+							'unplayableUserIds' in value
+						) {
+							value['start'] = 0;
+							value['end'] = 0;
+							value['playable'] = true;
+							value['unplayableType'] = 'unknown';
+							value['unplayableUserIds'] = [];
 						}
 					}
 					return value;
@@ -351,7 +379,7 @@ hook.connect.before = (ctx) => {
 			hook.target.host.has(host)
 		)
 	) {
-		if (url.port === 80) {
+		if (parseInt(url.port) === 80) {
 			req.url = `${global.address || 'localhost'}:${global.port[0]}`;
 			req.local = true;
 		} else if (global.port[1]) {

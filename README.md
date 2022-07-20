@@ -1,3 +1,5 @@
+<!-- Thanks to https://zhconvert.org's Chinese (China) converter ! -->
+
 <img src="https://user-images.githubusercontent.com/26399680/47980314-0e3f1700-e102-11e8-8857-e3436ecc8beb.png" alt="logo" width="140" height="140" align="right">
 
 # UnblockNeteaseMusic
@@ -8,7 +10,8 @@
 
 ## 特性
 
--   使用 Bilibili / QQ / 酷狗 / 酷我 / 咪咕 / JOOX / Youtube 等音源替换变灰歌曲链接 (默认仅激活一、三、四、五)
+-   支援多个音源，替换变灰歌曲链接
+    -   支援的完整音源清单可以见下方〈音源清单〉处。
 -   为请求增加 `X-Real-IP` 参数解锁海外限制，支持指定网易云服务器 IP，支持设置上游 HTTP / HTTPS 代理
 -   完整的流量代理功能 (HTTP / HTTPS)，可直接作为系统代理 (同时支持 PAC)
 
@@ -19,6 +22,21 @@
 去右侧的 Releases 找到最新版本，然后在下方的 Assets 找到符合你系统架构的可运行文件。下载回来后点两下即可使用。
 
 > macOS 因为签名问题，暂时不提供可运行文件。请先按照其他做法使用。
+
+### NPM 安装
+
+#### 安装成依赖
+
+```bash
+npm install @unblockneteasemusic/server
+yarn add @unblockneteasemusic/server # for Yarn users
+```
+
+#### 用 NPX 运行
+
+```bash
+npx -p @unblockneteasemusic/server unblockneteasemusic
+```
 
 ### 注册成 Windows 服务
 
@@ -43,6 +61,30 @@ http 代理使用 `127.0.0.1`，端口默认使用 `8080`。
 见 [pan93412/unblock-netease-music-enhanced](https://hub.docker.com/repository/docker/pan93412/unblock-netease-music-enhanced)
 。`latest` 是从 `enhanced` 组建的最新版本；`release` 是最新 tag 的版本。
 
+直接运行 `pan93412/unblock-netease-music-enhanced` 的命令如下：
+
+```bash
+docker run pan93412/unblock-netease-music-enhanced
+```
+
+若要更新 UnblockNeteaseMusic，请运行以下命令后重新 `run`：
+
+```
+docker pull pan93412/unblock-netease-music-enhanced
+```
+
+若要指定环境变量，您可以往 `docker run` 传入 `-e`，就像这样：
+
+```bash
+docker run -e JSON_LOG=true -e LOG_LEVEL=debug pan93412/unblock-netease-music-enhanced
+```
+
+若要传入配置参数，只要在 `docker run` 的 image 之后传入参数即可：
+
+```bash
+docker run pan93412/unblock-netease-music-enhanced -o bilibili -p 1234
+```
+
 #### 自行编译
 
 ```bash
@@ -57,6 +99,12 @@ docker-compose up
 git clone https://github.com/UnblockNeteaseMusic/server.git UnblockNeteaseMusic
 cd UnblockNeteaseMusic
 node app.js # 建议使用 screen / tmux 把 app.js 挂后台
+```
+
+更新：
+
+```
+git pull
 ```
 
 #### 编译最新的 package
@@ -101,15 +149,38 @@ optional arguments:
   -t token, --token token         set up proxy authentication
   -e url, --endpoint url          replace virtual endpoint with public host
   -s, --strict                    enable proxy limitation
+  -c, --cnrelay host:port         Mainland China relay to get music url
   -h, --help                      output usage information
 ```
+
+### 音源清单
+
+将有兴趣的音源代号用 `-o` 传入 UNM 即可使用，像这样：
+
+```bash
+node app.js -o bilibili ytdlp
+```
+
+| 名称                        | 代号         | 默认启用 | 注意事项                                                                       |
+| --------------------------- | ------------ | -------- | ------------------------------------------------------------------------------ |
+| QQ 音乐                     | `qq`         |          | 需要准备自己的 `QQ_COOKIE`（请参阅下方〈环境变量〉处）。                       |
+| 酷狗音乐                    | `kugou`      | ✅       |                                                                                |
+| 酷我音乐                    | `kuwo`       | ✅       |                                                                                |
+| 咪咕音乐                    | `migu`       | ✅       |                                                                                |
+| JOOX                        | `joox`       |          | 需要准备自己的 `JOOX_COOKIE`（请参阅下方〈环境变量〉处）。似乎有严格地区限制。 |
+| YouTube（纯 JS 解析方式）   | `youtube`    |          | 需要 Google 认定的**非中国大陆区域** IP 地址。                                 |
+| yt-download                 | `ytdownload` |          | **似乎不能使用**。                                                             |
+| YouTube（通过 `youtube-dl`) | `youtubedl`  |          | 需要自行安装 `youtube-dl`。                                                    |
+| YouTube（通过 `yt-dlp`)     | `ytdlp`      | ✅       | 需要自行安装 `yt-dlp`（`youtube-dl` 仍在活跃维护的 fork）。                    |
+| B 站音乐                    | `bilibili`   | ✅       |                                                                                |
+| 第三方网易云 API            | `pyncmd`     |          |                                                                                |
 
 ### 环境变量
 
 | 变量名称         | 类型 | 描述                                                                                              | 示例                                                             |
 | ---------------- | ---- | ------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | ENABLE_FLAC      | bool | 激活无损音质获取                                                                                  | `ENABLE_FLAC=true`                                               |
-| ENABLE_LOCAL_VIP | bool | 启用本地黑胶 VIP                                                                                  | `ENABLE_LOCAL_VIP=true`                                          |
+| ENABLE_LOCAL_VIP | bool | 激活本地黑胶 VIP                                                                                  | `ENABLE_LOCAL_VIP=true`                                          |
 | ENABLE_HTTPDNS   | bool | 激活故障的 Netease HTTPDNS 查询（不建议）                                                         | `ENABLE_HTTPDNS=true`                                            |
 | DEVELOPMENT      | bool | 激活开发模式。需要自己用 `yarn` 安装依赖 (dependencies)                                           | `DEVELOPMENT=true`                                               |
 | JSON_LOG         | bool | 输出机器可读的 JSON 记录格式                                                                      | `JSON_LOG=true`                                                  |
@@ -118,10 +189,9 @@ optional arguments:
 | LOG_LEVEL        | str  | 日志输出等级。请见〈日志等级〉部分。                                                              | `LOG_LEVEL=debug`                                                |
 | LOG_FILE         | str  | 从 Pino 端设置日志输出的文件位置。也可以用 `*sh` 的输出重导向功能 (`node app.js >> app.log`) 代替 | `LOG_FILE=app.log`                                               |
 | JOOX_COOKIE      | str  | JOOX 音源的 wmid 和 session_key cookie                                                            | `JOOX_COOKIE="wmid=<your_wmid>; session_key=<your_session_key>"` |
-| MIGU_COOKIE      | str  | 咪咕音源的 aversionid cookie                                                                      | `MIGU_COOKIE="<your_aversionid>"`                                |
 | QQ_COOKIE        | str  | QQ 音源的 uin 和 qm_keyst cookie                                                                  | `QQ_COOKIE="uin=<your_uin>; qm_keyst=<your_qm_keyst>"`           |
 | YOUTUBE_KEY      | str  | Youtube 音源的 Data API v3 Key                                                                    | `YOUTUBE_KEY="<your_data_api_key>"`                              |
-| SIGN_CERT        | path | 自定义证书文件                                                                                    | `SIGN_CERT="./ca.crt"`                                           |
+| SIGN_CERT        | path | 自定义证书文件                                                                                    | `SIGN_CERT="./server.crt"`                                       |
 | SIGN_KEY         | path | 自定义密钥文件                                                                                    | `SIGN_KEY="./server.key"`                                        |
 
 #### 日志等级 (`LOG_LEVEL`)
@@ -204,31 +274,35 @@ global.hosts = { 'i.y.qq.com': '59.37.96.220' };
 match(418602084, ['qq', 'kuwo', 'migu']).then(console.log);
 ```
 
+### 設定 HTTPS 憑證
+
+新版的 NeteaseMusic 需要 HTTPS 才能使用。证书的设置教学可参阅[《安裝 UNM 的 HTTPS 憑證》](https://github.com/UnblockNeteaseMusic/server/discussions/426)一文。
+
 ## 效果
 
 ### Windows 客户端
 
-<img src="https://user-images.githubusercontent.com/26399680/60316017-87de8a80-999b-11e9-9381-16d40efbe7f6.png" width="100%">
+<img alt="Windows 客户端" src="https://user-images.githubusercontent.com/26399680/60316017-87de8a80-999b-11e9-9381-16d40efbe7f6.png" width="100%">
 
 ### UWP 客户端
 
-<img src="https://user-images.githubusercontent.com/26399680/52215123-5a028780-28ce-11e9-8491-08c4c5dac3b4.png" width="100%">
+<img alt="UWP 客户端" src="https://user-images.githubusercontent.com/26399680/52215123-5a028780-28ce-11e9-8491-08c4c5dac3b4.png" width="100%">
 
 ### Linux 客户端
 
-<img src="https://user-images.githubusercontent.com/26399680/60316169-18b56600-999c-11e9-8ae5-5cd168b0edae.png" width="100%">
+<img alt="Linux 客户端" src="https://user-images.githubusercontent.com/26399680/60316169-18b56600-999c-11e9-8ae5-5cd168b0edae.png" width="100%">
 
 ### macOS 客户端
 
-<img src="https://user-images.githubusercontent.com/26399680/52196035-51418f80-2895-11e9-8f33-78a631cdf151.png" width="100%">
+<img alt="macOS 客户端" src="https://user-images.githubusercontent.com/26399680/52196035-51418f80-2895-11e9-8f33-78a631cdf151.png" width="100%">
 
 ### Android 客户端
 
-<img src="https://user-images.githubusercontent.com/26399680/57972549-eabd2900-79ce-11e9-8fef-95cb60906298.png" width="50%">
+<img alt="Android 客户端" src="https://user-images.githubusercontent.com/26399680/57972549-eabd2900-79ce-11e9-8fef-95cb60906298.png" width="50%">
 
 ### iOS 客户端
 
-<img src="https://user-images.githubusercontent.com/26399680/57972440-f90a4580-79cc-11e9-8dbf-6150ee299b9c.jpg" width="50%">
+<img alt="iOS 客户端" src="https://user-images.githubusercontent.com/26399680/57972440-f90a4580-79cc-11e9-8dbf-6150ee299b9c.jpg" width="50%">
 
 ## 致谢
 

@@ -6,6 +6,7 @@ on:
             - 'enhanced'
         paths-ignore:
             - '**.md'
+            - 'precompiled/*.js'
 
     pull_request:
         types:
@@ -14,6 +15,7 @@ on:
             - reopened
         paths-ignore:
             - '**.md'
+            - 'precompiled/*.js'
 
     release:
         types:
@@ -28,21 +30,22 @@ jobs:
                     - 'linux-x64'
                     - 'win-arm64'
                     - 'win-x64'
+            fail-fast: false
 
         runs-on: ubuntu-latest
 
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v3
 
-            - name: Use Node.js 14
-              uses: actions/setup-node@v2
+            - name: Use Node.js 16
+              uses: actions/setup-node@v3
               with:
-                  node-version: 14
+                  node-version: 16
                   cache: yarn
 
             - name: Set up QEMU
               id: qemu
-              uses: docker/setup-qemu-action@v1
+              uses: docker/setup-qemu-action@v2
               with:
                   image: tonistiigi/binfmt:latest
                   platforms: all
@@ -50,14 +53,17 @@ jobs:
             - name: Install dependencies
               run: yarn
 
+            - name: Make bundle
+              run: yarn build
+
             - name: Building executable file for ${{ matrix.target }}
               run: |
-                  npx pkg --compress Brotli -t node14-${{ matrix.target }} .
+                  npx pkg --compress Brotli -t node16-${{ matrix.target }} .
                   mv "$(ls dist/*)" "$(ls dist/* | sed 's/server/unblockneteasemusic-${{ matrix.target }}/g')"
                   echo "ASSET_NAME=$(ls dist)" >> $GITHUB_ENV
 
             - name: Publishing to GitHub Artifacts
-              uses: actions/upload-artifact@v2
+              uses: actions/upload-artifact@v3
               if: github.event_name != 'release'
               with:
                   name: ${{ env.ASSET_NAME }}

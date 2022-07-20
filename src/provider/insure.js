@@ -1,7 +1,7 @@
 const request = require('../request');
-const host = null; // 'http://localhost:9000'
 
 module.exports = () => {
+	const host = global.cnrelay; // 'http://localhost:9000'
 	const proxy = new Proxy(() => {}, {
 		get: (target, property) => {
 			target.route = (target.route || []).concat(property);

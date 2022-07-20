@@ -11,15 +11,18 @@ on:
 jobs:
     run-prettier:
         runs-on: ubuntu-latest
+        permissions:
+            contents: write
+            pull-requests: write
 
         steps:
             - name: Checkout
-              uses: actions/checkout@v2
+              uses: actions/checkout@v3
 
-            - name: Use Node.js 14
-              uses: actions/setup-node@v2
+            - name: Use Node.js 16
+              uses: actions/setup-node@v3
               with:
-                  node-version: 14
+                  node-version: 16
                   cache: yarn
 
             - name: Install dependencies
@@ -29,10 +32,11 @@ jobs:
               run: yarn prettier -w .
 
             - name: Create Pull Request
-              uses: peter-evans/create-pull-request@v3
+              uses: peter-evans/create-pull-request@v4
               with:
-                  token: ${{ secrets.PR_PAT }}
+                  token: ${{ github.token }}
                   commit-message: 'style: with prettier [skip ci]'
+                  author: 'github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>'
                   branch: ci/prettier
                   delete-branch: true
                   title: 'style: with prettier'
