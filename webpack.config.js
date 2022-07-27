@@ -1,5 +1,6 @@
 const TerserPlugin = require('terser-webpack-plugin');
 const webpack = require('webpack');
+const { PinoWebpackPlugin } = require('pino-webpack-plugin');
 
 module.exports = {
 	target: 'node',
@@ -29,6 +30,7 @@ module.exports = {
 			banner: '#!/usr/bin/env node',
 			raw: true,
 		}),
+		new PinoWebpackPlugin({ transports: ['pino-pretty'] })
 	],
 	optimization: {
 		minimize: true,
