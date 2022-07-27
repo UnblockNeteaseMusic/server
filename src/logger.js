@@ -9,21 +9,36 @@ const messageFormat = colorize
 	? '\x1b[1m\x1b[32m({scope})\x1b[0m\x1b[36m {msg}'
 	: '({scope}) {msg}';
 
+const prettyPrintTransport = {
+	target: 'pino-pretty',
+	options: {
+		destination: 1, // use 2 for stderr
+		colorize,
+		messageFormat: messageFormat,
+		ignore: 'time,pid,hostname,scope',
+		errorProps: '*',
+	},
+};
+
+const fileTransport = destFile
+	? {
+		target: 'pino/file',
+		options: { destination: destFile }
+	}
+	: null;
+
+const transport = pino.transport({
+	targets: [
+		prettyPrintTransport,
+		fileTransport,
+	].filter(v => !!v),
+});
+
 const logger = pino(
 	{
 		level: process.env.LOG_LEVEL ?? 'info',
-		prettyPrint:
-			process.env.JSON_LOG === 'true'
-				? false
-				: {
-						colorize: colorize,
-						messageFormat: messageFormat,
-						ignore: 'time,pid,hostname,scope',
-						errorProps: '*',
-				  },
 	},
-	// Redirect the logs to destFile if specified.
-	destFile && pino.destination(destFile)
+	transport
 );
 
 /**
