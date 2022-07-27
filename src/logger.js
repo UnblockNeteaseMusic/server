@@ -5,7 +5,9 @@ const destFile = process.env.LOG_FILE;
 
 // Do not colorize if printing to non-TTY deivce.
 const colorize = process.stdout.isTTY;
-const messageFormat = colorize ? '\x1b[1m\x1b[32m({scope})\x1b[0m\x1b[36m {msg}' : '({scope}) {msg}'
+const messageFormat = colorize
+	? '\x1b[1m\x1b[32m({scope})\x1b[0m\x1b[36m {msg}'
+	: '({scope}) {msg}';
 
 const logger = pino(
 	{
