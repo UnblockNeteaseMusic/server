@@ -16,6 +16,7 @@ const logger = pino(
 				: {
 						colorize: colorize,
 						messageFormat: messageFormat,
+						ignore: 'time,pid,hostname,scope',
 						errorProps: '*',
 				  },
 	},
