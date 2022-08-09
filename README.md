@@ -134,13 +134,13 @@ DEVELOPMENT=true node app.js
 
 ```bash
 $ unblockneteasemusic -h
-usage: unblockneteasemusic [-v] [-p port] [-a address] [-u url] [-f host]
+usage: unblockneteasemusic [-v] [-p http[:https]] [-a address] [-u url] [-f host]
                            [-o source [source ...]] [-t token] [-e url] [-s]
                            [-h]
 
 optional arguments:
   -v, --version                   output the version number
-  -p port, --port port            specify server port
+  -p port, --port http[:https]    specify server port
   -a address, --address address   specify server host
   -u url, --proxy-url url         request through upstream proxy
   -f host, --force-host host      force the netease server ip
@@ -213,7 +213,7 @@ node app.js -o bilibili ytdlp
 
 支持 Windows 客户端，UWP 客户端，Android 客户端，Linux 客户端 (1.2 版本以上需要自签证书 MITM，启动客户端需要增加 `--ignore-certificate-errors` 参数)，macOS 客户端 (726 版本以上需要自签证书)，iOS 客户端 (配置 https endpoint 或使用自签证书) 和网页版 (需要自签证书，需要脚本配合)
 
-目前除 UWP 外其它客户端均优先请求 HTTPS 接口，默认配置下本代理对网易云所有 HTTPS API 连接返回空数据，促使客户端降级使用 HTTP 接口 (新版 Linux 客户端和 macOS 客户端已无法降级)
+目前除 UWP 外其它客户端均优先请求 HTTPS 接口，~~默认配置下本代理对网易云所有 HTTPS API 连接返回空数据，促使客户端降级使用 HTTP 接口~~ (新版 Linux 客户端和 macOS 客户端已无法降级)
 
 因 UWP 应用存在网络隔离，限制流量发送到本机，若使用的代理在 localhost，或修改的 hosts 指向 localhost，需为 "网易云音乐 UWP" 手工开启 loopback 才能使用，请以**管理员身份**运行命令
 
