@@ -42,7 +42,7 @@
 	},
 	"devDependencies": {
 		"@swc/core": "^1.2.244",
-		"@types/node": "^18.7.13",
+		"@types/node": "^18.7.14",
 		"@types/pino": "6.3.12",
 		"browserslist": "^4.21.3",
 		"core-js": "^3.25.0",
