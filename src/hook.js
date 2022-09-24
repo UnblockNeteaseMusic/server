@@ -62,6 +62,7 @@ hook.target.path = new Set([
 	'/api/song/enhance/player/url',
 	'/api/song/enhance/player/url/v1',
 	'/api/song/enhance/download/url',
+	'/api/song/enhance/download/url/v1',
 	'/api/song/enhance/privilege',
 	'/batch',
 	'/api/batch',
@@ -167,7 +168,10 @@ hook.request.before = (ctx) => {
 					ctx.netease = netease;
 					// console.log(netease.path, netease.param)
 
-					if (netease.path === '/api/song/enhance/download/url')
+					if (
+						netease.path === '/api/song/enhance/download/url' ||
+						netease.path === '/api/song/enhance/download/url/v1'
+					)
 						return pretendPlay(ctx);
 				}
 			})
@@ -338,6 +342,19 @@ hook.request.after = (ctx) => {
 							value['unplayableType'] = 'unknown';
 							value['unplayableUserIds'] = [];
 						}
+						if ('noCopyrightRcmd' in value)
+							value['noCopyrightRcmd'] = null;
+						if (
+							'payed' in value &&
+							value['flLevel'] === 'none' &&
+							value['plLevel'] === 'none' &&
+							value['dlLevel'] === 'none'
+						) {
+							value['flLevel'] = 'exhigh';
+							value['plLevel'] = 'exhigh';
+							value['dlLevel'] = 'exhigh';
+							value['payed'] = 1;
+						}
 					}
 					return value;
 				};
@@ -412,7 +429,21 @@ const pretendPlay = (ctx) => {
 		netease.param = { ids: `["${id}"]`, br };
 		query = crypto.linuxapi.encryptRequest(turn, netease.param);
 	} else {
-		const { id, br, e_r, header } = netease.param;
+		let { id, br, level, e_r, header } = netease.param;
+		if (!br && level) {
+			switch (level) {
+				case 'hires':
+				case 'loseless':
+					br = 999000;
+					break;
+				case 'exhigh':
+					br = 320000;
+					break;
+				case 'standard':
+					br = 128000;
+					break;
+			}
+		}
 		netease.param = { ids: `["${id}"]`, br, e_r, header };
 		query = crypto.eapi.encryptRequest(turn, netease.param);
 	}
