@@ -109,7 +109,7 @@ const pretendPlay=ctx=>{const{req,netease}=ctx,turn="http://music.163.com/api/so
 let query
 if(netease.forward){const{id,br}=netease.param
 netease.param={ids:`["${id}"]`,br},query=crypto.linuxapi.encryptRequest(turn,netease.param)}else{let{id:id1,br:br1,level,e_r,header}=netease.param
-if(!br1&&level)switch(level){case"hires":case"loseless":br1=999e3
+if(!br1&&level)switch(level){case"hires":case"lossless":br1=999e3
 break
 case"exhigh":br1=32e4
 break

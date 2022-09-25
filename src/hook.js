@@ -433,7 +433,7 @@ const pretendPlay = (ctx) => {
 		if (!br && level) {
 			switch (level) {
 				case 'hires':
-				case 'loseless':
+				case 'lossless':
 					br = 999000;
 					break;
 				case 'exhigh':
