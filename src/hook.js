@@ -72,6 +72,8 @@ hook.target.path = new Set([
 	'/api/v1/search/get',
 	'/api/v1/search/song/get',
 	'/api/search/complex/get',
+	'/api/search/complex/page',
+	'/api/search/song/page',
 	'/api/cloudsearch/pc',
 	'/api/v1/playlist/manipulate/tracks',
 	'/api/song/like',
@@ -179,7 +181,7 @@ hook.request.before = (ctx) => {
 					if (DISABLE_UPGRADE_CHECK) {
 						if (
 							netease.path.match(
-								/^\/api(\/v1)?\/(android|grayscale|ios|osx|pc)\/(upgrade|version)/
+								/^\/api(\/v1)?\/(android|ios|osx|pc)\/(upgrade|version)/
 							)
 						)
 							ctx.req.url = 'http://0.0.0.0';
