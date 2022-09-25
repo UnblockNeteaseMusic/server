@@ -184,6 +184,7 @@ node app.js -o bilibili ytdlp
 | ENABLE_HTTPDNS        | bool | 激活故障的 Netease HTTPDNS 查询（不建议）                                                         | `ENABLE_HTTPDNS=true`                                            |
 | DISABLE_UPGRADE_CHECK | bool | 禁用更新检测。                                                                                    | `DISABLE_UPGRADE_CHECK=true`                                     |
 | DEVELOPMENT           | bool | 激活开发模式。需要自己用 `yarn` 安装依赖 (dependencies)                                           | `DEVELOPMENT=true`                                               |
+| FOLLOW_SOURCE_ORDER   | bool | 严格按照配置音源的顺序进行查询                                                                    | `FOLLOW_SOURCE_ORDER=true`                                       |
 | JSON_LOG              | bool | 输出机器可读的 JSON 记录格式                                                                      | `JSON_LOG=true`                                                  |
 | NO_CACHE              | bool | 停用 cache                                                                                        | `NO_CACHE=true`                                                  |
 | MIN_BR                | int  | 允许的最低源音质，小于该值将被替换                                                                | `MIN_BR=320000`                                                  |
