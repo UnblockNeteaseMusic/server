@@ -13,6 +13,8 @@ cs.aliveDuration = 7 * 24 * 60 * 60 * 1000;
 
 const ENABLE_LOCAL_VIP =
 	(process.env.ENABLE_LOCAL_VIP || '').toLowerCase() === 'true';
+const DISABLE_UPGRADE_CHECK =
+	(process.env.DISABLE_UPGRADE_CHECK || '').toLowerCase() === 'true';
 
 const hook = {
 	request: {
@@ -173,6 +175,15 @@ hook.request.before = (ctx) => {
 						netease.path === '/api/song/enhance/download/url/v1'
 					)
 						return pretendPlay(ctx);
+
+					if (DISABLE_UPGRADE_CHECK) {
+						if (
+							netease.path.match(
+								/^\/api(\/v1)?\/(android|grayscale|ios|osx|pc)\/(upgrade|version)/
+							)
+						)
+							ctx.req.url = 'http://0.0.0.0';
+					}
 				}
 			})
 			.catch(
