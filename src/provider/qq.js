@@ -22,25 +22,29 @@ const search = (info) => {
 		'https://u.y.qq.com/cgi-bin/musicu.fcg?data=' +
 		encodeURIComponent(
 			JSON.stringify({
-				"search": {
+				search: {
 					method: 'DoSearchForQQMusicDesktop',
 					module: 'music.search.SearchCgiService',
 					param: {
 						num_per_page: 5,
 						page_num: 1,
 						query: info.keyword,
-						search_type: 0
+						search_type: 0,
 					},
-				}
+				},
 			})
 		);
 
 	return request('GET', url, headers)
 		.then((response) => response.json())
-		.then(jsonBody => {
-			const result = jsonBody.search.data.body.song.list.slice(0, 5).map(format);
+		.then((jsonBody) => {
+			const result = jsonBody.search.data.body.song.list
+				.slice(0, 5)
+				.map(format);
 			const matched = select(result, info);
-			return matched ? matched.id : Promise.reject("qqmusic: do_search: not matched.");
+			return matched
+				? matched.id
+				: Promise.reject('qqmusic: do_search: not matched.');
 		});
 };
 
