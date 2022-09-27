@@ -38,13 +38,9 @@ const search = (info) => {
 	return request('GET', url, headers)
 		.then((response) => response.json())
 		.then((jsonBody) => {
-			const result = jsonBody.search.data.body.song.list
-				.slice(0, 5)
-				.map(format);
+			const result = jsonBody.search.data.body.song.list.map(format);
 			const matched = select(result, info);
-			return matched
-				? matched.id
-				: Promise.reject('qqmusic: do_search: not matched.');
+			return matched ? matched.id : Promise.reject();
 		});
 };
 

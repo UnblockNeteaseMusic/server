@@ -62,9 +62,9 @@ async function match(id, source, data) {
 
 	const audioInfo = await find(id, data);
 	let audioData = null;
-	
+
 	if (process.env.FOLLOW_SOURCE_ORDER) {
-		for (let i=0; i<candidate.length; i++) {
+		for (let i = 0; i < candidate.length; i++) {
 			const source = candidate[i];
 			try {
 				audioData = await getAudioFromSource(source, audioInfo);
@@ -76,9 +76,9 @@ async function match(id, source, data) {
 				}
 			}
 		}
-		
+
 		if (!audioData) {
-			throw "No audioData!";
+			throw 'No audioData!';
 		}
 	} else {
 		audioData = await Promise.any(
@@ -91,7 +91,7 @@ async function match(id, source, data) {
 					throw e; // We just log it instead of resolving it.
 				})
 			)
-		)
+		);
 	}
 
 	const { id: audioId, name } = audioInfo;
