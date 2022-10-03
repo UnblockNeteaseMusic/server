@@ -13,6 +13,8 @@ cs.aliveDuration = 7 * 24 * 60 * 60 * 1000;
 
 const ENABLE_LOCAL_VIP =
 	(process.env.ENABLE_LOCAL_VIP || '').toLowerCase() === 'true';
+const DISABLE_UPGRADE_CHECK =
+	(process.env.DISABLE_UPGRADE_CHECK || '').toLowerCase() === 'true';
 
 const hook = {
 	request: {
@@ -62,6 +64,7 @@ hook.target.path = new Set([
 	'/api/song/enhance/player/url',
 	'/api/song/enhance/player/url/v1',
 	'/api/song/enhance/download/url',
+	'/api/song/enhance/download/url/v1',
 	'/api/song/enhance/privilege',
 	'/batch',
 	'/api/batch',
@@ -69,6 +72,8 @@ hook.target.path = new Set([
 	'/api/v1/search/get',
 	'/api/v1/search/song/get',
 	'/api/search/complex/get',
+	'/api/search/complex/page',
+	'/api/search/song/page',
 	'/api/cloudsearch/pc',
 	'/api/v1/playlist/manipulate/tracks',
 	'/api/song/like',
@@ -124,6 +129,7 @@ hook.request.before = (ctx) => {
 				if ('x-napm-retry' in req.headers)
 					delete req.headers['x-napm-retry'];
 				req.headers['X-Real-IP'] = '118.88.88.88';
+				req.headers['Accept-Encoding'] = 'gzip, deflate'; // https://blog.csdn.net/u013022222/article/details/51707352
 				if (req.url.includes('stream')) return; // look living eapi can not be decrypted
 				if (body) {
 					let data;
@@ -166,8 +172,20 @@ hook.request.before = (ctx) => {
 					ctx.netease = netease;
 					// console.log(netease.path, netease.param)
 
-					if (netease.path === '/api/song/enhance/download/url')
+					if (
+						netease.path === '/api/song/enhance/download/url' ||
+						netease.path === '/api/song/enhance/download/url/v1'
+					)
 						return pretendPlay(ctx);
+
+					if (DISABLE_UPGRADE_CHECK) {
+						if (
+							netease.path.match(
+								/^\/api(\/v1)?\/(android|ios|osx|pc)\/(upgrade|version)/
+							)
+						)
+							ctx.req.url = 'http://0.0.0.0';
+					}
 				}
 			})
 			.catch(
@@ -337,6 +355,19 @@ hook.request.after = (ctx) => {
 							value['unplayableType'] = 'unknown';
 							value['unplayableUserIds'] = [];
 						}
+						if ('noCopyrightRcmd' in value)
+							value['noCopyrightRcmd'] = null;
+						if (
+							'payed' in value &&
+							value['flLevel'] === 'none' &&
+							value['plLevel'] === 'none' &&
+							value['dlLevel'] === 'none'
+						) {
+							value['flLevel'] = 'exhigh';
+							value['plLevel'] = 'exhigh';
+							value['dlLevel'] = 'exhigh';
+							value['payed'] = 1;
+						}
 					}
 					return value;
 				};
@@ -411,7 +442,21 @@ const pretendPlay = (ctx) => {
 		netease.param = { ids: `["${id}"]`, br };
 		query = crypto.linuxapi.encryptRequest(turn, netease.param);
 	} else {
-		const { id, br, e_r, header } = netease.param;
+		let { id, br, level, e_r, header } = netease.param;
+		if (!br && level) {
+			switch (level) {
+				case 'hires':
+				case 'lossless':
+					br = 999000;
+					break;
+				case 'exhigh':
+					br = 320000;
+					break;
+				case 'standard':
+					br = 128000;
+					break;
+			}
+		}
 		netease.param = { ids: `["${id}"]`, br, e_r, header };
 		query = crypto.eapi.encryptRequest(turn, netease.param);
 	}

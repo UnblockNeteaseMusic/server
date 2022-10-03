@@ -3,6 +3,12 @@ const pino = require('pino');
 // The destination of the log file. Can be `undefined`.
 const destFile = process.env.LOG_FILE;
 
+// Do not colorize if printing to non-TTY deivce.
+const colorize = process.stdout.isTTY;
+const messageFormat = colorize
+	? '\x1b[1m\x1b[32m({scope})\x1b[0m\x1b[36m {msg}'
+	: '({scope}) {msg}';
+
 const logger = pino(
 	{
 		level: process.env.LOG_LEVEL ?? 'info',
@@ -10,9 +16,8 @@ const logger = pino(
 			process.env.JSON_LOG === 'true'
 				? false
 				: {
-						colorize: true,
-						messageFormat:
-							'\x1b[1m\x1b[32m({scope})\x1b[0m\x1b[36m {msg}',
+						colorize: colorize,
+						messageFormat: messageFormat,
 						ignore: 'time,pid,hostname,scope',
 						errorProps: '*',
 				  },

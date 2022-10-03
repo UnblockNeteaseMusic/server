@@ -61,17 +61,38 @@ async function match(id, source, data) {
 	);
 
 	const audioInfo = await find(id, data);
-	const audioData = await Promise.any(
-		candidate.map(async (source) =>
-			getAudioFromSource(source, audioInfo).catch((e) => {
+	let audioData = null;
+
+	if (process.env.FOLLOW_SOURCE_ORDER) {
+		for (let i = 0; i < candidate.length; i++) {
+			const source = candidate[i];
+			try {
+				audioData = await getAudioFromSource(source, audioInfo);
+				break;
+			} catch (e) {
 				if (e) {
 					if (e instanceof RequestCancelled) logger.debug(e);
 					else logger.error(e);
 				}
-				throw e; // We just log it instead of resolving it.
-			})
-		)
-	);
+			}
+		}
+
+		if (!audioData) {
+			throw 'No audioData!';
+		}
+	} else {
+		audioData = await Promise.any(
+			candidate.map(async (source) =>
+				getAudioFromSource(source, audioInfo).catch((e) => {
+					if (e) {
+						if (e instanceof RequestCancelled) logger.debug(e);
+						else logger.error(e);
+					}
+					throw e; // We just log it instead of resolving it.
+				})
+			)
+		);
+	}
 
 	const { id: audioId, name } = audioInfo;
 	const { url } = audioData;

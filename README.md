@@ -134,13 +134,13 @@ DEVELOPMENT=true node app.js
 
 ```bash
 $ unblockneteasemusic -h
-usage: unblockneteasemusic [-v] [-p port] [-a address] [-u url] [-f host]
+usage: unblockneteasemusic [-v] [-p http[:https]] [-a address] [-u url] [-f host]
                            [-o source [source ...]] [-t token] [-e url] [-s]
                            [-h]
 
 optional arguments:
   -v, --version                   output the version number
-  -p port, --port port            specify server port
+  -p port, --port http[:https]    specify server port
   -a address, --address address   specify server host
   -u url, --proxy-url url         request through upstream proxy
   -f host, --force-host host      force the netease server ip
@@ -166,7 +166,7 @@ node app.js -o bilibili ytdlp
 | QQ 音乐                     | `qq`         |          | 需要准备自己的 `QQ_COOKIE`（请参阅下方〈环境变量〉处）。                       |
 | 酷狗音乐                    | `kugou`      | ✅       |                                                                                |
 | 酷我音乐                    | `kuwo`       | ✅       |                                                                                |
-| 咪咕音乐                    | `migu`       | ✅       |                                                                                |
+| 咪咕音乐                    | `migu`       | ✅       | 需要准备自己的 `MIGU_COOKIE`（请参阅下方〈环境变量〉处）。                     |
 | JOOX                        | `joox`       |          | 需要准备自己的 `JOOX_COOKIE`（请参阅下方〈环境变量〉处）。似乎有严格地区限制。 |
 | YouTube（纯 JS 解析方式）   | `youtube`    |          | 需要 Google 认定的**非中国大陆区域** IP 地址。                                 |
 | yt-download                 | `ytdownload` |          | **似乎不能使用**。                                                             |
@@ -177,22 +177,25 @@ node app.js -o bilibili ytdlp
 
 ### 环境变量
 
-| 变量名称         | 类型 | 描述                                                                                              | 示例                                                             |
-| ---------------- | ---- | ------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| ENABLE_FLAC      | bool | 激活无损音质获取                                                                                  | `ENABLE_FLAC=true`                                               |
-| ENABLE_LOCAL_VIP | bool | 激活本地黑胶 VIP                                                                                  | `ENABLE_LOCAL_VIP=true`                                          |
-| ENABLE_HTTPDNS   | bool | 激活故障的 Netease HTTPDNS 查询（不建议）                                                         | `ENABLE_HTTPDNS=true`                                            |
-| DEVELOPMENT      | bool | 激活开发模式。需要自己用 `yarn` 安装依赖 (dependencies)                                           | `DEVELOPMENT=true`                                               |
-| JSON_LOG         | bool | 输出机器可读的 JSON 记录格式                                                                      | `JSON_LOG=true`                                                  |
-| NO_CACHE         | bool | 停用 cache                                                                                        | `NO_CACHE=true`                                                  |
-| MIN_BR           | int  | 允许的最低源音质，小于该值将被替换                                                                | `MIN_BR=320000`                                                  |
-| LOG_LEVEL        | str  | 日志输出等级。请见〈日志等级〉部分。                                                              | `LOG_LEVEL=debug`                                                |
-| LOG_FILE         | str  | 从 Pino 端设置日志输出的文件位置。也可以用 `*sh` 的输出重导向功能 (`node app.js >> app.log`) 代替 | `LOG_FILE=app.log`                                               |
-| JOOX_COOKIE      | str  | JOOX 音源的 wmid 和 session_key cookie                                                            | `JOOX_COOKIE="wmid=<your_wmid>; session_key=<your_session_key>"` |
-| QQ_COOKIE        | str  | QQ 音源的 uin 和 qm_keyst cookie                                                                  | `QQ_COOKIE="uin=<your_uin>; qm_keyst=<your_qm_keyst>"`           |
-| YOUTUBE_KEY      | str  | Youtube 音源的 Data API v3 Key                                                                    | `YOUTUBE_KEY="<your_data_api_key>"`                              |
-| SIGN_CERT        | path | 自定义证书文件                                                                                    | `SIGN_CERT="./server.crt"`                                       |
-| SIGN_KEY         | path | 自定义密钥文件                                                                                    | `SIGN_KEY="./server.key"`                                        |
+| 变量名称              | 类型 | 描述                                                                                              | 示例                                                             |
+| --------------------- | ---- | ------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| ENABLE_FLAC           | bool | 激活无损音质获取                                                                                  | `ENABLE_FLAC=true`                                               |
+| ENABLE_LOCAL_VIP      | bool | 激活本地黑胶 VIP                                                                                  | `ENABLE_LOCAL_VIP=true`                                          |
+| ENABLE_HTTPDNS        | bool | 激活故障的 Netease HTTPDNS 查询（不建议）                                                         | `ENABLE_HTTPDNS=true`                                            |
+| DISABLE_UPGRADE_CHECK | bool | 禁用更新检测。                                                                                    | `DISABLE_UPGRADE_CHECK=true`                                     |
+| DEVELOPMENT           | bool | 激活开发模式。需要自己用 `yarn` 安装依赖 (dependencies)                                           | `DEVELOPMENT=true`                                               |
+| FOLLOW_SOURCE_ORDER   | bool | 严格按照配置音源的顺序进行查询                                                                    | `FOLLOW_SOURCE_ORDER=true`                                       |
+| JSON_LOG              | bool | 输出机器可读的 JSON 记录格式                                                                      | `JSON_LOG=true`                                                  |
+| NO_CACHE              | bool | 停用 cache                                                                                        | `NO_CACHE=true`                                                  |
+| MIN_BR                | int  | 允许的最低源音质，小于该值将被替换                                                                | `MIN_BR=320000`                                                  |
+| LOG_LEVEL             | str  | 日志输出等级。请见〈日志等级〉部分。                                                              | `LOG_LEVEL=debug`                                                |
+| LOG_FILE              | str  | 从 Pino 端设置日志输出的文件位置。也可以用 `*sh` 的输出重导向功能 (`node app.js >> app.log`) 代替 | `LOG_FILE=app.log`                                               |
+| JOOX_COOKIE           | str  | JOOX 音源的 wmid 和 session_key cookie                                                            | `JOOX_COOKIE="wmid=<your_wmid>; session_key=<your_session_key>"` |
+| MIGU_COOKIE           | str  | 咪咕音源的 aversionid cookie                                                                      | `MIGU_COOKIE="<your_aversionid>"`                                |
+| QQ_COOKIE             | str  | QQ 音源的 uin 和 qm_keyst cookie                                                                  | `QQ_COOKIE="uin=<your_uin>; qm_keyst=<your_qm_keyst>"`           |
+| YOUTUBE_KEY           | str  | Youtube 音源的 Data API v3 Key                                                                    | `YOUTUBE_KEY="<your_data_api_key>"`                              |
+| SIGN_CERT             | path | 自定义证书文件                                                                                    | `SIGN_CERT="./server.crt"`                                       |
+| SIGN_KEY              | path | 自定义密钥文件                                                                                    | `SIGN_KEY="./server.key"`                                        |
 
 #### 日志等级 (`LOG_LEVEL`)
 
@@ -212,7 +215,7 @@ node app.js -o bilibili ytdlp
 
 支持 Windows 客户端，UWP 客户端，Android 客户端，Linux 客户端 (1.2 版本以上需要自签证书 MITM，启动客户端需要增加 `--ignore-certificate-errors` 参数)，macOS 客户端 (726 版本以上需要自签证书)，iOS 客户端 (配置 https endpoint 或使用自签证书) 和网页版 (需要自签证书，需要脚本配合)
 
-目前除 UWP 外其它客户端均优先请求 HTTPS 接口，默认配置下本代理对网易云所有 HTTPS API 连接返回空数据，促使客户端降级使用 HTTP 接口 (新版 Linux 客户端和 macOS 客户端已无法降级)
+目前除 UWP 外其它客户端均优先请求 HTTPS 接口，~~默认配置下本代理对网易云所有 HTTPS API 连接返回空数据，促使客户端降级使用 HTTP 接口~~ (新版 Linux 客户端和 macOS 客户端已无法降级)
 
 因 UWP 应用存在网络隔离，限制流量发送到本机，若使用的代理在 localhost，或修改的 hosts 指向 localhost，需为 "网易云音乐 UWP" 手工开启 loopback 才能使用，请以**管理员身份**运行命令
 

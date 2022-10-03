@@ -5,7 +5,10 @@ const config = require('./cli.js')
 		version: packageJson.version,
 	})
 	.option(['-v', '--version'], { action: 'version' })
-	.option(['-p', '--port'], { metavar: 'port', help: 'specify server port' })
+	.option(['-p', '--port'], {
+		metavar: 'http[:https]',
+		help: 'specify server port',
+	})
 	.option(['-a', '--address'], {
 		metavar: 'address',
 		help: 'specify server host',

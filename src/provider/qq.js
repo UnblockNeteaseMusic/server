@@ -10,28 +10,36 @@ const headers = {
 };
 
 const format = (song) => ({
-	id: { song: song.songmid, file: song.media_mid },
-	name: song.songname,
+	id: { song: song.mid, file: song.mid },
+	name: song.name,
 	duration: song.interval * 1000,
-	album: { id: song.albummid, name: song.albumname },
+	album: { id: song.album.mid, name: song.album.name },
 	artists: song.singer.map(({ mid, name }) => ({ id: mid, name })),
 });
 
 const search = (info) => {
 	const url =
-		'https://c.y.qq.com/soso/fcgi-bin/client_search_cp?' +
-		'ct=24&qqmusic_ver=1298&remoteplace=txt.yqq.center&' +
-		't=0&aggr=1&cr=1&catZhida=1&lossless=0&flag_qc=0&p=1&n=20&w=' +
-		encodeURIComponent(info.keyword) +
-		'&' +
-		'g_tk=5381&jsonpCallback=MusicJsonCallback10005317669353331&loginUin=0&hostUin=0&' +
-		'format=jsonp&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0';
+		'https://u.y.qq.com/cgi-bin/musicu.fcg?data=' +
+		encodeURIComponent(
+			JSON.stringify({
+				search: {
+					method: 'DoSearchForQQMusicDesktop',
+					module: 'music.search.SearchCgiService',
+					param: {
+						num_per_page: 5,
+						page_num: 1,
+						query: info.keyword,
+						search_type: 0,
+					},
+				},
+			})
+		);
 
-	return request('GET', url)
-		.then((response) => response.jsonp())
+	return request('GET', url, headers)
+		.then((response) => response.json())
 		.then((jsonBody) => {
-			const list = jsonBody.data.song.list.map(format);
-			const matched = select(list, info);
+			const result = jsonBody.search.data.body.song.list.map(format);
+			const matched = select(result, info);
 			return matched ? matched.id : Promise.reject();
 		});
 };
