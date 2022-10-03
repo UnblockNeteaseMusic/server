@@ -1143,10 +1143,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^18.7.18":
-  version: 18.7.18
-  resolution: "@types/node@npm:18.7.18"
-  checksum: 8aec61f0f96e2a69ce51f1f40f949ca578bbb4fe05d7c0b8ce3aeeb848e90f755837f17f6ac132ca404d974fe9b2974150ad3b4984fc9dc7c3ceddb10bae0167
+"@types/node@npm:*, @types/node@npm:^18.8.0":
+  version: 18.8.0
+  resolution: "@types/node@npm:18.8.0"
+  checksum: 3433cbc22e90fafb047f93b3ef05ba01a07f780a24ff1af393f435f807537b533fe9e8a816586825f4c5fd5336c3e80225571f44ec3b6479c463408c072773e7
   languageName: node
   linkType: hard
 
@@ -1239,7 +1239,7 @@ __metadata:
   resolution: "@unblockneteasemusic/server@workspace:."
   dependencies:
     "@swc/core": ^1.3.2
-    "@types/node": ^18.7.18
+    "@types/node": ^18.8.0
     "@types/pino": 6.3.12
     "@yarnpkg/sdks": ^3.0.0-rc.20
     browserslist: ^4.21.4
