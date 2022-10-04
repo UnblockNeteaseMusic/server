@@ -6,8 +6,7 @@ const svc = new Service({
 	name: 'unblock-netease-cloud-music',
 	description: '点亮网易云音乐灰色歌曲',
 	script: './app.js', // 入口文件路径
-	scriptOptions: '-o kugou kuwo bilibili', // 可选参数
-	// scriptOptions: '-o qq kugou kuwo bilibili', // 可选参数
+	// scriptOptions: '-o qq', // 可选参数
 	wait: '1', // 程序崩溃后重启时间间隔
 	grow: '0.25', // 重启等待时间成长值，第一次1秒，第二次1.25秒。。。
 	maxRestarts: '40', // 60秒内最大重启次数
@@ -16,22 +15,6 @@ const svc = new Service({
 		// 	name: 'QQ_COOKIE',
 		// 	value: process.env.QQ_COOKIE,
 		// },
-		{
-			name: 'ENABLE_FLAC',
-			value: process.env.ENABLE_FLAC,
-		},
-		{
-			name: 'DISABLE_UPGRADE_CHECK',
-			value: process.env.DISABLE_UPGRADE_CHECK,
-		},
-		{
-			name: 'FOLLOW_SOURCE_ORDER',
-			value: process.env.FOLLOW_SOURCE_ORDER,
-		},
-		{
-			name: 'MIN_BR',
-			value: process.env.MIN_BR,
-		},
 	],
 });
 
