@@ -46,9 +46,9 @@ npx -p @unblockneteasemusic/server unblockneteasemusic
 
 #### 配置
 
-关于环境变量的配置，请在项目根目录创建`.env`文件，并在其中配置相关选项，具体格式请参考<a href="#环境变量">环境变量</a>
+关于环境变量的配置，具体格式请参考 <a href="#环境变量">环境变量</a>
 
-**如果使用qq音乐，请注意，只能使用qq登录获取cookie！**
+**如果使用 QQ 音乐，请注意，只能使用 QQ 登录获取 cookie！**
 
 ```js
 // nw.js
@@ -56,14 +56,15 @@ const svc = new Service({
 	name: 'unblock-netease-cloud-music',
 	description: '点亮网易云音乐灰色歌曲',
 	script: './app.js', // 入口文件路径
-	// scriptOptions: '-o qq', // 可选参数
+    // scriptOptions:'-p 52100:52101', // 可选参数示例: 自定义端口并开启HTTPS
+	// scriptOptions: '-o qq', // 可选参数: 使用QQ音源
 	wait: '1', // 程序崩溃后重启时间间隔
 	grow: '0.25', // 重启等待时间成长值，第一次1秒，第二次1.25秒。。。
 	maxRestarts: '40', // 60秒内最大重启次数
 	env: [
 		// {
 		// 	name: 'QQ_COOKIE',
-		// 	value: process.env.QQ_COOKIE,
+		// 	value: QQ_COOKIE,
 		// },
 	],
 });
