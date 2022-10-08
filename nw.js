@@ -11,8 +11,12 @@ const svc = new Service({
 	maxRestarts: '40', // 60秒内最大重启次数
 	env: [
 		// {
+		// 	name: 'ENABLE_FLAC',
+		// 	value 'true',
+		// },
+		// {
 		// 	name: 'QQ_COOKIE',
-		// 	value: QQ_COOKIE,
+		// 	value: 'uin=<your_uin>; qm_keyst=<your_qm_keyst>',
 		// },
 	],
 });

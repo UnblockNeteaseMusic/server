@@ -46,29 +46,9 @@ npx -p @unblockneteasemusic/server unblockneteasemusic
 
 #### 配置
 
-关于环境变量的配置，具体格式请参考 <a href="#环境变量">环境变量</a>
+http 代理使用 `127.0.0.1`，端口默认使用 `8080`。
 
-**如果使用 QQ 音乐，请注意，只能使用 QQ 登录获取 cookie！**
-
-```js
-// nw.js
-const svc = new Service({
-	name: 'unblock-netease-cloud-music',
-	description: '点亮网易云音乐灰色歌曲',
-	script: './app.js', // 入口文件路径
-	// scriptOptions:'-p 52100:52101', // 可选参数示例: 自定义端口并开启HTTPS
-	// scriptOptions: '-o qq', // 可选参数: 使用QQ音源
-	wait: '1', // 程序崩溃后重启时间间隔
-	grow: '0.25', // 重启等待时间成长值，第一次1秒，第二次1.25秒。。。
-	maxRestarts: '40', // 60秒内最大重启次数
-	env: [
-		// {
-		// 	name: 'QQ_COOKIE',
-		// 	value: QQ_COOKIE,
-		// },
-	],
-});
-```
+如果想要添加启动参数和环境变量，请在项目根目录中的 `nw.js` 中配置 `scriptOptions` 和 `env`。
 
 > 如果想要卸载已安装的服务，请再次运行 `node ./nw.js`。
 >
@@ -183,7 +163,7 @@ node app.js -o bilibili ytdlp
 
 | 名称                        | 代号         | 默认启用 | 注意事项                                                                       |
 | --------------------------- | ------------ | -------- | ------------------------------------------------------------------------------ |
-| QQ 音乐                     | `qq`         |          | 需要准备自己的 `QQ_COOKIE`（请参阅下方〈环境变量〉处）。                       |
+| QQ 音乐                     | `qq`         |          | 需要准备自己的 `QQ_COOKIE`（请参阅下方〈环境变量〉处）。必须使用 QQ 登录。     |
 | 酷狗音乐                    | `kugou`      | ✅       |                                                                                |
 | 酷我音乐                    | `kuwo`       | ✅       |                                                                                |
 | 咪咕音乐                    | `migu`       | ✅       | 需要准备自己的 `MIGU_COOKIE`（请参阅下方〈环境变量〉处）。                     |
