@@ -46,7 +46,7 @@
 		"@types/pino": "6.3.12",
 		"@yarnpkg/sdks": "^3.0.0-rc.23",
 		"browserslist": "^4.21.4",
-		"core-js": "^3.25.2",
+		"core-js": "^3.25.5",
 		"cross-env": "^7.0.3",
 		"jest": "^29.1.2",
 		"pkg": "^5.8.0",
