@@ -58,6 +58,7 @@
 		"webpack-cli": "^4.10.0"
 	},
 	"resolutions": {
+		"minimatch": "^3.0.5",
 		"minimist": "^1.2.6"
 	},
 	"publishConfig": {
