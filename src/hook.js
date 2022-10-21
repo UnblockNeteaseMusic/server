@@ -323,13 +323,20 @@ hook.request.after = (ctx) => {
 				const inject = (key, value) => {
 					if (typeof value === 'object' && value != null) {
 						if ('cp' in value) value['cp'] = 1;
+						if ('fee' in value) value['fee'] = 0;
+						if (
+							'downloadMaxbr' in value &&
+							value['downloadMaxbr'] === 0
+						)
+							value['downloadMaxbr'] = 320000;
 						if (
 							'dl' in value &&
 							'downloadMaxbr' in value &&
 							value['dl'] < value['downloadMaxbr']
 						)
 							value['dl'] = value['downloadMaxbr'];
-						if ('fee' in value) value['fee'] = 0;
+						if ('playMaxbr' in value && value['playMaxbr'] === 0)
+							value['playMaxbr'] = 320000;
 						if (
 							'pl' in value &&
 							'playMaxbr' in value &&
