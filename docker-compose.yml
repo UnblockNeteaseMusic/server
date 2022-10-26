@@ -5,7 +5,9 @@ services:
         build: .
         environment:
             NODE_ENV: production
-            SOURCE: ${SOURCE:-bilibili kugou kuwo}
+
+        # Change sources here
+        # command: ["-o", "bilibili", "kugou", "kuwo", "ytdlp"]
 
         ports:
             - ${HTTP_PROXY_PORT:-8080}:8080
