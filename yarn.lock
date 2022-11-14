@@ -815,90 +815,90 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swc/core-darwin-arm64@npm:1.3.15":
-  version: 1.3.15
-  resolution: "@swc/core-darwin-arm64@npm:1.3.15"
+"@swc/core-darwin-arm64@npm:1.3.16":
+  version: 1.3.16
+  resolution: "@swc/core-darwin-arm64@npm:1.3.16"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@swc/core-darwin-x64@npm:1.3.15":
-  version: 1.3.15
-  resolution: "@swc/core-darwin-x64@npm:1.3.15"
+"@swc/core-darwin-x64@npm:1.3.16":
+  version: 1.3.16
+  resolution: "@swc/core-darwin-x64@npm:1.3.16"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm-gnueabihf@npm:1.3.15":
-  version: 1.3.15
-  resolution: "@swc/core-linux-arm-gnueabihf@npm:1.3.15"
+"@swc/core-linux-arm-gnueabihf@npm:1.3.16":
+  version: 1.3.16
+  resolution: "@swc/core-linux-arm-gnueabihf@npm:1.3.16"
   conditions: os=linux & cpu=arm
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm64-gnu@npm:1.3.15":
-  version: 1.3.15
-  resolution: "@swc/core-linux-arm64-gnu@npm:1.3.15"
+"@swc/core-linux-arm64-gnu@npm:1.3.16":
+  version: 1.3.16
+  resolution: "@swc/core-linux-arm64-gnu@npm:1.3.16"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm64-musl@npm:1.3.15":
-  version: 1.3.15
-  resolution: "@swc/core-linux-arm64-musl@npm:1.3.15"
+"@swc/core-linux-arm64-musl@npm:1.3.16":
+  version: 1.3.16
+  resolution: "@swc/core-linux-arm64-musl@npm:1.3.16"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@swc/core-linux-x64-gnu@npm:1.3.15":
-  version: 1.3.15
-  resolution: "@swc/core-linux-x64-gnu@npm:1.3.15"
+"@swc/core-linux-x64-gnu@npm:1.3.16":
+  version: 1.3.16
+  resolution: "@swc/core-linux-x64-gnu@npm:1.3.16"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@swc/core-linux-x64-musl@npm:1.3.15":
-  version: 1.3.15
-  resolution: "@swc/core-linux-x64-musl@npm:1.3.15"
+"@swc/core-linux-x64-musl@npm:1.3.16":
+  version: 1.3.16
+  resolution: "@swc/core-linux-x64-musl@npm:1.3.16"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@swc/core-win32-arm64-msvc@npm:1.3.15":
-  version: 1.3.15
-  resolution: "@swc/core-win32-arm64-msvc@npm:1.3.15"
+"@swc/core-win32-arm64-msvc@npm:1.3.16":
+  version: 1.3.16
+  resolution: "@swc/core-win32-arm64-msvc@npm:1.3.16"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@swc/core-win32-ia32-msvc@npm:1.3.15":
-  version: 1.3.15
-  resolution: "@swc/core-win32-ia32-msvc@npm:1.3.15"
+"@swc/core-win32-ia32-msvc@npm:1.3.16":
+  version: 1.3.16
+  resolution: "@swc/core-win32-ia32-msvc@npm:1.3.16"
   conditions: os=win32 & cpu=ia32
   languageName: node
   linkType: hard
 
-"@swc/core-win32-x64-msvc@npm:1.3.15":
-  version: 1.3.15
-  resolution: "@swc/core-win32-x64-msvc@npm:1.3.15"
+"@swc/core-win32-x64-msvc@npm:1.3.16":
+  version: 1.3.16
+  resolution: "@swc/core-win32-x64-msvc@npm:1.3.16"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
 "@swc/core@npm:^1.3.15":
-  version: 1.3.15
-  resolution: "@swc/core@npm:1.3.15"
+  version: 1.3.16
+  resolution: "@swc/core@npm:1.3.16"
   dependencies:
-    "@swc/core-darwin-arm64": 1.3.15
-    "@swc/core-darwin-x64": 1.3.15
-    "@swc/core-linux-arm-gnueabihf": 1.3.15
-    "@swc/core-linux-arm64-gnu": 1.3.15
-    "@swc/core-linux-arm64-musl": 1.3.15
-    "@swc/core-linux-x64-gnu": 1.3.15
-    "@swc/core-linux-x64-musl": 1.3.15
-    "@swc/core-win32-arm64-msvc": 1.3.15
-    "@swc/core-win32-ia32-msvc": 1.3.15
-    "@swc/core-win32-x64-msvc": 1.3.15
+    "@swc/core-darwin-arm64": 1.3.16
+    "@swc/core-darwin-x64": 1.3.16
+    "@swc/core-linux-arm-gnueabihf": 1.3.16
+    "@swc/core-linux-arm64-gnu": 1.3.16
+    "@swc/core-linux-arm64-musl": 1.3.16
+    "@swc/core-linux-x64-gnu": 1.3.16
+    "@swc/core-linux-x64-musl": 1.3.16
+    "@swc/core-win32-arm64-msvc": 1.3.16
+    "@swc/core-win32-ia32-msvc": 1.3.16
+    "@swc/core-win32-x64-msvc": 1.3.16
   dependenciesMeta:
     "@swc/core-darwin-arm64":
       optional: true
@@ -922,7 +922,7 @@ __metadata:
       optional: true
   bin:
     swcx: run_swcx.js
-  checksum: d9235a769d84e1246cca3af272731f3ed23b0516032d0f1d7170def594d280184a865d3f2444774e7a26dbcb156b1fa69f08a9898caea11d22a3395e3ee48c3d
+  checksum: 4361252c928c487a02f526aecd8f3072b923244234c2701916944cf13c252b6d5ce2466caf3e0797d3e92e71a89d4a044f8577e51e8f7fe3af0fe30d94e94b13
   languageName: node
   linkType: hard
 
