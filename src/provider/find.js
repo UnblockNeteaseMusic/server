@@ -37,6 +37,12 @@ const getFormatData = (data) => {
 			info.name +
 			' - ' +
 			limit(info.artists.map((artist) => artist.name)).join(' / ');
+		if (process.env.SEARCH_ALBUM === "true") {
+			let album = info.album?.name;
+			if (album && album !== info.name) {
+				info.keyword += ` ${album}`
+			};
+		}
 		return info;
 	} catch (err) {
 		console.log('getFormatData err: ', err);
