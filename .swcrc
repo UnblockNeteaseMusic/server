@@ -4,7 +4,7 @@
 			"node": "12"
 		},
 		"mode": "usage",
-		"coreJs": "3.26",
+		"coreJs": "3.27",
 		"shippedProposals": true
 	},
 	"jsc": {
