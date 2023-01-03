@@ -1,0 +1,38 @@
+name: 功能请求
+description: 请求加入新的功能以满足您的日常使用所需。
+labels:
+    - enhancement
+body:
+    - type: textarea
+      id: description
+      attributes:
+          label: 需求描述
+          description: 清晰明了地描述您的需求。
+      validations:
+          required: true
+    - type: textarea
+      id: expected
+      attributes:
+          label: 预期行为
+          description: 简明地描述您所希望发生的行为。
+    - type: input
+      id: cloudmusic-version
+      attributes:
+          label: 网易云音乐版本号
+    - type: input
+      id: os
+      attributes:
+          label: 操作系统
+    - type: textarea
+      id: additional
+      attributes:
+          label: 其他信息
+          description: 其他任何您认为有意义的信息。
+    - type: checkboxes
+      id: terms
+      attributes:
+          label: 条款
+          description: 提交此 issue 即表明您同意以下条款。
+          options:
+              - label: 我同意开发者没有任何义务必须满足我的需求，尤其是高度自定义或特定于个人环境的需求。
+                required: true
