@@ -1,0 +1,70 @@
+name: Bug 报告
+description: 在使用过程中遇到错误或非预期行为。
+labels:
+    - bug
+body:
+    - type: textarea
+      id: description
+      attributes:
+          label: Bug 描述
+          description: 简明地描述您所遇到的 Bug。
+      validations:
+          required: true
+    - type: textarea
+      id: expected
+      attributes:
+          label: 预期行为
+          description: 简明地描述您所希望发生的行为。
+    - type: textarea
+      id: behaviour
+      attributes:
+          label: 实际行为
+          description: 简明地描述实际发生的行为。
+    - type: textarea
+      id: reproduce
+      attributes:
+          label: 复现步骤
+          description: 复现报告行为的步骤。
+    - type: textarea
+      id: log
+      attributes:
+          label: 日志内容
+          description: |
+              请在启动时传递环境变量 `LOG_LEVEL=debug` 以便打印详细日志信息。
+      validations:
+          required: true
+    - type: input
+      id: cloudmusic-version
+      attributes:
+          label: 网易云音乐版本号
+      validations:
+          required: true
+    - type: input
+      id: os
+      attributes:
+          label: 操作系统
+      validations:
+          required: true
+    - type: textarea
+      id: additional
+      attributes:
+          label: 其他信息
+          description: 其他任何您认为有意义的信息。
+    - type: checkboxes
+      id: terms
+      attributes:
+          label: 条款
+          description: 提交此 issue 即表明您同意以下条款。
+          options:
+              - label: 我确认我使用的核心是由 UnblockNeteaseMusic 项目官方发行，不是其他任何 fork。
+                required: true
+              - label: 我确认我已经升级到了最新的核心版本（推荐使用最新构建而不是 release）。
+                required: true
+              - label: 我确认我已经启用了 HTTPS 端口。
+                required: true
+              - label: 我确认我已经正确设置了 EndPoint（仅 macOS 或 iOS）。
+                required: true
+              - label: 我确认我已经在对应的客户端正确安装了 CA 证书。
+                required: true
+              - label: 我同意开发者没有任何义务必须解答我的问题，尤其是缺少恰当的描述和日志。
+                required: true
