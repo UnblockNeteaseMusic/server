@@ -44,7 +44,7 @@ const search = (info) => {
 		});
 };
 
-const track = (id) => {
+const single = (id, format) => {
 	const uin = ((headers.cookie || '').match(/uin=(\d+)/) || [])[1] || '0';
 
 	const url =
@@ -57,6 +57,7 @@ const track = (id) => {
 					param: {
 						guid: (Math.random() * 10000000).toFixed(0),
 						loginflag: 1,
+						filename: [format.join(id.file)],
 						songmid: [id.song],
 						songtype: [0],
 						uin,
@@ -73,7 +74,27 @@ const track = (id) => {
 			return midurlinfo[0].purl
 				? sip[0] + midurlinfo[0].purl
 				: Promise.reject();
-		})
+		});
+};
+
+const track = (id) => {
+	id.key = id.file;
+	return Promise.all(
+		[
+			['F000', '.flac'],
+			['M800', '.mp3'],
+			['M500', '.mp3'],
+		]
+			.slice(
+				headers.cookie || typeof window !== 'undefined'
+					? select.ENABLE_FLAC
+						? 0
+						: 1
+					: 2
+			)
+			.map((format) => single(id, format).catch(() => null))
+	)
+		.then((result) => result.find((url) => url) || Promise.reject())
 		.catch(() => insure().qq.track(id));
 };
 
