@@ -63,7 +63,28 @@ async function match(id, source, data) {
 	const audioInfo = await find(id, data);
 	let audioData = null;
 
-	if (process.env.FOLLOW_SOURCE_ORDER) {
+	if (process.env.SELECT_MAX_BR) {
+		let audioDataArr = await Promise.allSettled(
+			candidate.map(async (source) =>
+				getAudioFromSource(source, audioInfo).catch((e) => {
+					if (e) {
+						if (e instanceof RequestCancelled) logger.debug(e);
+						else logger.error(e);
+					}
+					throw e; // We just log it instead of resolving it.
+				})
+			)
+		);
+
+		audioDataArr = audioDataArr.filter((result) => result.status === "fulfilled");
+
+		if (audioDataArr.length === 0) {
+			throw new SongNotAvailable('any source');
+		}
+
+		audioDataArr = audioDataArr.map((result) => result.value);
+		audioData = audioDataArr.reduce((a, b) => a.br >= b.br ? a : b);
+	} else if (process.env.FOLLOW_SOURCE_ORDER) {
 		for (let i = 0; i < candidate.length; i++) {
 			const source = candidate[i];
 			try {
@@ -147,6 +168,32 @@ async function check(url) {
 		song.br = bitrate && !isNaN(bitrate) ? bitrate * 1000 : null;
 	} catch (e) {
 		logger.debug(e, 'Failed to decode and extract the bitrate');
+	}
+
+	if (!song.br) {
+		if (isHost('qq.com') && song.url.includes('.m4a')) {
+			//m4a is the lowest audio quality of qq music, usually 96kbps
+			song.br = 96000;
+		}
+
+		if (isHost('bilivideo.com') && song.url.includes('.m4a')) {
+			const result = song.url.match(/-(\d+)k\.m4a/);
+			let bitrate = parseInt(result);
+
+			if (isNaN(bitrate)) {
+				bitrate = 192000;
+			} else if (bitrate < 96 || bitrate > 999) {
+				bitrate = 192000;
+			} else {
+				bitrate *= 1000;
+			}
+
+			song.br = bitrate;
+		}
+
+		if (isHost('googlevideo.com')) {
+			song.br = 128000;
+		}
 	}
 
 	// Check if "headers" existed. There are some edge cases
