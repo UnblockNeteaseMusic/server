@@ -33,6 +33,12 @@ body:
               请在启动时传递环境变量 `LOG_LEVEL=debug` 以便打印详细日志信息。
       validations:
           required: true
+    - type: textarea
+      id: music-links
+      attributes:
+          label: 网易云音乐歌曲链接
+          description: |
+              请填写出现问题的歌曲链接（如果有）。
     - type: input
       id: cloudmusic-version
       attributes:
