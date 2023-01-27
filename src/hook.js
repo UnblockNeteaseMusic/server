@@ -13,6 +13,7 @@ cs.aliveDuration = 7 * 24 * 60 * 60 * 1000;
 
 const ENABLE_LOCAL_VIP =
 	(process.env.ENABLE_LOCAL_VIP || '').toLowerCase() === 'true';
+const BLOCK_ADS = (process.env.BLOCK_ADS || '').toLowerCase() === 'true';
 const DISABLE_UPGRADE_CHECK =
 	(process.env.DISABLE_UPGRADE_CHECK || '').toLowerCase() === 'true';
 
@@ -66,6 +67,7 @@ hook.target.path = new Set([
 	'/api/song/enhance/download/url',
 	'/api/song/enhance/download/url/v1',
 	'/api/song/enhance/privilege',
+	'/api/ad',
 	'/batch',
 	'/api/batch',
 	'/api/listen/together/privilege/get',
@@ -178,13 +180,22 @@ hook.request.before = (ctx) => {
 					)
 						return pretendPlay(ctx);
 
+					if (BLOCK_ADS) {
+						if (netease.path.startsWith('/api/ad')) {
+							ctx.error = new Error('ADs blocked.');
+							ctx.decision = 'close';
+						}
+					}
+
 					if (DISABLE_UPGRADE_CHECK) {
 						if (
 							netease.path.match(
 								/^\/api(\/v1)?\/(android|ios|osx|pc)\/(upgrade|version)/
 							)
-						)
-							ctx.req.url = 'http://0.0.0.0';
+						) {
+							ctx.error = new Error('Upgrade check blocked.');
+							ctx.decision = 'close';
+						}
 					}
 				}
 			})
