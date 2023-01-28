@@ -76,14 +76,16 @@ async function match(id, source, data) {
 			)
 		);
 
-		audioDataArr = audioDataArr.filter((result) => result.status === "fulfilled");
+		audioDataArr = audioDataArr.filter(
+			(result) => result.status === 'fulfilled'
+		);
 
 		if (audioDataArr.length === 0) {
 			throw new SongNotAvailable('any source');
 		}
 
 		audioDataArr = audioDataArr.map((result) => result.value);
-		audioData = audioDataArr.reduce((a, b) => a.br >= b.br ? a : b);
+		audioData = audioDataArr.reduce((a, b) => (a.br >= b.br ? a : b));
 	} else if (process.env.FOLLOW_SOURCE_ORDER) {
 		for (let i = 0; i < candidate.length; i++) {
 			const source = candidate[i];
