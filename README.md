@@ -189,6 +189,7 @@ node app.js -o bilibili ytdlp
 | JSON_LOG              | bool | 输出机器可读的 JSON 记录格式                                                                            | `JSON_LOG=true`                                                  |
 | NO_CACHE              | bool | 停用 cache                                                                                              | `NO_CACHE=true`                                                  |
 | MIN_BR                | int  | 允许的最低源音质，小于该值将被替换                                                                      | `MIN_BR=320000`                                                  |
+| SELECT_MAX_BR         | bool | 选择所有音源中的最高码率替换音频                                                                        | `SELECT_MAX_BR=true`                                             |
 | LOG_LEVEL             | str  | 日志输出等级。请见〈日志等级〉部分。                                                                    | `LOG_LEVEL=debug`                                                |
 | LOG_FILE              | str  | 从 Pino 端设置日志输出的文件位置。也可以用 `*sh` 的输出重导向功能 (`node app.js >> app.log`) 代替       | `LOG_FILE=app.log`                                               |
 | JOOX_COOKIE           | str  | JOOX 音源的 wmid 和 session_key cookie                                                                  | `JOOX_COOKIE="wmid=<your_wmid>; session_key=<your_session_key>"` |
