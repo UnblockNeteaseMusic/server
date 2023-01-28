@@ -34,16 +34,13 @@ module.exports = {
 		minimize: true,
 		minimizer: [
 			new TerserPlugin({
-				// parallel: false,
+				parallel: true,
+				minify: TerserPlugin.swcMinify,
 				terserOptions: {
 					compress: {
-						ecma: 2019,
+						ecma: 2018,
 					},
-					mangle: false,
-					format: {
-						semicolons: false,
-					},
-					// https://github.com/webpack-contrib/terser-webpack-plugin#terseroptions
+					// https://swc.rs/docs/configuration/minification#jscminifycompress
 				},
 			}),
 		],
