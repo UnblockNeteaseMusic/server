@@ -48,6 +48,7 @@
 		"core-js": "^3.27.2",
 		"cross-env": "^7.0.3",
 		"jest": "^29.4.1",
+		"pino-webpack-plugin": "https://github.com/pinojs/pino-webpack-plugin.git#07714e3a2872800d85b763b7d4004175a02704b5",
 		"pkg": "^5.8.0",
 		"prettier": "^2.8.3",
 		"swc-loader": "^0.2.3",
