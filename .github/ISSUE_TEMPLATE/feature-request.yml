@@ -28,11 +28,3 @@ body:
       attributes:
           label: 其他信息
           description: 其他任何您认为有意义的信息。
-    - type: checkboxes
-      id: terms
-      attributes:
-          label: 条款
-          description: 提交此 issue 即表明您同意以下条款。
-          options:
-              - label: 我同意开发者没有任何义务必须满足我的需求，尤其是高度自定义或特定于个人环境的需求。
-                required: true
