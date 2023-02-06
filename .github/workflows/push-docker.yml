@@ -48,7 +48,7 @@ jobs:
                   password: ${{ secrets.DOCKERHUB_TOKEN }}
 
             - name: Build and push the latest version
-              uses: docker/build-push-action@v3
+              uses: docker/build-push-action@v4
               if: github.event_name != 'release'
               with:
                   context: .
@@ -59,7 +59,7 @@ jobs:
                   cache-to: type=gha,mode=max
 
             - name: Build and push the released version
-              uses: docker/build-push-action@v3
+              uses: docker/build-push-action@v4
               if: github.event_name == 'release'
               with:
                   context: .
