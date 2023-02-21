@@ -37,10 +37,10 @@ jobs:
         steps:
             - uses: actions/checkout@v3
 
-            - name: Use Node.js 16
+            - name: Use Node.js 18
               uses: actions/setup-node@v3
               with:
-                  node-version: 16
+                  node-version: 18
                   cache: yarn
 
             - name: Set up QEMU
@@ -58,7 +58,7 @@ jobs:
 
             - name: Building executable file for ${{ matrix.target }}
               run: |
-                  npx pkg --compress Brotli -t node16-${{ matrix.target }} .
+                  npx pkg --compress Brotli -t node18-${{ matrix.target }} .
                   mv "$(ls dist/*)" "$(ls dist/* | sed 's/server/unblockneteasemusic-${{ matrix.target }}/g')"
                   echo "ASSET_NAME=$(ls dist)" >> $GITHUB_ENV
 
