@@ -23,6 +23,9 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v3
 
+            - name: Cleanup precompiled
+              run: rm -rf precompiled/*
+
             - name: Use Node.js 16
               uses: actions/setup-node@v3
               with:
