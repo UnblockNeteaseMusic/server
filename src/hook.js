@@ -690,14 +690,13 @@ const unblockSoundEffects = (obj) => {
 const unblockLyricsEffects = (obj) => {
 	logger.debug('unblockLyricsEffects() has been triggered.');
 	const { data, code } = obj;
-	if (code === 200) {
-		if (Array.isArray(data))
-			data.map((item) => {
-				if ("canUse" in item)
-					item.canUse = true;
-				if ("canNotUseReasonCode" in item)
-					item.canNotUseReasonCode = 200;
-			});
+	if (code === 200 && Array.isArray(data)) {
+		data.forEach((item) => {
+			if ("canUse" in item)
+				item.canUse = true;
+			if ("canNotUseReasonCode" in item)
+				item.canNotUseReasonCode = 200;
+		});
 	}
 };
 
