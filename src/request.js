@@ -181,6 +181,8 @@ const read = (connect, raw) =>
 			buffer.length &&
 			['gzip', 'deflate'].includes(connect.headers['content-encoding'])
 				? zlib.unzipSync(buffer)
+				: ['br'].includes(connect.headers['content-encoding'])
+				? zlib.brotliDecompressSync(buffer)
 				: buffer;
 		return raw ? buffer : buffer.toString();
 	});
