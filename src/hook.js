@@ -88,6 +88,7 @@ hook.target.path = new Set([
 	'/api/usertool/sound/mobile/animationList',
 	'/api/usertool/sound/mobile/all',
 	'/api/usertool/sound/mobile/detail',
+	'/api/vipauth/app/auth/query',
 ]);
 
 const domainList = [
@@ -325,6 +326,8 @@ hook.request.after = (ctx) => {
 							unblockSoundEffects(netease.jsonBody[key]);
 					}
 				}
+				else if (netease.path.includes('/vipauth/app/auth/query'))
+					return unblockLyricsEffects(netease.jsonBody);
 			})
 			.then(() => {
 				['transfer-encoding', 'content-encoding', 'content-length']
@@ -681,6 +684,20 @@ const unblockSoundEffects = (obj) => {
 				if (item.type) item.type = 1;
 			});
 		else if (data.type) data.type = 1;
+	}
+};
+
+const unblockLyricsEffects = (obj) => {
+	logger.debug('unblockLyricsEffects() has been triggered.');
+	const { data, code } = obj;
+	if (code === 200) {
+		if (Array.isArray(data))
+			data.map((item) => {
+				if ("canUse" in item)
+					item.canUse = true;
+				if ("canNotUseReasonCode" in item)
+					item.canNotUseReasonCode = 200;
+			});
 	}
 };
 
