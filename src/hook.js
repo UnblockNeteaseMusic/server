@@ -325,8 +325,7 @@ hook.request.after = (ctx) => {
 						if (key.includes('/usertool/sound/'))
 							unblockSoundEffects(netease.jsonBody[key]);
 					}
-				}
-				else if (netease.path.includes('/vipauth/app/auth/query'))
+				} else if (netease.path.includes('/vipauth/app/auth/query'))
 					return unblockLyricsEffects(netease.jsonBody);
 			})
 			.then(() => {
@@ -692,10 +691,8 @@ const unblockLyricsEffects = (obj) => {
 	const { data, code } = obj;
 	if (code === 200 && Array.isArray(data)) {
 		data.forEach((item) => {
-			if ("canUse" in item)
-				item.canUse = true;
-			if ("canNotUseReasonCode" in item)
-				item.canNotUseReasonCode = 200;
+			if ('canUse' in item) item.canUse = true;
+			if ('canNotUseReasonCode' in item) item.canNotUseReasonCode = 200;
 		});
 	}
 };
