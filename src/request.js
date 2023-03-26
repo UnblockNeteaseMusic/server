@@ -177,13 +177,13 @@ const read = (connect, raw) =>
 			.on('end', () => resolve(Buffer.concat(chunks)))
 			.on('error', (error) => reject(error));
 	}).then((buffer) => {
-		buffer =
-			buffer.length &&
-			['gzip', 'deflate'].includes(connect.headers['content-encoding'])
-				? zlib.unzipSync(buffer)
-				: ['br'].includes(connect.headers['content-encoding'])
-				? zlib.brotliDecompressSync(buffer)
-				: buffer;
+		if (buffer.length) {
+			if (['gzip', 'deflate'].includes(connect.headers['content-encoding'])) {
+				buffer = zlib.unzipSync(buffer)
+			} else if (['br'].includes(connect.headers['content-encoding'])) {
+				buffer = zlib.brotliDecompressSync(buffer)
+			}
+		}
 		return raw ? buffer : buffer.toString();
 	});
 
