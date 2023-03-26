@@ -178,10 +178,14 @@ const read = (connect, raw) =>
 			.on('error', (error) => reject(error));
 	}).then((buffer) => {
 		if (buffer.length) {
-			if (['gzip', 'deflate'].includes(connect.headers['content-encoding'])) {
-				buffer = zlib.unzipSync(buffer)
-			} else if (['br'].includes(connect.headers['content-encoding'])) {
-				buffer = zlib.brotliDecompressSync(buffer)
+			switch (connect.headers['content-encoding']) {
+				case 'deflate':
+				case 'gzip':
+					buffer = zlib.unzipSync(buffer);
+					break;
+				case 'br':
+					buffer = zlib.brotliDecompressSync(buffer);
+					break;
 			}
 		}
 		return raw ? buffer : buffer.toString();
