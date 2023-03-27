@@ -1082,10 +1082,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^18.15.5":
-  version: 18.15.5
-  resolution: "@types/node@npm:18.15.5"
-  checksum: 5fbf3453bd5ce1402bb2964e55d928fc8a8a7de5451b1b0fe66587fecb8a3eb86854ca9cefa5076a5971e2cff00e1773ceeb5d872a54f6c6ddfbbc1064b4e91a
+"@types/node@npm:*, @types/node@npm:^18.15.10":
+  version: 18.15.10
+  resolution: "@types/node@npm:18.15.10"
+  checksum: 9aeae0b683eda82892def5315812bdee3f1a28c4898b7e70f8e2514564538b16c4dccbe8339c1266f8fc1d707a48f152689264a854f5ebc2eba5011e793612d9
   languageName: node
   linkType: hard
 
@@ -1178,9 +1178,9 @@ __metadata:
   resolution: "@unblockneteasemusic/server@workspace:."
   dependencies:
     "@swc/core": ^1.3.42
-    "@types/node": ^18.15.5
+    "@types/node": ^18.15.10
     "@types/pino": 6.3.12
-    "@yarnpkg/sdks": ^3.0.0-rc.40
+    "@yarnpkg/sdks": ^3.0.0-rc.41
     browserslist: ^4.21.5
     core-js: ^3.29.1
     cross-env: ^7.0.3
@@ -1189,11 +1189,11 @@ __metadata:
     pino: 6.14.0
     pino-pretty: ^7.6.1
     pkg: ^5.8.1
-    prettier: ^2.8.6
+    prettier: ^2.8.7
     swc-loader: ^0.2.3
     terser-webpack-plugin: ^5.3.7
     typescript: ^5.0.2
-    webpack: ^5.76.2
+    webpack: ^5.76.3
     webpack-cli: ^5.0.1
   bin:
     unblockneteasemusic: ./precompiled/app.js
@@ -1398,17 +1398,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@yarnpkg/core@npm:^4.0.0-rc.40":
-  version: 4.0.0-rc.40
-  resolution: "@yarnpkg/core@npm:4.0.0-rc.40"
+"@yarnpkg/core@npm:^4.0.0-rc.41":
+  version: 4.0.0-rc.41
+  resolution: "@yarnpkg/core@npm:4.0.0-rc.41"
   dependencies:
     "@arcanis/slice-ansi": ^1.1.1
     "@types/semver": ^7.1.0
     "@types/treeify": ^1.0.0
-    "@yarnpkg/fslib": ^3.0.0-rc.40
-    "@yarnpkg/libzip": ^3.0.0-rc.40
-    "@yarnpkg/parsers": ^3.0.0-rc.40
-    "@yarnpkg/shell": ^4.0.0-rc.40
+    "@yarnpkg/fslib": ^3.0.0-rc.41
+    "@yarnpkg/libzip": ^3.0.0-rc.41
+    "@yarnpkg/parsers": ^3.0.0-rc.41
+    "@yarnpkg/shell": ^4.0.0-rc.41
     camelcase: ^5.3.1
     chalk: ^3.0.0
     ci-info: ^3.2.0
@@ -1427,49 +1427,49 @@ __metadata:
     treeify: ^1.1.0
     tslib: ^2.4.0
     tunnel: ^0.0.6
-  checksum: 38a141f5e26355fd75e23c2a3afbe6bb79693ad914d263a75a2d212185ad2f987c740aea2e9f61fe360fcee666e9c56b961ffe57444e367acb7cc2ed77327127
+  checksum: ec6d23bfcca652f988b3590fcea1def0324257be4d890cd398110547d384ed29dfa534f21f4d4a1c950d98f94885ae0c1d279e7472b05b8ada250ea651713e2f
   languageName: node
   linkType: hard
 
-"@yarnpkg/fslib@npm:^3.0.0-rc.40":
-  version: 3.0.0-rc.40
-  resolution: "@yarnpkg/fslib@npm:3.0.0-rc.40"
+"@yarnpkg/fslib@npm:^3.0.0-rc.41":
+  version: 3.0.0-rc.41
+  resolution: "@yarnpkg/fslib@npm:3.0.0-rc.41"
   dependencies:
     tslib: ^2.4.0
-  checksum: 8f36ade258a21ee9bec8621367dce68dab5d4e318863bd6b7585595f3697268f76fee5dd855c357ced31213d8ddbf2a2ab7a931d91699b295d60aa02433cc442
+  checksum: 30906a9e549e1e4f7e580e5c7d9e3edf90b661ba2899ae2696c4b73a7f16fea3653d2d10e9d5f5f9f969a70463db4330914b329d531404b56c8f3ffae0afcbe5
   languageName: node
   linkType: hard
 
-"@yarnpkg/libzip@npm:^3.0.0-rc.40":
-  version: 3.0.0-rc.40
-  resolution: "@yarnpkg/libzip@npm:3.0.0-rc.40"
+"@yarnpkg/libzip@npm:^3.0.0-rc.41":
+  version: 3.0.0-rc.41
+  resolution: "@yarnpkg/libzip@npm:3.0.0-rc.41"
   dependencies:
     "@types/emscripten": ^1.39.6
-    "@yarnpkg/fslib": ^3.0.0-rc.40
+    "@yarnpkg/fslib": ^3.0.0-rc.41
     tslib: ^2.4.0
   peerDependencies:
-    "@yarnpkg/fslib": ^3.0.0-rc.40
-  checksum: eca50e5f56709a98111a77bede2e25da573668ad9bc98be01326c0ef1b7e47aac4de19896cc8f2a59f4f4175dfc6e9e307ee18c25facc32353d1209ab43b1c2e
+    "@yarnpkg/fslib": ^3.0.0-rc.41
+  checksum: 14e451f1008178a6ee9bf16eb87e1aeee09bd555ebb042b4740dd7754c6ff5969d9ca42dc72bd475148bb5e1d64eeac3fb814a996d599bddeb317e7ec2247c68
   languageName: node
   linkType: hard
 
-"@yarnpkg/parsers@npm:^3.0.0-rc.40":
-  version: 3.0.0-rc.40
-  resolution: "@yarnpkg/parsers@npm:3.0.0-rc.40"
+"@yarnpkg/parsers@npm:^3.0.0-rc.41":
+  version: 3.0.0-rc.41
+  resolution: "@yarnpkg/parsers@npm:3.0.0-rc.41"
   dependencies:
     js-yaml: ^3.10.0
     tslib: ^2.4.0
-  checksum: 64df0d8dad4cd43af5fcff758b0cfc47e7dc56e00eed87e3bd6ce8a9ea265c41fe758c1e01607e630bae46c9f8324ca853bced58be3d1c93492e125757ab7f30
+  checksum: b64599f7c104f6f9eb191689f63f458ed0ae8ad5d24dc1893dac664f48e53a6a1234b24ffde20503782ef391904cac9978f70185defd42c89836ee9e53ea2a3b
   languageName: node
   linkType: hard
 
-"@yarnpkg/sdks@npm:^3.0.0-rc.40":
-  version: 3.0.0-rc.40
-  resolution: "@yarnpkg/sdks@npm:3.0.0-rc.40"
+"@yarnpkg/sdks@npm:^3.0.0-rc.41":
+  version: 3.0.0-rc.41
+  resolution: "@yarnpkg/sdks@npm:3.0.0-rc.41"
   dependencies:
-    "@yarnpkg/core": ^4.0.0-rc.40
-    "@yarnpkg/fslib": ^3.0.0-rc.40
-    "@yarnpkg/parsers": ^3.0.0-rc.40
+    "@yarnpkg/core": ^4.0.0-rc.41
+    "@yarnpkg/fslib": ^3.0.0-rc.41
+    "@yarnpkg/parsers": ^3.0.0-rc.41
     chalk: ^3.0.0
     clipanion: ^3.2.0-rc.10
     comment-json: ^2.2.0
@@ -1477,16 +1477,16 @@ __metadata:
     tslib: ^2.4.0
   bin:
     sdks: ./lib/cli.js
-  checksum: 537dd8e951f37f2dd06df58c19f09a539a0a8ddf5b9fbaf0417375fed13394c449197af9f2e93f1643f7396edc2595bc80fd96a4ef77269598e575415e4773f4
+  checksum: fa64e5056a5c985f54ed0dc059ad9dc6dceaf99085e0b2b4f655d24de0fc89af938fad3075a39c4de12750d40dd16372777b4623bda514dbf2384606a5da19aa
   languageName: node
   linkType: hard
 
-"@yarnpkg/shell@npm:^4.0.0-rc.40":
-  version: 4.0.0-rc.40
-  resolution: "@yarnpkg/shell@npm:4.0.0-rc.40"
+"@yarnpkg/shell@npm:^4.0.0-rc.41":
+  version: 4.0.0-rc.41
+  resolution: "@yarnpkg/shell@npm:4.0.0-rc.41"
   dependencies:
-    "@yarnpkg/fslib": ^3.0.0-rc.40
-    "@yarnpkg/parsers": ^3.0.0-rc.40
+    "@yarnpkg/fslib": ^3.0.0-rc.41
+    "@yarnpkg/parsers": ^3.0.0-rc.41
     chalk: ^3.0.0
     clipanion: ^3.2.0-rc.10
     cross-spawn: 7.0.3
@@ -1495,7 +1495,7 @@ __metadata:
     tslib: ^2.4.0
   bin:
     shell: ./lib/cli.js
-  checksum: 0e136522ce5f157b38bdbb9633b9860cdfa06846cb6eafa5b04a64b790381cf4d946037669d4e975d4c4c9b5264f7f89e206dac5c82f01673ca5e479235d3c63
+  checksum: a0c7701dbdd112c5bc33eff67dce38b04a6dd76c67498834d56a396db20e593d99efc682db9de43b89e33bb8ca70274bf147617eb772123c88ea4a83394805b6
   languageName: node
   linkType: hard
 
@@ -4451,12 +4451,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^2.8.6":
-  version: 2.8.6
-  resolution: "prettier@npm:2.8.6"
+"prettier@npm:^2.8.7":
+  version: 2.8.7
+  resolution: "prettier@npm:2.8.7"
   bin:
     prettier: bin-prettier.js
-  checksum: 8ac94fa67aec0e65743ea15ebf954ef2f1e52638abd129dc04e8b49e8bb3224c0233c98df6b5c98efd31bd2a43866590486559438ee4ead09dc81be389068572
+  checksum: fdc8f2616f099f5f0d685907f4449a70595a0fc1d081a88919604375989e0d5e9168d6121d8cc6861f21990b31665828e00472544d785d5940ea08a17660c3a6
   languageName: node
   linkType: hard
 
@@ -5481,9 +5481,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5.76.2":
-  version: 5.76.2
-  resolution: "webpack@npm:5.76.2"
+"webpack@npm:^5.76.3":
+  version: 5.76.3
+  resolution: "webpack@npm:5.76.3"
   dependencies:
     "@types/eslint-scope": ^3.7.3
     "@types/estree": ^0.0.51
@@ -5514,7 +5514,7 @@ __metadata:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: 86db98299a175c371031449c26077e87b33acd8f45de7f7945ed4b9b37c8ca11bc5169af9c44743efccd4d55e08042a3aa3a3bc42aff831309a0821ffbcd395e
+  checksum: 363f536b56971d056e34ab4cffa4cbc630b220e51be1a8c3adea87d9f0b51c49cfc7c3720d6614a1fd2c8c63f1ab3100db916fe8367c8bb9299327ff8c3f856d
   languageName: node
   linkType: hard
 
