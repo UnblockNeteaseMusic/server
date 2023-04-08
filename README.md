@@ -58,37 +58,37 @@ http 代理使用 `127.0.0.1`，端口默认使用 `8080`。
 
 #### Docker Hub
 
-见 [pan93412/unblock-netease-music-enhanced](https://hub.docker.com/repository/docker/pan93412/unblock-netease-music-enhanced)
+见 [laureatepoet/unblock-netease-music](https://hub.docker.com/repository/docker/laureatepoet/unblock-netease-music)
 。`latest` 是从 `enhanced` 组建的最新版本；`release` 是最新 tag 的版本。
 
-直接运行 `pan93412/unblock-netease-music-enhanced` 的命令如下：
+直接运行 `laureatepoet/unblock-netease-music` 的命令如下：
 
 ```bash
-docker run pan93412/unblock-netease-music-enhanced
+docker run laureatepoet/unblock-netease-music
 ```
 
 若要更新 UnblockNeteaseMusic，请运行以下命令后重新 `run`：
 
 ```
-docker pull pan93412/unblock-netease-music-enhanced
+docker pull laureatepoet/unblock-netease-music
 ```
 
 若要指定环境变量，您可以往 `docker run` 传入 `-e`，就像这样：
 
 ```bash
-docker run -e JSON_LOG=true -e LOG_LEVEL=debug pan93412/unblock-netease-music-enhanced
+docker run -e JSON_LOG=true -e LOG_LEVEL=debug laureatepoet/unblock-netease-music
 ```
 
 若要传入配置参数，只要在 `docker run` 的 image 之后传入参数即可：
 
 ```bash
-docker run pan93412/unblock-netease-music-enhanced -o bilibili -p 1234
+docker run laureatepoet/unblock-netease-music -o bilibili -p 1234
 ```
 
 #### 自行编译
 
 ```bash
-git clone https://github.com/UnblockNeteaseMusic/server.git UnblockNeteaseMusic
+git clone https://github.com/LaureatePoet/server.git UnblockNeteaseMusic
 cd UnblockNeteaseMusic
 docker-compose up
 ```
@@ -96,7 +96,7 @@ docker-compose up
 ### 直接使用 Repo 最新版本
 
 ```bash
-git clone https://github.com/UnblockNeteaseMusic/server.git UnblockNeteaseMusic
+git clone https://github.com/LaureatePoet/server.git UnblockNeteaseMusic
 cd UnblockNeteaseMusic
 node app.js # 建议使用 screen / tmux 把 app.js 挂后台
 ```
@@ -282,7 +282,7 @@ match(418602084, ['qq', 'kuwo', 'migu']).then(console.log);
 
 ### 設定 HTTPS 憑證
 
-新版的 NeteaseMusic 需要 HTTPS 才能使用。证书的设置教学可参阅[《安裝 UNM 的 HTTPS 憑證》](https://github.com/UnblockNeteaseMusic/server/discussions/426)一文。
+新版的 NeteaseMusic 需要 HTTPS 才能使用。证书的设置教学可参阅[《安裝 UNM 的 HTTPS 憑證》](https://github.com/LaureatePoet/server/discussions/426)一文。
 
 ## 效果
 
