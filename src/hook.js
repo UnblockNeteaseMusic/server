@@ -19,7 +19,7 @@ const DISABLE_UPGRADE_CHECK =
 const ENABLE_LOCAL_SVIP =
 	(process.env.ENABLE_LOCAL_SVIP || '').toLowerCase() === 'true';
 const LOCAL_VIP_UID =
-	parseInt(process.env.LOCAL_VIP_UIDS || '')
+	parseInt(process.env.LOCAL_VIP_UID || '')
 
 const hook = {
 	request: {
