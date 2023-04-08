@@ -16,6 +16,10 @@ const ENABLE_LOCAL_VIP =
 const BLOCK_ADS = (process.env.BLOCK_ADS || '').toLowerCase() === 'true';
 const DISABLE_UPGRADE_CHECK =
 	(process.env.DISABLE_UPGRADE_CHECK || '').toLowerCase() === 'true';
+const ENABLE_LOCAL_SVIP =
+	(process.env.ENABLE_LOCAL_SVIP || '').toLowerCase() === 'true';
+const LOCAL_VIP_ID =
+	parseInt(process.env.LOCAL_VIP_IDS || '')
 
 const hook = {
 	request: {
@@ -273,37 +277,94 @@ hook.request.after = (ctx) => {
 					netease.jsonBody = JSON.parse(
 						patch(crypto.eapi.decrypt(buffer).toString())
 					);
-					if (ENABLE_LOCAL_VIP) {
-						if (
-							netease.path === '/batch' ||
-							netease.path === '/api/batch'
-						) {
-							var info =
+				}
+				
+				if (netease.encrypted && ENABLE_LOCAL_VIP) {
+					if (
+						netease.path === '/batch' ||
+						netease.path === '/api/batch'
+					) {
+						var info =
+							netease.jsonBody[
+								'/api/music-vip-membership/client/vip/info'
+							];
+						nVipLevel = 5; // ? months
+						if (info && (LOCAL_VIP_ID==NaN || (info.data.userId === LOCAL_VIP_ID))) {
+							try {
+								const expireTime =
+									info.data.now + 31622400000;
+								info.data.redVipLevel = 7;
+								info.data.redVipAnnualCount = 1;
+
+								if (!info.data.musicPackage){
+									info.data.musicPackage = {
+										iconUrl: null,
+										dynamicIconUrl: null,
+										isSign: false,
+										isSignIap: false,
+										isSignDeduct: false,
+										isSignIapDeduct: false,
+									}
+								}
+								info.data.musicPackage.expireTime =
+									expireTime;
+								info.data.musicPackage.vipCode = 230;
+								info.data.musicPackage.vipLevel = nVipLevel;
+
+								if (!info.data.associator){
+									info.data.associator = {
+										iconUrl: null,
+										dynamicIconUrl: null,
+										isSign: false,
+										isSignIap: false,
+										isSignDeduct: false,
+										isSignIapDeduct: false,
+									}
+								}
+								info.data.associator.vipCode = 100;
+								info.data.associator.vipLevel = nVipLevel;
+								info.data.associator.expireTime =
+									expireTime;
+								
+								if (ENABLE_LOCAL_VIP){
+									if (!info.data.redplus){
+										info.data.redplus = {
+											iconUrl: null,
+											dynamicIconUrl: null,
+											isSign: false,
+											isSignIap: false,
+											isSignDeduct: false,
+											isSignIapDeduct: false,
+										}
+									}
+									info.data.redplus.vipCode = 300;
+									info.data.redplus.vipLevel = nVipLevel;
+									info.data.redplus.expireTime =
+										expireTime;
+									
+									if (!info.data.albumVip){
+										info.data.albumVip = {
+											iconUrl: null,
+											dynamicIconUrl: null,
+											isSign: false,
+											isSignIap: false,
+											isSignDeduct: false,
+											isSignIapDeduct: false,
+										}
+									}
+									info.data.albumVip.vipCode = 400;
+									info.data.albumVip.vipLevel = 0;
+									info.data.albumVip.expireTime =
+										expireTime;
+								}
+
 								netease.jsonBody[
 									'/api/music-vip-membership/client/vip/info'
-								];
-							if (info) {
-								try {
-									const expireTime =
-										info.data.now + 31622400000;
-									info.data.redVipLevel = 7;
-									info.data.redVipAnnualCount = 1;
-
-									info.data.musicPackage.expireTime =
-										expireTime;
-									info.data.musicPackage.vipCode = 230;
-
-									info.data.associator.expireTime =
-										expireTime;
-
-									netease.jsonBody[
-										'/api/music-vip-membership/client/vip/info'
-									] = info;
-								} catch (error) {
-									logger.debug(
-										'Unable to apply the local VIP.'
-									);
-								}
+								] = info;
+							} catch (error) {
+								logger.debug({err: error},
+									'Unable to apply the local VIP.'
+								);
 							}
 						}
 					}
