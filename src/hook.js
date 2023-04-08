@@ -288,6 +288,14 @@ hook.request.after = (ctx) => {
 							netease.jsonBody[
 								'/api/music-vip-membership/client/vip/info'
 							];
+						const defaultPackage = {
+							iconUrl: null,
+							dynamicIconUrl: null,
+							isSign: false,
+							isSignIap: false,
+							isSignDeduct: false,
+							isSignIapDeduct: false,
+						};
 						nVipLevel = 5; // ? months
 						if (info && (LOCAL_VIP_UID==NaN || (info.data.userId === LOCAL_VIP_UID))) {
 							try {
@@ -296,66 +304,38 @@ hook.request.after = (ctx) => {
 								info.data.redVipLevel = 7;
 								info.data.redVipAnnualCount = 1;
 
-								if (!info.data.musicPackage){
-									info.data.musicPackage = {
-										iconUrl: null,
-										dynamicIconUrl: null,
-										isSign: false,
-										isSignIap: false,
-										isSignDeduct: false,
-										isSignIapDeduct: false,
-									}
+								info.data.musicPackage = {
+									...defaultPackage,
+									...info.data.musicPackage,
+									vipCode: 230,
+									vipLevel: nVipLevel,
+									expireTime: expireTime
 								}
-								info.data.musicPackage.expireTime =
-									expireTime;
-								info.data.musicPackage.vipCode = 230;
-								info.data.musicPackage.vipLevel = nVipLevel;
 
-								if (!info.data.associator){
-									info.data.associator = {
-										iconUrl: null,
-										dynamicIconUrl: null,
-										isSign: false,
-										isSignIap: false,
-										isSignDeduct: false,
-										isSignIapDeduct: false,
-									}
+								info.data.associator = {
+									...defaultPackage,
+									...info.data.associator,
+									vipCode: 100,
+									vipLevel: nVipLevel,
+									expireTime: expireTime
 								}
-								info.data.associator.vipCode = 100;
-								info.data.associator.vipLevel = nVipLevel;
-								info.data.associator.expireTime =
-									expireTime;
 								
-								if (ENABLE_LOCAL_VIP){
-									if (!info.data.redplus){
-										info.data.redplus = {
-											iconUrl: null,
-											dynamicIconUrl: null,
-											isSign: false,
-											isSignIap: false,
-											isSignDeduct: false,
-											isSignIapDeduct: false,
-										}
-									}
-									info.data.redplus.vipCode = 300;
-									info.data.redplus.vipLevel = nVipLevel;
-									info.data.redplus.expireTime =
-										expireTime;
+								if (ENABLE_LOCAL_SVIP){
+									info.data.redplus = {
+										...defaultPackage,
+										...info.data.redplus,
+										vipCode: 300,
+										vipLevel: nVipLevel,
+										expireTime: expireTime
+									};
 									
-									if (!info.data.albumVip){
-										info.data.albumVip = {
-											iconUrl: null,
-											dynamicIconUrl: null,
-											isSign: false,
-											isSignIap: false,
-											isSignDeduct: false,
-											isSignIapDeduct: false,
-										}
-									}
-									info.data.albumVip.vipCode = 400;
-									info.data.albumVip.vipLevel = 0;
-									info.data.albumVip.expireTime =
-										expireTime;
+									info.data.albumVip = {
+										...defaultPackage,
+										...info.data.albumVip,
+										vipCode: 400,
+										vipLevel: 0,
+										expireTime: expireTime
+									};
 								}
 
 								netease.jsonBody[
