@@ -18,8 +18,8 @@ const DISABLE_UPGRADE_CHECK =
 	(process.env.DISABLE_UPGRADE_CHECK || '').toLowerCase() === 'true';
 const ENABLE_LOCAL_SVIP =
 	(process.env.ENABLE_LOCAL_SVIP || '').toLowerCase() === 'true';
-const LOCAL_VIP_ID =
-	parseInt(process.env.LOCAL_VIP_IDS || '')
+const LOCAL_VIP_UID =
+	parseInt(process.env.LOCAL_VIP_UIDS || '')
 
 const hook = {
 	request: {
@@ -289,7 +289,7 @@ hook.request.after = (ctx) => {
 								'/api/music-vip-membership/client/vip/info'
 							];
 						nVipLevel = 5; // ? months
-						if (info && (LOCAL_VIP_ID==NaN || (info.data.userId === LOCAL_VIP_ID))) {
+						if (info && (LOCAL_VIP_UID==NaN || (info.data.userId === LOCAL_VIP_UID))) {
 							try {
 								const expireTime =
 									info.data.now + 31622400000;
