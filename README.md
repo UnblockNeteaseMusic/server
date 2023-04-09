@@ -122,6 +122,9 @@ yarn
 DEVELOPMENT=true node app.js
 ```
 
+### BetterNCM 一键安装器
+请移步至 [RevivedUnblockInstaller](https://github.com/ReviveUnblockNCMInstaller/RevivedUnblockInstaller)。
+
 ### Android Xposed 模块
 
 请移步至 [杜比大喇叭 β 版](https://github.com/nining377/dolby_beta)。
