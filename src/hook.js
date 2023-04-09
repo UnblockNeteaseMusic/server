@@ -11,14 +11,18 @@ const logger = logScope('hook');
 const cs = getManagedCacheStorage('hook');
 cs.aliveDuration = 7 * 24 * 60 * 60 * 1000;
 
-const ENABLE_LOCAL_VIP =
-	(process.env.ENABLE_LOCAL_VIP || '').toLowerCase() === 'true';
+const ENABLE_LOCAL_VIP = ['true', 'cvip', 'svip'].includes(
+	(process.env.ENABLE_LOCAL_VIP || '').toLowerCase()
+);
 const BLOCK_ADS = (process.env.BLOCK_ADS || '').toLowerCase() === 'true';
 const DISABLE_UPGRADE_CHECK =
 	(process.env.DISABLE_UPGRADE_CHECK || '').toLowerCase() === 'true';
 const ENABLE_LOCAL_SVIP =
-	(process.env.ENABLE_LOCAL_SVIP || '').toLowerCase() === 'true';
-const LOCAL_VIP_UID = parseInt(process.env.LOCAL_VIP_UID || '');
+	(process.env.ENABLE_LOCAL_VIP || '').toLowerCase() === 'svip';
+const LOCAL_VIP_UID = (process.env.LOCAL_VIP_UID || '')
+	.split(',')
+	.map((str) => parseInt(str))
+	.filter((num) => !Number.isNaN(num));
 
 const hook = {
 	request: {
@@ -298,8 +302,8 @@ hook.request.after = (ctx) => {
 						nVipLevel = 5; // ? months
 						if (
 							info &&
-							(Number.isNaN(LOCAL_VIP_UID) ||
-								info.data.userId === LOCAL_VIP_UID)
+							(LOCAL_VIP_UID.length === 0 ||
+								LOCAL_VIP_UID.includes(info.data.userId))
 						) {
 							try {
 								const expireTime = info.data.now + 31622400000;
