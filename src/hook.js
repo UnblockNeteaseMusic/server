@@ -18,8 +18,7 @@ const DISABLE_UPGRADE_CHECK =
 	(process.env.DISABLE_UPGRADE_CHECK || '').toLowerCase() === 'true';
 const ENABLE_LOCAL_SVIP =
 	(process.env.ENABLE_LOCAL_SVIP || '').toLowerCase() === 'true';
-const LOCAL_VIP_UID =
-	parseInt(process.env.LOCAL_VIP_UID || '')
+const LOCAL_VIP_UID = parseInt(process.env.LOCAL_VIP_UID || '');
 
 const hook = {
 	request: {
@@ -278,13 +277,13 @@ hook.request.after = (ctx) => {
 						patch(crypto.eapi.decrypt(buffer).toString())
 					);
 				}
-				
+
 				if (netease.encrypted && ENABLE_LOCAL_VIP) {
 					if (
 						netease.path === '/batch' ||
 						netease.path === '/api/batch'
 					) {
-						var info =
+						const info =
 							netease.jsonBody[
 								'/api/music-vip-membership/client/vip/info'
 							];
@@ -297,10 +296,13 @@ hook.request.after = (ctx) => {
 							isSignIapDeduct: false,
 						};
 						nVipLevel = 5; // ? months
-						if (info && (LOCAL_VIP_UID==NaN || (info.data.userId === LOCAL_VIP_UID))) {
+						if (
+							info &&
+							(Number.isNaN(LOCAL_VIP_UID) ||
+								info.data.userId === LOCAL_VIP_UID)
+						) {
 							try {
-								const expireTime =
-									info.data.now + 31622400000;
+								const expireTime = info.data.now + 31622400000;
 								info.data.redVipLevel = 7;
 								info.data.redVipAnnualCount = 1;
 
@@ -309,32 +311,32 @@ hook.request.after = (ctx) => {
 									...info.data.musicPackage,
 									vipCode: 230,
 									vipLevel: nVipLevel,
-									expireTime: expireTime
-								}
+									expireTime,
+								};
 
 								info.data.associator = {
 									...defaultPackage,
 									...info.data.associator,
 									vipCode: 100,
 									vipLevel: nVipLevel,
-									expireTime: expireTime
-								}
-								
-								if (ENABLE_LOCAL_SVIP){
+									expireTime,
+								};
+
+								if (ENABLE_LOCAL_SVIP) {
 									info.data.redplus = {
 										...defaultPackage,
 										...info.data.redplus,
 										vipCode: 300,
 										vipLevel: nVipLevel,
-										expireTime: expireTime
+										expireTime,
 									};
-									
+
 									info.data.albumVip = {
 										...defaultPackage,
 										...info.data.albumVip,
 										vipCode: 400,
 										vipLevel: 0,
-										expireTime: expireTime
+										expireTime,
 									};
 								}
 
@@ -342,7 +344,8 @@ hook.request.after = (ctx) => {
 									'/api/music-vip-membership/client/vip/info'
 								] = info;
 							} catch (error) {
-								logger.debug({err: error},
+								logger.debug(
+									{ err: error },
 									'Unable to apply the local VIP.'
 								);
 							}
