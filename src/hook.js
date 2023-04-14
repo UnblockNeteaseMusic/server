@@ -299,7 +299,7 @@ hook.request.after = (ctx) => {
 							isSignDeduct: false,
 							isSignIapDeduct: false,
 						};
-						nVipLevel = 5; // ? months
+						const nVipLevel = 5; // ? months
 						if (
 							info &&
 							(LOCAL_VIP_UID.length === 0 ||
