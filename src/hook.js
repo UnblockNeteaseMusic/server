@@ -282,7 +282,7 @@ hook.request.after = (ctx) => {
 					);
 				}
 
-				if (netease.encrypted && ENABLE_LOCAL_VIP) {
+				if (ENABLE_LOCAL_VIP) {
 					if (
 						netease.path === '/batch' ||
 						netease.path === '/api/batch'
