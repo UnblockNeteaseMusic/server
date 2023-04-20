@@ -428,11 +428,11 @@ hook.request.after = (ctx) => {
 						if ('payed' in value && value['payed'] == 0)
 							value['payed'] = 1;
 						if ('flLevel' in value && value['flLevel'] === 'none')
-							value['flLevel'] = 'exhigh'
+							value['flLevel'] = 'exhigh';
 						if ('plLevel' in value && value['plLevel'] === 'none')
-							value['plLevel'] = 'exhigh'
+							value['plLevel'] = 'exhigh';
 						if ('dlLevel' in value && value['dlLevel'] === 'none')
-							value['dlLevel'] = 'exhigh'
+							value['dlLevel'] = 'exhigh';
 					}
 					return value;
 				};
