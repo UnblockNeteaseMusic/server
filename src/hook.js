@@ -425,17 +425,14 @@ hook.request.after = (ctx) => {
 						}
 						if ('noCopyrightRcmd' in value)
 							value['noCopyrightRcmd'] = null;
-						if (
-							'payed' in value &&
-							value['flLevel'] === 'none' &&
-							value['plLevel'] === 'none' &&
-							value['dlLevel'] === 'none'
-						) {
-							value['flLevel'] = 'exhigh';
-							value['plLevel'] = 'exhigh';
-							value['dlLevel'] = 'exhigh';
+						if ('payed' in value && value['payed'] == 0)
 							value['payed'] = 1;
-						}
+						if ('flLevel' in value && value['flLevel'] === 'none')
+							value['flLevel'] = 'exhigh'
+						if ('plLevel' in value && value['plLevel'] === 'none')
+							value['plLevel'] = 'exhigh'
+						if ('dlLevel' in value && value['dlLevel'] === 'none')
+							value['dlLevel'] = 'exhigh'
 					}
 					return value;
 				};
