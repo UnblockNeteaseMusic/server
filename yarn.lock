@@ -813,90 +813,90 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swc/core-darwin-arm64@npm:1.3.52":
-  version: 1.3.52
-  resolution: "@swc/core-darwin-arm64@npm:1.3.52"
+"@swc/core-darwin-arm64@npm:1.3.55":
+  version: 1.3.55
+  resolution: "@swc/core-darwin-arm64@npm:1.3.55"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@swc/core-darwin-x64@npm:1.3.52":
-  version: 1.3.52
-  resolution: "@swc/core-darwin-x64@npm:1.3.52"
+"@swc/core-darwin-x64@npm:1.3.55":
+  version: 1.3.55
+  resolution: "@swc/core-darwin-x64@npm:1.3.55"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm-gnueabihf@npm:1.3.52":
-  version: 1.3.52
-  resolution: "@swc/core-linux-arm-gnueabihf@npm:1.3.52"
+"@swc/core-linux-arm-gnueabihf@npm:1.3.55":
+  version: 1.3.55
+  resolution: "@swc/core-linux-arm-gnueabihf@npm:1.3.55"
   conditions: os=linux & cpu=arm
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm64-gnu@npm:1.3.52":
-  version: 1.3.52
-  resolution: "@swc/core-linux-arm64-gnu@npm:1.3.52"
+"@swc/core-linux-arm64-gnu@npm:1.3.55":
+  version: 1.3.55
+  resolution: "@swc/core-linux-arm64-gnu@npm:1.3.55"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm64-musl@npm:1.3.52":
-  version: 1.3.52
-  resolution: "@swc/core-linux-arm64-musl@npm:1.3.52"
+"@swc/core-linux-arm64-musl@npm:1.3.55":
+  version: 1.3.55
+  resolution: "@swc/core-linux-arm64-musl@npm:1.3.55"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@swc/core-linux-x64-gnu@npm:1.3.52":
-  version: 1.3.52
-  resolution: "@swc/core-linux-x64-gnu@npm:1.3.52"
+"@swc/core-linux-x64-gnu@npm:1.3.55":
+  version: 1.3.55
+  resolution: "@swc/core-linux-x64-gnu@npm:1.3.55"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@swc/core-linux-x64-musl@npm:1.3.52":
-  version: 1.3.52
-  resolution: "@swc/core-linux-x64-musl@npm:1.3.52"
+"@swc/core-linux-x64-musl@npm:1.3.55":
+  version: 1.3.55
+  resolution: "@swc/core-linux-x64-musl@npm:1.3.55"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@swc/core-win32-arm64-msvc@npm:1.3.52":
-  version: 1.3.52
-  resolution: "@swc/core-win32-arm64-msvc@npm:1.3.52"
+"@swc/core-win32-arm64-msvc@npm:1.3.55":
+  version: 1.3.55
+  resolution: "@swc/core-win32-arm64-msvc@npm:1.3.55"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@swc/core-win32-ia32-msvc@npm:1.3.52":
-  version: 1.3.52
-  resolution: "@swc/core-win32-ia32-msvc@npm:1.3.52"
+"@swc/core-win32-ia32-msvc@npm:1.3.55":
+  version: 1.3.55
+  resolution: "@swc/core-win32-ia32-msvc@npm:1.3.55"
   conditions: os=win32 & cpu=ia32
   languageName: node
   linkType: hard
 
-"@swc/core-win32-x64-msvc@npm:1.3.52":
-  version: 1.3.52
-  resolution: "@swc/core-win32-x64-msvc@npm:1.3.52"
+"@swc/core-win32-x64-msvc@npm:1.3.55":
+  version: 1.3.55
+  resolution: "@swc/core-win32-x64-msvc@npm:1.3.55"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"@swc/core@npm:^1.3.52":
-  version: 1.3.52
-  resolution: "@swc/core@npm:1.3.52"
+"@swc/core@npm:^1.3.55":
+  version: 1.3.55
+  resolution: "@swc/core@npm:1.3.55"
   dependencies:
-    "@swc/core-darwin-arm64": 1.3.52
-    "@swc/core-darwin-x64": 1.3.52
-    "@swc/core-linux-arm-gnueabihf": 1.3.52
-    "@swc/core-linux-arm64-gnu": 1.3.52
-    "@swc/core-linux-arm64-musl": 1.3.52
-    "@swc/core-linux-x64-gnu": 1.3.52
-    "@swc/core-linux-x64-musl": 1.3.52
-    "@swc/core-win32-arm64-msvc": 1.3.52
-    "@swc/core-win32-ia32-msvc": 1.3.52
-    "@swc/core-win32-x64-msvc": 1.3.52
+    "@swc/core-darwin-arm64": 1.3.55
+    "@swc/core-darwin-x64": 1.3.55
+    "@swc/core-linux-arm-gnueabihf": 1.3.55
+    "@swc/core-linux-arm64-gnu": 1.3.55
+    "@swc/core-linux-arm64-musl": 1.3.55
+    "@swc/core-linux-x64-gnu": 1.3.55
+    "@swc/core-linux-x64-musl": 1.3.55
+    "@swc/core-win32-arm64-msvc": 1.3.55
+    "@swc/core-win32-ia32-msvc": 1.3.55
+    "@swc/core-win32-x64-msvc": 1.3.55
   peerDependencies:
     "@swc/helpers": ^0.5.0
   dependenciesMeta:
@@ -923,7 +923,7 @@ __metadata:
   peerDependenciesMeta:
     "@swc/helpers":
       optional: true
-  checksum: ae92657347b223ddbcc47d995966517356bbd600f775fcd74805c95eb8b10e80d0db1def315c710675fa40cae3c89cf26c413bccf1ea884066ba435f65425864
+  checksum: e8ae32e21e78761597b802bd76bb5f0d819441454c4cc5624c077dfa8cf84760eb589e4a1eb6fdc1b1ec65a4b03f7ab42413952b38234f5c13b8b2afb4d453f4
   languageName: node
   linkType: hard
 
@@ -1087,10 +1087,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^18.15.12":
-  version: 18.15.12
-  resolution: "@types/node@npm:18.15.12"
-  checksum: dff7596db8d0a18bcd8da542dc62ed4377cba39546ff53baaa06d106f1482bc3e4e5e03644f5d1e3cef0904ffbe8ebbc244b2b0851f8025ab2a3959ee0ace58f
+"@types/node@npm:*, @types/node@npm:^18.16.3":
+  version: 18.16.3
+  resolution: "@types/node@npm:18.16.3"
+  checksum: 816b39d45b05ebdc6f362b630970df3f6d82f71d418a2555353522f4eeeb078fa201de5299f02c09a09faa975e43b2745fe19c263d44069f87ddf37d6c37b717
   languageName: node
   linkType: hard
 
@@ -1182,8 +1182,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@unblockneteasemusic/server@workspace:."
   dependencies:
-    "@swc/core": ^1.3.52
-    "@types/node": ^18.15.12
+    "@swc/core": ^1.3.55
+    "@types/node": ^18.16.3
     "@types/pino": 6.3.12
     "@yarnpkg/sdks": ^3.0.0-rc.42
     browserslist: ^4.21.5
@@ -1194,12 +1194,12 @@ __metadata:
     pino: 6.14.0
     pino-pretty: ^7.6.1
     pkg: ^5.8.1
-    prettier: ^2.8.7
+    prettier: ^2.8.8
     swc-loader: ^0.2.3
     terser-webpack-plugin: ^5.3.7
     typescript: ^5.0.4
-    webpack: ^5.80.0
-    webpack-cli: ^5.0.1
+    webpack: ^5.81.0
+    webpack-cli: ^5.0.2
   bin:
     unblockneteasemusic: ./precompiled/app.js
   languageName: unknown
@@ -1376,16 +1376,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webpack-cli/serve@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "@webpack-cli/serve@npm:2.0.1"
+"@webpack-cli/serve@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "@webpack-cli/serve@npm:2.0.2"
   peerDependencies:
     webpack: 5.x.x
     webpack-cli: 5.x.x
   peerDependenciesMeta:
     webpack-dev-server:
       optional: true
-  checksum: 75c55f8398dd60e4821f81bec6e96287cebb3ab1837ef016779bc2f0c76a1d29c45b99e53daa99ba1fa156b5e2b61c19abf58098de20c2b58391b1f496ecc145
+  checksum: f74c8cc7d3e4de58e1261c6d09af0e8b8a23f53ada4ec336140f30fa16d57d9f56de954e87125947c090c06a30b10a243ca1e093c3e4bd60ba3f19c852cb20b7
   languageName: node
   linkType: hard
 
@@ -2108,17 +2108,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"commander@npm:^10.0.1":
+  version: 10.0.1
+  resolution: "commander@npm:10.0.1"
+  checksum: 436901d64a818295803c1996cd856621a74f30b9f9e28a588e726b2b1670665bccd7c1a77007ebf328729f0139838a88a19265858a0fa7a8728c4656796db948
+  languageName: node
+  linkType: hard
+
 "commander@npm:^2.20.0":
   version: 2.20.3
   resolution: "commander@npm:2.20.3"
   checksum: ab8c07884e42c3a8dbc5dd9592c606176c7eb5c1ca5ff274bcf907039b2c41de3626f684ea75ccf4d361ba004bbaff1f577d5384c155f3871e456bdf27becf9e
-  languageName: node
-  linkType: hard
-
-"commander@npm:^9.4.1":
-  version: 9.4.1
-  resolution: "commander@npm:9.4.1"
-  checksum: bfb18e325a5bdf772763c2213d5c7d9e77144d944124e988bcd8e5e65fb6d45d5d4e86b09155d0f2556c9a59c31e428720e57968bcd050b2306e910a0bf3cf13
   languageName: node
   linkType: hard
 
@@ -4456,12 +4456,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^2.8.7":
-  version: 2.8.7
-  resolution: "prettier@npm:2.8.7"
+"prettier@npm:^2.8.8":
+  version: 2.8.8
+  resolution: "prettier@npm:2.8.8"
   bin:
     prettier: bin-prettier.js
-  checksum: fdc8f2616f099f5f0d685907f4449a70595a0fc1d081a88919604375989e0d5e9168d6121d8cc6861f21990b31665828e00472544d785d5940ea08a17660c3a6
+  checksum: b49e409431bf129dd89238d64299ba80717b57ff5a6d1c1a8b1a28b590d998a34e083fa13573bc732bb8d2305becb4c9a4407f8486c81fa7d55100eb08263cf8
   languageName: node
   linkType: hard
 
@@ -5437,16 +5437,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack-cli@npm:^5.0.1":
-  version: 5.0.1
-  resolution: "webpack-cli@npm:5.0.1"
+"webpack-cli@npm:^5.0.2":
+  version: 5.0.2
+  resolution: "webpack-cli@npm:5.0.2"
   dependencies:
     "@discoveryjs/json-ext": ^0.5.0
     "@webpack-cli/configtest": ^2.0.1
     "@webpack-cli/info": ^2.0.1
-    "@webpack-cli/serve": ^2.0.1
+    "@webpack-cli/serve": ^2.0.2
     colorette: ^2.0.14
-    commander: ^9.4.1
+    commander: ^10.0.1
     cross-spawn: ^7.0.3
     envinfo: ^7.7.3
     fastest-levenshtein: ^1.0.12
@@ -5465,7 +5465,7 @@ __metadata:
       optional: true
   bin:
     webpack-cli: bin/cli.js
-  checksum: b1544eea669442e78c3dba9f79c0f8d0136759b8b2fe9cd32c0d410250fd719988ae037778ba88993215d44971169f2c268c0c934068be561711615f1951bd53
+  checksum: 98816d84c51487b90e1008ddbcda8827dcb7ae9ab7892f4d742f0d7b93f90a4a18a6ec2671b380e5a7ee4b0917cf0c43921119419d8ba9e1b14ea060115684fd
   languageName: node
   linkType: hard
 
@@ -5486,9 +5486,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5.80.0":
-  version: 5.80.0
-  resolution: "webpack@npm:5.80.0"
+"webpack@npm:^5.81.0":
+  version: 5.81.0
+  resolution: "webpack@npm:5.81.0"
   dependencies:
     "@types/eslint-scope": ^3.7.3
     "@types/estree": ^1.0.0
@@ -5519,7 +5519,7 @@ __metadata:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: 7b9229d64439ceb20372e0b1452025e2a37cf136f7867102e095b99c3f2bbaf8b0e7e8ff093278238e45b0b1efaae4ed5f0709be48c20e8dab94e94f11c8e5c7
+  checksum: 1a6eecaffac3226d80f4e8f330b32e0ff117d9dafd8700166d230afbc171d68ea1ff55a9939fa789307f7b9d11881889ccb8e6cd79d4ccbaeef916788ce73fdb
   languageName: node
   linkType: hard
 
