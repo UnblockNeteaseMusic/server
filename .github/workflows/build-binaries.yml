@@ -71,7 +71,7 @@ jobs:
                       ./dist/*
 
             - name: Publishing to GitHub Releases
-              uses: svenstaro/upload-release-action@2.5.0
+              uses: svenstaro/upload-release-action@2.6.0
               if: github.event_name == 'release'
               with:
                   repo_token: ${{ github.token }}
