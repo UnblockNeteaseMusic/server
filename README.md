@@ -119,8 +119,12 @@ node app.js # 即可使用 repo 的最新开发内容
 
 ```bash
 yarn
-DEVELOPMENT=true node app.js
+DEVELOPMENT=true yarn node app.js
 ```
+
+### BetterNCM 一键安装器
+
+请移步至 [RevivedUnblockInstaller](https://github.com/ReviveUnblockNCMInstaller/RevivedUnblockInstaller)。
 
 ### Android Xposed 模块
 
@@ -180,7 +184,8 @@ node app.js -o bilibili ytdlp
 | 变量名称              | 类型 | 描述                                                                                                    | 示例                                                             |
 | --------------------- | ---- | ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | ENABLE_FLAC           | bool | 激活无损音质获取                                                                                        | `ENABLE_FLAC=true`                                               |
-| ENABLE_LOCAL_VIP      | bool | 激活本地黑胶 VIP                                                                                        | `ENABLE_LOCAL_VIP=true`                                          |
+| ENABLE_LOCAL_VIP      | str  | 激活本地黑胶 VIP，可选值：`true`（等同于 CVIP）、`cvip` 和 `svip`                                       | `ENABLE_LOCAL_VIP=svip`                                          |
+| LOCAL_VIP_UID         | str  | 仅对这些 UID 激活本地黑胶 VIP，默认为对全部用户生效                                                     | `LOCAL_VIP_UID=123456789,1234,123456`                            |
 | ENABLE_HTTPDNS        | bool | 激活故障的 Netease HTTPDNS 查询（不建议）                                                               | `ENABLE_HTTPDNS=true`                                            |
 | BLOCK_ADS             | bool | 屏蔽应用内部分广告                                                                                      | `BLOCK_ADS=true`                                                 |
 | DISABLE_UPGRADE_CHECK | bool | 禁用更新检测                                                                                            | `DISABLE_UPGRADE_CHECK=true`                                     |

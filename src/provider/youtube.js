@@ -74,7 +74,7 @@ const search = (info) => {
 			const matched =
 				initialData.contents.twoColumnSearchResultsRenderer
 					.primaryContents.sectionListRenderer.contents[0]
-					.itemSectionRenderer.contents[0];
+					.itemSectionRenderer.contents[1];
 			if (matched) return matched.videoRenderer.videoId;
 			else return Promise.reject();
 		});

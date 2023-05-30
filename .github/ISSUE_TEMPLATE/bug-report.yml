@@ -68,7 +68,7 @@ body:
                 required: true
               - label: 我确认我已经启用了 HTTPS 端口。
                 required: true
-              - label: 我确认我已经正确设置了 EndPoint（仅 macOS 或 iOS）。
+              - label: 我确认我已经正确设置了 EndPoint。
                 required: true
               - label: 我确认我已经在对应的客户端正确安装了 CA 证书。
                 required: true

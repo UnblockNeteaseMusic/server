@@ -11,11 +11,18 @@ const logger = logScope('hook');
 const cs = getManagedCacheStorage('hook');
 cs.aliveDuration = 7 * 24 * 60 * 60 * 1000;
 
-const ENABLE_LOCAL_VIP =
-	(process.env.ENABLE_LOCAL_VIP || '').toLowerCase() === 'true';
+const ENABLE_LOCAL_VIP = ['true', 'cvip', 'svip'].includes(
+	(process.env.ENABLE_LOCAL_VIP || '').toLowerCase()
+);
 const BLOCK_ADS = (process.env.BLOCK_ADS || '').toLowerCase() === 'true';
 const DISABLE_UPGRADE_CHECK =
 	(process.env.DISABLE_UPGRADE_CHECK || '').toLowerCase() === 'true';
+const ENABLE_LOCAL_SVIP =
+	(process.env.ENABLE_LOCAL_VIP || '').toLowerCase() === 'svip';
+const LOCAL_VIP_UID = (process.env.LOCAL_VIP_UID || '')
+	.split(',')
+	.map((str) => parseInt(str))
+	.filter((num) => !Number.isNaN(num));
 
 const hook = {
 	request: {
@@ -273,37 +280,78 @@ hook.request.after = (ctx) => {
 					netease.jsonBody = JSON.parse(
 						patch(crypto.eapi.decrypt(buffer).toString())
 					);
-					if (ENABLE_LOCAL_VIP) {
+				}
+
+				if (ENABLE_LOCAL_VIP) {
+					if (
+						netease.path === '/batch' ||
+						netease.path === '/api/batch'
+					) {
+						const info =
+							netease.jsonBody[
+								'/api/music-vip-membership/client/vip/info'
+							];
+						const defaultPackage = {
+							iconUrl: null,
+							dynamicIconUrl: null,
+							isSign: false,
+							isSignIap: false,
+							isSignDeduct: false,
+							isSignIapDeduct: false,
+						};
+						const nVipLevel = 5; // ? months
 						if (
-							netease.path === '/batch' ||
-							netease.path === '/api/batch'
+							info &&
+							(LOCAL_VIP_UID.length === 0 ||
+								LOCAL_VIP_UID.includes(info.data.userId))
 						) {
-							var info =
+							try {
+								const expireTime = info.data.now + 31622400000;
+								info.data.redVipLevel = 7;
+								info.data.redVipAnnualCount = 1;
+
+								info.data.musicPackage = {
+									...defaultPackage,
+									...info.data.musicPackage,
+									vipCode: 230,
+									vipLevel: nVipLevel,
+									expireTime,
+								};
+
+								info.data.associator = {
+									...defaultPackage,
+									...info.data.associator,
+									vipCode: 100,
+									vipLevel: nVipLevel,
+									expireTime,
+								};
+
+								if (ENABLE_LOCAL_SVIP) {
+									info.data.redplus = {
+										...defaultPackage,
+										...info.data.redplus,
+										vipCode: 300,
+										vipLevel: nVipLevel,
+										expireTime,
+									};
+
+									info.data.albumVip = {
+										...defaultPackage,
+										...info.data.albumVip,
+										vipCode: 400,
+										vipLevel: 0,
+										expireTime,
+									};
+								}
+
 								netease.jsonBody[
 									'/api/music-vip-membership/client/vip/info'
-								];
-							if (info) {
-								try {
-									const expireTime =
-										info.data.now + 31622400000;
-									info.data.redVipLevel = 7;
-									info.data.redVipAnnualCount = 1;
-
-									info.data.musicPackage.expireTime =
-										expireTime;
-									info.data.musicPackage.vipCode = 230;
-
-									info.data.associator.expireTime =
-										expireTime;
-
-									netease.jsonBody[
-										'/api/music-vip-membership/client/vip/info'
-									] = info;
-								} catch (error) {
-									logger.debug(
-										'Unable to apply the local VIP.'
-									);
-								}
+								] = info;
+							} catch (error) {
+								logger.debug(
+									{ err: error },
+									'Unable to apply the local VIP.'
+								);
 							}
 						}
 					}
@@ -377,17 +425,14 @@ hook.request.after = (ctx) => {
 						}
 						if ('noCopyrightRcmd' in value)
 							value['noCopyrightRcmd'] = null;
-						if (
-							'payed' in value &&
-							value['flLevel'] === 'none' &&
-							value['plLevel'] === 'none' &&
-							value['dlLevel'] === 'none'
-						) {
-							value['flLevel'] = 'exhigh';
-							value['plLevel'] = 'exhigh';
-							value['dlLevel'] = 'exhigh';
+						if ('payed' in value && value['payed'] == 0)
 							value['payed'] = 1;
-						}
+						if ('flLevel' in value && value['flLevel'] === 'none')
+							value['flLevel'] = 'exhigh';
+						if ('plLevel' in value && value['plLevel'] === 'none')
+							value['plLevel'] = 'exhigh';
+						if ('dlLevel' in value && value['dlLevel'] === 'none')
+							value['dlLevel'] = 'exhigh';
 					}
 					return value;
 				};
