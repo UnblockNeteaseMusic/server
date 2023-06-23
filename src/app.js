@@ -58,7 +58,9 @@ if (config.proxyUrl && !/http(s?):\/\/.+:\d+/.test(config.proxyUrl)) {
 	console.log('Please check the proxy url.');
 	process.exit(1);
 }
-if (config.endpoint && !/http(s?):\/\/.+/.test(config.endpoint)) {
+if (!config.endpoint) config.endpoint = 'https://music.163.com';
+else if (config.endpoint === '-') config.endpoint = '';
+else if (!/http(s?):\/\/.+/.test(config.endpoint)) {
 	console.log('Please check the endpoint host.');
 	process.exit(1);
 }
