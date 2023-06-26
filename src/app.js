@@ -100,7 +100,13 @@ global.hosts = target.reduce(
 	(result, host) => Object.assign(result, { [host]: config.forceHost }),
 	{}
 );
-server.whitelist = ['://[\\w.]*music\\.126\\.net', '://[\\w.]*vod\\.126\\.net', '://acstatic-dun.126.net', '://[\\w.]*\\.netease.com', '://[\\w.]*\\.163yun.com'];
+server.whitelist = [
+	'://[\\w.]*music\\.126\\.net',
+	'://[\\w.]*vod\\.126\\.net',
+	'://acstatic-dun.126.net',
+	'://[\\w.]*\\.netease.com',
+	'://[\\w.]*\\.163yun.com',
+];
 global.cnrelay = config.cnrelay;
 if (config.strict) server.blacklist.push('.*');
 server.authentication = config.token || null;
