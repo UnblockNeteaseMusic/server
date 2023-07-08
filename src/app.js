@@ -152,9 +152,12 @@ const dnsSource =
 
 // Start the "Clean Cache" background task.
 const csgInstance = CacheStorageGroup.getInstance();
-setInterval(() => {
-	csgInstance.cleanup();
-}, 15 * 60 * 1000);
+setInterval(
+	() => {
+		csgInstance.cleanup();
+	},
+	15 * 60 * 1000
+);
 
 Promise.all(
 	dnsSource.map((query) => query(target.join(','))).concat(target.map(dns))
