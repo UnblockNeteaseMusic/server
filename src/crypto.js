@@ -167,6 +167,13 @@ module.exports = {
 					.once('finish', () => resolve(digest.read()));
 			}),
 	},
+	random: {
+		hex: (length) =>
+			crypto
+				.randomBytes(Math.ceil(length / 2))
+				.toString('hex')
+				.slice(0, length),
+	},
 };
 
 try {

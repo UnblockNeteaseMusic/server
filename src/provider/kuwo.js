@@ -46,11 +46,11 @@ const search = (info) => {
 	const keyword = encodeURIComponent(info.keyword.replace(' - ', ' '));
 	const url = `http://www.kuwo.cn/api/www/search/searchMusicBykeyWord?key=${keyword}&pn=1&rn=30`;
 
-	const token = Math.random().toString(16).slice(-11).toUpperCase();
+	const token = crypto.random.hex(32).toUpperCase();
 	return request('GET', url, {
 		referer: `http://www.kuwo.cn/search/list?key=${keyword}`,
-		csrf: token,
-		cookie: `kw_token=${token}`,
+		cross: crypto.md5.digest(token),
+		cookie: `Hm_token=${token}`,
 	})
 		.then((response) => response.json())
 		.then((jsonBody) => {
