@@ -1206,6 +1206,7 @@ __metadata:
     browserslist: ^4.21.9
     core-js: ^3.31.1
     cross-env: ^7.0.3
+    dotenv: ^16.3.1
     jest: ^29.6.1
     node-windows: ^1.0.0-beta.8
     pino: 6.14.0
