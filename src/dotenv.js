@@ -15,11 +15,11 @@ const path = require('path');
  * @returns {Promise<Record<string, string>>}
  */
 async function parseDotenv(filePath) {
-	const env = /**@type {Record<string, string>}*/({});
+	const env = /**@type {Record<string, string>}*/ ({});
 	const rl = readline.createInterface({
 		input: fs.createReadStream(filePath),
 		crlfDelay: Infinity,
-	})
+	});
 
 	for await (const line of rl) {
 		if (line.startsWith('#')) continue;
@@ -28,7 +28,7 @@ async function parseDotenv(filePath) {
 		env[key.trimEnd()] = value.trimStart();
 	}
 
-	return env
+	return env;
 }
 
 /**
@@ -95,4 +95,4 @@ module.exports = {
 	injectEnv,
 	findEnv,
 	parseDotenv,
-}
+};
