@@ -22,6 +22,8 @@ async function parseDotenv(filePath) {
 	})
 
 	for await (const line of rl) {
+		if (line.startsWith('#')) continue;
+
 		const [key, value] = line.split('=', 2);
 		env[key] = value;
 	}
