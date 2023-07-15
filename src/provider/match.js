@@ -205,8 +205,6 @@ async function check(url) {
 		// Set the MD5 info of this song.
 		if (isHost('126.net'))
 			song.md5 = song.url.split('/').slice(-1)[0].replace(/\..*/g, '');
-		if (isHost('kuwo.cn') && song.br <= 320000)
-			song.md5 = headers['etag'].replace(/"/g, '');
 		if (isHost('qq.com')) song.md5 = headers['server-md5'];
 
 		// Set the size info of this song.
