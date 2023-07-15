@@ -49,7 +49,7 @@ const search = (info) => {
 	const token = crypto.random.hex(32).toUpperCase();
 	return request('GET', url, {
 		referer: `http://www.kuwo.cn/search/list?key=${keyword}`,
-		cross: crypto.md5.digest(token),
+		cross: crypto.md5.digest(crypto.sha1.digest(token)),
 		cookie: `Hm_token=${token}`,
 	})
 		.then((response) => response.json())
