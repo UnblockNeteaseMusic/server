@@ -167,6 +167,17 @@ module.exports = {
 					.once('finish', () => resolve(digest.read()));
 			}),
 	},
+	sha1: {
+		digest: (value) =>
+			crypto.createHash('sha1').update(value).digest('hex'),
+	},
+	random: {
+		hex: (length) =>
+			crypto
+				.randomBytes(Math.ceil(length / 2))
+				.toString('hex')
+				.slice(0, length),
+	},
 };
 
 try {

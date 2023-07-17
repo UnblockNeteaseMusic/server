@@ -100,7 +100,13 @@ global.hosts = target.reduce(
 	(result, host) => Object.assign(result, { [host]: config.forceHost }),
 	{}
 );
-server.whitelist = ['://[\\w.]*music\\.126\\.net', '://[\\w.]*vod\\.126\\.net'];
+server.whitelist = [
+	'://[\\w.]*music\\.126\\.net',
+	'://[\\w.]*vod\\.126\\.net',
+	'://acstatic-dun.126.net',
+	'://[\\w.]*\\.netease.com',
+	'://[\\w.]*\\.163yun.com',
+];
 global.cnrelay = config.cnrelay;
 if (config.strict) server.blacklist.push('.*');
 server.authentication = config.token || null;
@@ -146,9 +152,12 @@ const dnsSource =
 
 // Start the "Clean Cache" background task.
 const csgInstance = CacheStorageGroup.getInstance();
-setInterval(() => {
-	csgInstance.cleanup();
-}, 15 * 60 * 1000);
+setInterval(
+	() => {
+		csgInstance.cleanup();
+	},
+	15 * 60 * 1000
+);
 
 Promise.all(
 	dnsSource.map((query) => query(target.join(','))).concat(target.map(dns))

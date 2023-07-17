@@ -28,9 +28,12 @@ const distribute = (url, router) =>
 
 // Start the "Clean Cache" background task.
 const csgInstance = CacheStorageGroup.getInstance();
-setInterval(() => {
-	csgInstance.cleanup();
-}, 15 * 60 * 1000);
+setInterval(
+	() => {
+		csgInstance.cleanup();
+	},
+	15 * 60 * 1000
+);
 
 require('http')
 	.createServer()
