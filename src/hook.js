@@ -96,6 +96,7 @@ hook.target.path = new Set([
 	'/api/usertool/sound/mobile/all',
 	'/api/usertool/sound/mobile/detail',
 	'/api/vipauth/app/auth/query',
+	'/api/music-vip-membership/client/vip/info',
 ]);
 
 const domainList = [
@@ -283,14 +284,16 @@ hook.request.after = (ctx) => {
 				}
 
 				if (ENABLE_LOCAL_VIP) {
+					const vipPath = '/api/music-vip-membership/client/vip/info';
 					if (
 						netease.path === '/batch' ||
-						netease.path === '/api/batch'
+						netease.path === '/api/batch' ||
+						netease.path === vipPath
 					) {
 						const info =
-							netease.jsonBody[
-								'/api/music-vip-membership/client/vip/info'
-							];
+							netease.path === vipPath
+								? netease.jsonBody
+								: netease.jsonBody[vipPath];
 						const defaultPackage = {
 							iconUrl: null,
 							dynamicIconUrl: null,
@@ -299,7 +302,7 @@ hook.request.after = (ctx) => {
 							isSignDeduct: false,
 							isSignIapDeduct: false,
 						};
-						const nVipLevel = 5; // ? months
+						const vipLevel = 7; // ? months
 						if (
 							info &&
 							(LOCAL_VIP_UID.length === 0 ||
@@ -307,14 +310,14 @@ hook.request.after = (ctx) => {
 						) {
 							try {
 								const expireTime = info.data.now + 31622400000;
-								info.data.redVipLevel = 7;
+								info.data.redVipLevel = vipLevel;
 								info.data.redVipAnnualCount = 1;
 
 								info.data.musicPackage = {
 									...defaultPackage,
 									...info.data.musicPackage,
 									vipCode: 230,
-									vipLevel: nVipLevel,
+									vipLevel,
 									expireTime,
 								};
 
@@ -322,7 +325,7 @@ hook.request.after = (ctx) => {
 									...defaultPackage,
 									...info.data.associator,
 									vipCode: 100,
-									vipLevel: nVipLevel,
+									vipLevel,
 									expireTime,
 								};
 
@@ -331,7 +334,7 @@ hook.request.after = (ctx) => {
 										...defaultPackage,
 										...info.data.redplus,
 										vipCode: 300,
-										vipLevel: nVipLevel,
+										vipLevel,
 										expireTime,
 									};
 
@@ -344,9 +347,9 @@ hook.request.after = (ctx) => {
 									};
 								}
 
-								netease.jsonBody[
-									'/api/music-vip-membership/client/vip/info'
-								] = info;
+								if (netease.path === vipPath)
+									netease.jsonBody = info;
+								else netease.jsonBody[vipPath] = info;
 							} catch (error) {
 								logger.debug(
 									{ err: error },
