@@ -182,11 +182,11 @@ hook.request.before = (ctx) => {
 					ctx.netease = netease;
 					// console.log(netease.path, netease.param)
 
-					if (
-						netease.path === '/api/song/enhance/download/url' ||
-						netease.path === '/api/song/enhance/download/url/v1'
-					)
+					if (netease.path === '/api/song/enhance/download/url')
 						return pretendPlay(ctx);
+
+					if (netease.path === '/api/song/enhance/download/url/v1')
+						return pretendPlayV1(ctx);
 
 					if (BLOCK_ADS) {
 						if (netease.path.startsWith('/api/ad')) {
@@ -507,22 +507,37 @@ const pretendPlay = (ctx) => {
 		netease.param = { ids: `["${id}"]`, br };
 		query = crypto.linuxapi.encryptRequest(turn, netease.param);
 	} else {
-		let { id, br, level, e_r, header } = netease.param;
-		if (!br && level) {
-			switch (level) {
-				case 'hires':
-				case 'lossless':
-					br = 999000;
-					break;
-				case 'exhigh':
-					br = 320000;
-					break;
-				case 'standard':
-					br = 128000;
-					break;
-			}
-		}
+		const { id, br, e_r, header } = netease.param;
 		netease.param = { ids: `["${id}"]`, br, e_r, header };
+		query = crypto.eapi.encryptRequest(turn, netease.param);
+	}
+	req.url = query.url;
+	req.body = query.body + netease.pad;
+};
+
+const pretendPlayV1 = (ctx) => {
+	const { req, netease } = ctx;
+	const turn = 'http://music.163.com/api/song/enhance/player/url/v1';
+	let query;
+	if (netease.forward) {
+		const { id, level, immerseType } = netease.param;
+		netease.param = {
+			ids: `["${id}"]`,
+			level,
+			encodeType: 'flac',
+			immerseType,
+		};
+		query = crypto.linuxapi.encryptRequest(turn, netease.param);
+	} else {
+		const { id, level, immerseType, e_r, header } = netease.param;
+		netease.param = {
+			ids: `["${id}"]`,
+			level,
+			encodeType: 'flac',
+			immerseType,
+			e_r,
+			header,
+		};
 		query = crypto.eapi.encryptRequest(turn, netease.param);
 	}
 	req.url = query.url;
