@@ -4,7 +4,7 @@ const { getManagedCacheStorage } = require('../cache');
 
 const track = (info) => {
 	const url =
-		'https://pyncmd.buildtest.site/api/pyncm?module=track&method=GetTrackAudio&song_ids=' +
+		'https://pyncmd.vercel.app/api/pyncm?module=track&method=GetTrackAudio&song_ids=' +
 		info.id +
 		'&bitrate=' +
 		['999000', '320000'].slice(
@@ -12,7 +12,7 @@ const track = (info) => {
 			select.ENABLE_FLAC ? 1 : 2
 		);
 	const headers = {
-		Host: 'pyncmd.buildtest.site',
+		Host: 'pyncmd.vercel.app',
 	};
 	return request('GET', url, headers)
 		.then((response) => response.json())
