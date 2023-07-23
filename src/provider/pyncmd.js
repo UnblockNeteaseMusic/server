@@ -4,7 +4,7 @@ const { getManagedCacheStorage } = require('../cache');
 
 const track = (info) => {
 	const url =
-		'http://pyncmd.vercel.app/api/pyncm?module=track&method=GetTrackAudio&song_ids=' +
+		'https://cors.buildtest.site/https://pyncmd.vercel.app/api/pyncm?module=track&method=GetTrackAudio&song_ids=' +
 		info.id +
 		'&bitrate=' +
 		['999000', '320000'].slice(
