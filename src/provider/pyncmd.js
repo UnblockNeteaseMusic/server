@@ -4,17 +4,14 @@ const { getManagedCacheStorage } = require('../cache');
 
 const track = (info) => {
 	const url =
-		'http://76.76.21.21/api/pyncm?module=track&method=GetTrackAudio&song_ids=' +
+		'https://pyncmd.apis.imouto.in/api/pyncm?module=track&method=GetTrackAudio&song_ids=' +
 		info.id +
 		'&bitrate=' +
 		['999000', '320000'].slice(
 			select.ENABLE_FLAC ? 0 : 1,
 			select.ENABLE_FLAC ? 1 : 2
 		);
-	const headers = {
-		Host: 'music.163-my-beloved.com',
-	};
-	return request('GET', url, headers)
+	return request('GET', url)
 		.then((response) => response.json())
 		.then((jsonBody) => {
 			if (
