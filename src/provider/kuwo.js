@@ -45,21 +45,18 @@ const search = (info) => {
 
 	const keyword = encodeURIComponent(info.keyword.replace(' - ', ' '));
 	const url = `http://www.kuwo.cn/api/www/search/searchMusicBykeyWord?key=${keyword}&pn=1&rn=30`;
+	const cookie = process.env.KUWO_COOKIE || null;
 
-	const token = crypto.random.hex(32).toUpperCase();
 	return request('GET', url, {
 		referer: `http://www.kuwo.cn/search/list?key=${keyword}`,
-		cross: crypto.md5.digest(crypto.sha1.digest(token)),
-		cookie: `Hm_token=${token}`,
+		secret: cookie
+			? (cookie.match(/Secret=([0-9a-f]{72})/) || [])[1]
+			: null,
+		cookie,
 	})
 		.then((response) => response.json())
 		.then((jsonBody) => {
-			if (
-				jsonBody &&
-				typeof jsonBody === 'object' &&
-				'code' in jsonBody &&
-				jsonBody.code !== 200
-			)
+			if (!jsonBody || jsonBody.code !== 200 || jsonBody.data.total < 1)
 				return Promise.reject();
 			const list = jsonBody.data.list.map(format);
 			const matched = select(list, info);

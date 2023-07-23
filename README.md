@@ -198,6 +198,7 @@ node app.js -o bilibili ytdlp
 | LOG_LEVEL             | str  | 日志输出等级。请见〈日志等级〉部分。                                                                    | `LOG_LEVEL=debug`                                                |
 | LOG_FILE              | str  | 从 Pino 端设置日志输出的文件位置。也可以用 `*sh` 的输出重导向功能 (`node app.js >> app.log`) 代替       | `LOG_FILE=app.log`                                               |
 | JOOX_COOKIE           | str  | JOOX 音源的 wmid 和 session_key cookie                                                                  | `JOOX_COOKIE="wmid=<your_wmid>; session_key=<your_session_key>"` |
+| KUWO_COOKIE           | str  | 酷我音源的 CSRF Token                                                                                   | `KUWO_COOKIE=Hm_<encpwd>=<token>; Secret=<secret>`               |
 | MIGU_COOKIE           | str  | 咪咕音源的 aversionid cookie                                                                            | `MIGU_COOKIE="<your_aversionid>"`                                |
 | QQ_COOKIE             | str  | QQ 音源的 uin 和 qm_keyst cookie                                                                        | `QQ_COOKIE="uin=<your_uin>; qm_keyst=<your_qm_keyst>"`           |
 | YOUTUBE_KEY           | str  | Youtube 音源的 Data API v3 Key                                                                          | `YOUTUBE_KEY="<your_data_api_key>"`                              |
