@@ -26,6 +26,12 @@ body:
           label: 复现步骤
           description: 复现报告行为的步骤。
     - type: textarea
+      id: commands
+      attributes:
+          label: 启动命令及环境变量
+      validations:
+          required: true
+    - type: textarea
       id: log
       attributes:
           label: 日志内容
