@@ -234,11 +234,15 @@ checknetisolation loopbackexempt -a -n="1F8B0F94.122165AE053F_j2p0p5q0044a6"
 
 ### 方法 1. 修改 hosts
 
-向 hosts 文件添加两条规则
+向 hosts 文件添加几条规则
 
 ```hosts
 <Server IP> music.163.com
 <Server IP> interface.music.163.com
+<Server IP> interface3.music.163.com
+<Server IP> music.163.com.163jiasu.com
+<Server IP> interface.music.163.com.163jiasu.com
+<Server IP> interface3.music.163.com.163jiasu.com
 ```
 
 > 使用此方法必须监听 80 端口 `-p 80`
