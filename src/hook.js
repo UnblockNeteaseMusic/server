@@ -139,7 +139,8 @@ hook.request.before = (ctx) => {
 				if ('x-napm-retry' in req.headers)
 					delete req.headers['x-napm-retry'];
 				req.headers['X-Real-IP'] = '118.88.88.88';
-				req.headers['Accept-Encoding'] = 'gzip, deflate'; // https://blog.csdn.net/u013022222/article/details/51707352
+				if (!req.url.includes("/eapi/cloud/upload/check"))
+					req.headers['Accept-Encoding'] = 'gzip, deflate'; // https://blog.csdn.net/u013022222/article/details/51707352
 				if (req.url.includes('stream')) return; // look living eapi can not be decrypted
 				if (body) {
 					let data;
