@@ -47,7 +47,7 @@ hook.target.host = new Set([
 	'interface3.music.163.com',
 	'apm.music.163.com',
 	'apm3.music.163.com',
-#CDN host
+	
 	'music.163.com.163jiasu.com',
 	'interface.music.163.com.163jiasu.com',
 	'interface3.music.163.com.163jiasu.com',
