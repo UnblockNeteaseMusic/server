@@ -9,7 +9,7 @@ const format = (song) => ({
 	name: song.SONGNAME,
 	// duration: song.songTimeMinutes.split(':').reduce((minute, second) => minute * 60 + parseFloat(second), 0) * 1000,
 	duration: song.duration * 1000,
-	album: { id: song.ALBUMID, name: song.album },
+	album: { id: song.ALBUMID, name: song.ALBUM },
 	artists: song.ARTIST
 		.split('&')
 		.map((name, index) => ({ id: index ? null : song.ARTISTID, name })),
