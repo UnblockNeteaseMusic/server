@@ -10,9 +10,10 @@ const format = (song) => ({
 	// duration: song.songTimeMinutes.split(':').reduce((minute, second) => minute * 60 + parseFloat(second), 0) * 1000,
 	duration: song.DURATION * 1000,
 	album: { id: song.ALBUMID, name: song.ALBUM },
-	artists: song.ARTIST
-		.split('&')
-		.map((name, index) => ({ id: index ? null : song.ARTISTID, name })),
+	artists: song.ARTIST.split('&').map((name, index) => ({
+		id: index ? null : song.ARTISTID,
+		name,
+	})),
 });
 
 const search = (info) => {
@@ -52,7 +53,12 @@ const search = (info) => {
 	return request('GET', url)
 		.then((response) => response.json())
 		.then((jsonBody) => {
-			if (!jsonBody || jsonBody.content.length < 2 || !jsonBody.content[1].musicpage || jsonBody.content[1].musicpage.abslist.length < 1)
+			if (
+				!jsonBody ||
+				jsonBody.content.length < 2 ||
+				!jsonBody.content[1].musicpage ||
+				jsonBody.content[1].musicpage.abslist.length < 1
+			)
 				return Promise.reject();
 			const list = jsonBody.content[1].musicpage.abslist.map(format);
 			const matched = select(list, info);
