@@ -43,26 +43,6 @@ const search = (info) => {
 	// 		return Promise.reject()
 	// })
 
-	// const keyword = encodeURIComponent(info.keyword.replace(' - ', ' '));
-	// const url = `http://www.kuwo.cn/api/www/search/searchMusicBykeyWord?key=${keyword}&pn=1&rn=30`;
-	// const cookie = process.env.KUWO_COOKIE || null;
-
-	// return request('GET', url, {
-	// 	referer: `http://www.kuwo.cn/search/list?key=${keyword}`,
-	// 	secret: cookie
-	// 		? (cookie.match(/Secret=([0-9a-f]{72})/) || [])[1]
-	// 		: null,
-	// 	cookie,
-	// })
-	// 	.then((response) => response.json())
-	// 	.then((jsonBody) => {
-	// 		if (!jsonBody || jsonBody.code !== 200 || jsonBody.data.total < 1)
-	// 			return Promise.reject();
-	// 		const list = jsonBody.data.list.map(format);
-	// 		const matched = select(list, info);
-	// 		return matched ? matched.id : Promise.reject();
-	// 	});
-
 	const keyword = encodeURIComponent(info.keyword.replace(' - ', ' '));
 	const url =
 		'http://search.kuwo.cn/r.s?&correct=1&stype=comprehensive&encoding=utf8' +
