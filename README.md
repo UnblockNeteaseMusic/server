@@ -240,7 +240,6 @@ checknetisolation loopbackexempt -a -n="1F8B0F94.122165AE053F_j2p0p5q0044a6"
 <Server IP> music.163.com
 <Server IP> interface.music.163.com
 <Server IP> interface3.music.163.com
-<Server IP> music.163.com.163jiasu.com
 <Server IP> interface.music.163.com.163jiasu.com
 <Server IP> interface3.music.163.com.163jiasu.com
 ```
