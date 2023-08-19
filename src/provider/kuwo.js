@@ -5,60 +5,55 @@ const request = require('../request');
 const { getManagedCacheStorage } = require('../cache');
 
 const format = (song) => ({
-	id: song.musicrid.split('_').pop(),
-	name: song.name,
+	id: song.MUSICRID.split('_').pop(),
+	name: song.SONGNAME,
 	// duration: song.songTimeMinutes.split(':').reduce((minute, second) => minute * 60 + parseFloat(second), 0) * 1000,
-	duration: song.duration * 1000,
-	album: { id: song.albumid, name: song.album },
-	artists: song.artist
-		.split('&')
-		.map((name, index) => ({ id: index ? null : song.artistid, name })),
+	duration: song.DURATION * 1000,
+	album: { id: song.ALBUMID, name: song.ALBUM },
+	artists: song.ARTIST.split('&').map((name, index) => ({
+		id: index ? null : song.ARTISTID,
+		name,
+	})),
 });
 
 const search = (info) => {
-	// const url =
-	// 	// 'http://search.kuwo.cn/r.s?' +
-	// 	// 'ft=music&itemset=web_2013&client=kt&' +
-	// 	// 'rformat=json&encoding=utf8&' +
-	// 	// 'all=' + encodeURIComponent(info.keyword) + '&pn=0&rn=20'
-	// 	'http://search.kuwo.cn/r.s?' +
-	// 	'ft=music&rformat=json&encoding=utf8&' +
-	// 	'rn=8&callback=song&vipver=MUSIC_8.0.3.1&' +
-	// 	'SONGNAME=' + encodeURIComponent(info.name) + '&' +
-	// 	'ARTIST=' + encodeURIComponent(info.artists[0].name)
+	// const keyword = encodeURIComponent(info.keyword.replace(' - ', ' '));
+	// const url = `http://www.kuwo.cn/api/www/search/searchMusicBykeyWord?key=${keyword}&pn=1&rn=30`;
+	// const cookie = process.env.KUWO_COOKIE || null;
 
-	// return request('GET', url)
-	// .then(response => response.body())
-	// .then(body => {
-	// 	const jsonBody = eval(
-	// 		'(' + body
-	// 		.replace(/\n/g, '')
-	// 		.match(/try\s*\{[^=]+=\s*(.+?)\s*\}\s*catch/)[1]
-	// 		.replace(/;\s*song\s*\(.+\)\s*;\s*/, '') + ')'
-	// 	)
-	// 	const matched = jsonBody.abslist[0]
-	// 	if (matched)
-	// 		return matched.MUSICRID.split('_').pop()
-	// 	else
-	// 		return Promise.reject()
+	// return request('GET', url, {
+	// 	referer: `http://www.kuwo.cn/search/list?key=${keyword}`,
+	// 	secret: cookie
+	// 		? (cookie.match(/Secret=([0-9a-f]{72})/) || [])[1]
+	// 		: null,
+	// 	cookie,
 	// })
+	// 	.then((response) => response.json())
+	// 	.then((jsonBody) => {
+	// 		if (!jsonBody || jsonBody.code !== 200 || jsonBody.data.total < 1)
+	// 			return Promise.reject();
+	// 		const list = jsonBody.data.list.map(format);
+	// 		const matched = select(list, info);
+	// 		return matched ? matched.id : Promise.reject();
+	// 	});
 
 	const keyword = encodeURIComponent(info.keyword.replace(' - ', ' '));
-	const url = `http://www.kuwo.cn/api/www/search/searchMusicBykeyWord?key=${keyword}&pn=1&rn=30`;
-	const cookie = process.env.KUWO_COOKIE || null;
+	const url =
+		'http://search.kuwo.cn/r.s?&correct=1&stype=comprehensive&encoding=utf8' +
+		'&rformat=json&mobi=1&show_copyright_off=1&searchapi=6&all=' +
+		keyword;
 
-	return request('GET', url, {
-		referer: `http://www.kuwo.cn/search/list?key=${keyword}`,
-		secret: cookie
-			? (cookie.match(/Secret=([0-9a-f]{72})/) || [])[1]
-			: null,
-		cookie,
-	})
+	return request('GET', url)
 		.then((response) => response.json())
 		.then((jsonBody) => {
-			if (!jsonBody || jsonBody.code !== 200 || jsonBody.data.total < 1)
+			if (
+				!jsonBody ||
+				jsonBody.content.length < 2 ||
+				!jsonBody.content[1].musicpage ||
+				jsonBody.content[1].musicpage.abslist.length < 1
+			)
 				return Promise.reject();
-			const list = jsonBody.data.list.map(format);
+			const list = jsonBody.content[1].musicpage.abslist.map(format);
 			const matched = select(list, info);
 			return matched ? matched.id : Promise.reject();
 		});
