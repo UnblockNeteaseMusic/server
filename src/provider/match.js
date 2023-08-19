@@ -21,10 +21,7 @@ const logger = logScope('provider/match');
 const isHttpResponseOk = (code) => code >= 200 && code <= 299;
 
 /** @type {Map<string, string>} */
-const headerReferer = new Map([
-	['bilivideo.com', 'https://www.bilibili.com/'],
-	['yt-download.org', 'https://www.yt-download.org/'],
-]);
+const headerReferer = new Map([['bilivideo.com', 'https://www.bilibili.com/']]);
 
 /**
  * @typedef {{ size: number, br: number | null, url: string | null, md5: string | null }} AudioData
@@ -215,10 +212,7 @@ async function check(url) {
 			) || 0;
 
 		// Check if the Content-Length equals 8192.
-		if (
-			!isHost('yt-download.org') &&
-			headers['content-length'] !== '8192'
-		) {
+		if (headers['content-length'] !== '8192') {
 			// I'm not sure how to describe this.
 			// Seems like not important.
 			return Promise.reject();
