@@ -77,7 +77,7 @@ const track = (song) =>
 		.then((result) => result.find((url) => url) || Promise.reject())
 		.catch(() => insure().kugou.track(song));
 
-const cs = getManagedCacheStorage('provider/kugou');
+const cs = getManagedCacheStorage('provider');
 const check = (info) => cs.cache(info, () => search(info)).then(track);
 
 module.exports = { check, search };

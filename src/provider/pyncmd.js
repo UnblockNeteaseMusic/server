@@ -29,7 +29,7 @@ const track = (info) => {
 		});
 };
 
-const cs = getManagedCacheStorage('provider/pyncmd');
+const cs = getManagedCacheStorage('provider');
 const check = (info) => cs.cache(info, () => track(info));
 
 module.exports = { check };

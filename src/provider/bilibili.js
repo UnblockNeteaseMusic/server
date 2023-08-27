@@ -49,7 +49,7 @@ const track = (id) => {
 		.catch(() => insure().bilibili.track(id));
 };
 
-const cs = getManagedCacheStorage('provider/bilibili');
+const cs = getManagedCacheStorage('provider');
 const check = (info) => cs.cache(info, () => search(info)).then(track);
 
 module.exports = { check, track };
