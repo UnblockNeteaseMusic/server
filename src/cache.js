@@ -1,9 +1,7 @@
 //@ts-check
 
-const { logScope } = require('./logger');
 const { LRUCache } = require('lru-cache');
-
-const logger = logScope('cache');
+const hash = require('object-hash');
 
 /**
  * @typedef {{ max?: number, ttl?: number, updateAgeOnGet?: boolean }} Options
@@ -64,9 +62,19 @@ class CacheStorage {
 	 * @returns {any}
 	 */
 	getData(key) {
-		return this.#lru.get(key, {
+		return this.#lru.get(this.keyOf(key), {
 			updateAgeOnGet: false,
 		});
+	}
+
+	/**
+	 * Generate a string key from an object.
+	 *
+	 * @param {any} stuff
+	 * @returns {string}
+	 */
+	keyOf(stuff) {
+		return hash(stuff);
 	}
 
 	/**
@@ -88,19 +96,15 @@ class CacheStorage {
 			return null;
 		}
 
-		const cached = this.#lru.get(key);
+		const hashedKey = this.keyOf(key);
+
+		const cached = this.#lru.get(hashedKey);
 		if (cached) {
 			return cached;
 		}
 
-		// Cache the response of action() and
-		// register into our cache map.
-		logger.debug(
-			`${key} did not hit. Storing the execution result...`
-		);
-
 		const response = await action();
-		this.#lru.set(key, response);
+		this.#lru.set(hashedKey, response);
 
 		return response;
 	}
