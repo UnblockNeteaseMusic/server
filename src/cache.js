@@ -1,84 +1,71 @@
-const { EventEmitter } = require('events');
+//@ts-check
+
 const { logScope } = require('./logger');
+const { LRUCache } = require('lru-cache');
 
 const logger = logScope('cache');
 
-const CacheStorageEvents = {
-	CLEANUP: 'cs@cleanup',
-};
-
 /**
- * @typedef {{data: any, expireAt: Date}} CacheData
+ * @typedef {{ max?: number, ttl?: number, updateAgeOnGet?: boolean }} Options
  */
 
 /**
  * A cache storage for storing any type of data.
  */
-class CacheStorage extends EventEmitter {
+class CacheStorage {
 	/**
 	 * @type {string}
 	 */
-	id = 'Default Cache Storage';
+	id = 'default';
 
 	/**
-	 * @type {Map<any, CacheData>}
+	 * The inner cache data structure.
+	 *
+	 * @type {LRUCache<string, any>}
+	 */
+	#lru;
+
+
+	/**
+	 * The default options for this cache storage.
+	 *
 	 * @readonly
 	 */
-	cacheMap = new Map();
+	static #defaultOptions = {
+		max: 250,
+		ttl: 60*60*1000, // expire after 1 hour
 
-	aliveDuration = 30 * 60 * 1000; // will expire after 30 minutes.
+		updateAgeOnGet: true,
+	};
 
 	/**
 	 * Construct a cache storage.
 	 *
 	 * @param {string?} id The ID of this cache storage.
+	 * @param {Options} options Custom options.
 	 */
-	constructor(id) {
-		super();
-
+	constructor(id, options) {
 		// Set the ID of this cache storage.
 		if (id) this.id = id;
 
-		// Register the CLEANUP event. It will clean up
-		// the expired cache when emitting "CLEANUP" event.
-		this.on(CacheStorageEvents.CLEANUP, async () =>
-			this.removeExpiredCache()
-		);
+		this.#lru = new LRUCache({
+			...CacheStorage.#defaultOptions,
+			...options,
+		})
 	}
 
 	/**
-	 * Get the absolute UNIX timestamp the cache will be ended.
-	 * @return {number}
-	 * @constructor
-	 */
-	get WillExpireAt() {
-		return Date.now() + this.aliveDuration;
-	}
-
-	/**
-	 * Get the context for logger().
+	 * getData just retrieve the data from the cache.
 	 *
-	 * @param {Record<string, string>?} customContext The additional context.
-	 * @return {Record<string, string>}
-	 * @private
+	 * It will not update the age of the cache. Only
+	 * for test purpose.
+	 *
+	 * @param {string} key
+	 * @returns {any}
 	 */
-	getLoggerContext(customContext = {}) {
-		return {
-			...customContext,
-			cacheStorageId: this.id,
-		};
-	}
-
-	/**
-	 * Remove the expired cache.
-	 */
-	removeExpiredCache() {
-		logger.debug(
-			this.getLoggerContext(),
-			'Cleaning up the expired caches...'
-		);
-		this.cacheMap.forEach((cachedData, key) => {
-			if (cachedData.expireAt <= Date.now()) this.cacheMap.delete(key);
+	getData(key) {
+		return this.#lru.get(key, {
+			updateAgeOnGet: false,
 		});
 	}
 
@@ -86,113 +73,67 @@ class CacheStorage extends EventEmitter {
 	 * Cache the response.
 	 *
 	 * @template T
-	 * @param {any} key the unique key of action to be cached.
+	 * @param {string?} key the unique key of action to be cached.
 	 * @param {() => Promise<T>} action the action to do and be cached.
-	 * @param {number=} expireAt customize the expireAt of this key.
-	 * @return {Promise<T>}
+	 * @return {Promise<T | null>}
 	 */
-	async cache(key, action, expireAt) {
+	async cache(key, action) {
 		// Disable the cache when the NO_CACHE = true.
 		if (process.env.NO_CACHE === 'true') {
 			return action();
 		}
 
-		// Push the CLEANUP task to the event loop - "polling",
-		// so that it won't block the cache() task.
-		this.emit(CacheStorageEvents.CLEANUP);
+		// If key is null or undefined, ignore it.
+		if (key == null) {
+			return null;
+		}
 
-		// Check if we have cached it before.
-		// If true, we return the cached value.
-		const cachedData = this.cacheMap.get(key);
-
-		// Object.toString() can't bring any useful information,
-		// we show "Something" instead.
-		const logKey = typeof key === 'object' ? 'Something' : key;
-
-		// Get the logger context with getLoggerContext
-		const logCtx = this.getLoggerContext({
-			logKey,
-		});
-
-		if (cachedData) {
-			logger.debug(logCtx, `${logKey} hit!`);
-			return cachedData.data;
+		const cached = this.#lru.get(key);
+		if (cached) {
+			return cached;
 		}
 
 		// Cache the response of action() and
 		// register into our cache map.
 		logger.debug(
-			logCtx,
-			`${logKey} did not hit. Storing the execution result...`
+			`${key} did not hit. Storing the execution result...`
 		);
 
-		const sourceResponse = await action();
-		this.cacheMap.set(key, {
-			data: sourceResponse,
-			expireAt: new Date(expireAt || this.WillExpireAt),
-		});
-		return sourceResponse;
+		const response = await action();
+		this.#lru.set(key, response);
+
+		return response;
 	}
 }
 
 /**
- * The group which aimed to manage all CacheStorage and
- * call the common method such as `removeExpiredCache()`.
- */
-class CacheStorageGroup {
-	/**
-	 * @type {CacheStorageGroup | undefined}
-	 */
-	static instance = undefined;
-
-	/** @type {Set<CacheStorage>} */
-	cacheStorages = new Set();
-
-	/** @private */
-	constructor() {}
-
-	/**
-	 * @return {CacheStorageGroup}
-	 */
-	static getInstance() {
-		if (!CacheStorageGroup.instance)
-			CacheStorageGroup.instance = new CacheStorageGroup();
-
-		return CacheStorageGroup.instance;
-	}
-
-	cleanup() {
-		this.cacheStorages.forEach((storage) => storage.removeExpiredCache());
-	}
-}
-
-/**
- * The CacheStorageGroup instance that is used internally.
+ * A map of tracked CacheStorage.
  *
- * Don't export it!
- *
- * @type {CacheStorageGroup}
+ * @type {Map<string, CacheStorage>}
  */
-const csgInstance = CacheStorageGroup.getInstance();
+const trackedCacheStorages = new Map();
 
 /**
  * Get the managed CacheStorage.
  *
- * “Managed” means that this CacheStorage has been
- * added to CacheStorageGroup.
+ * “Managed” means that this CacheStorage
+ * has been tracked. The returned CacheStorage
+ * is a singleton.
  *
  * @param {string} id
+ * @param {Options} options
  * @return {CacheStorage}
  */
-function getManagedCacheStorage(id) {
-	const cs = new CacheStorage(id);
-	csgInstance.cacheStorages.add(cs);
-	return cs;
+function getManagedCacheStorage(id, options) {
+	const s = trackedCacheStorages.get(id);
+	if (s) return s;
+
+	const newS = new CacheStorage(id, options);
+	trackedCacheStorages.set(id, newS);
+	return newS;
 }
 
 module.exports = {
 	CacheStorage,
-	CacheStorageEvents,
-	CacheStorageGroup,
 	getManagedCacheStorage,
 };
