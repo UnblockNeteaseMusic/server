@@ -8,8 +8,10 @@ const { getManagedCacheStorage } = require('./cache');
 const { logScope } = require('./logger');
 
 const logger = logScope('hook');
-const cs = getManagedCacheStorage('hook');
-cs.aliveDuration = 7 * 24 * 60 * 60 * 1000;
+const cs = getManagedCacheStorage('hook', {
+	max: 250,
+	ttl: 3 * 60 * 60 * 1000, // 3 hour
+});
 
 const ENABLE_LOCAL_VIP = ['true', 'cvip', 'svip'].includes(
 	(process.env.ENABLE_LOCAL_VIP || '').toLowerCase()

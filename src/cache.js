@@ -32,7 +32,7 @@ class CacheStorage {
 	 * @readonly
 	 */
 	static #defaultOptions = {
-		max: 250,
+		max: 100,
 		ttl: 60*60*1000, // expire after 1 hour
 
 		updateAgeOnGet: true,
