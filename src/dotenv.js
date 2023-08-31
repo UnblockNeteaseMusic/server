@@ -24,7 +24,12 @@ async function parseDotenv(filePath) {
 	for await (const line of rl) {
 		if (line.startsWith('#')) continue;
 
-		const [key, value] = line.split('=', 2);
+		// fix: QQ music Cookie parse error
+		// use the first '=' to split key and value
+		// const [key, value] = line.split('=', 2);
+		const index = line.indexOf('=');
+		const key = line.substring(0, index);
+		const value = line.substring(index + 1, line.length);
 		env[key.trimEnd()] = value.trimStart();
 	}
 
