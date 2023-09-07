@@ -41,7 +41,7 @@
 		"pino-pretty": "^7.6.1"
 	},
 	"devDependencies": {
-		"@swc/core": "^1.3.82",
+		"@swc/core": "^1.3.83",
 		"@types/node": "^20.5.9",
 		"@types/pino": "6.3.12",
 		"@yarnpkg/sdks": "^3.0.0-rc.50",
@@ -66,5 +66,5 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"packageManager": "yarn@3.6.1"
+	"packageManager": "yarn@3.6.3"
 }
