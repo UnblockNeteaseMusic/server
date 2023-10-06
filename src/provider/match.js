@@ -24,7 +24,7 @@ const isHttpResponseOk = (code) => code >= 200 && code <= 299;
 const headerReferer = new Map([['bilivideo.com', 'https://www.bilibili.com/']]);
 
 /**
- * @typedef {{ size: number, br: number | null, url: string | null, md5: string | null }} AudioData
+ * @typedef {{ size: number, br: number | null, url: string | null, md5: string | null, source: string }} AudioData
  */
 
 /**
@@ -49,7 +49,10 @@ async function getAudioFromSource(source, info) {
 		);
 
 	logger.debug({ source, info }, 'The audio matched!');
-	return song;
+	return {
+		...song,
+		source,
+	};
 }
 
 async function match(id, source, data) {
