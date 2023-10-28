@@ -4,10 +4,10 @@ const { getManagedCacheStorage } = require('../cache');
 
 const track = (info) => {
 	const url =
-		'https://pyncmd.apis.imouto.in/api/pyncm?module=track&method=GetTrackAudio&song_ids=' +
+		'https://csm.sayqz.com/api/?type=apiSongUrlV1&id=' +
 		info.id +
-		'&bitrate=' +
-		['999000', '320000'].slice(
+		'&level=' +
+		['hires', 'exhigh'].slice(
 			select.ENABLE_FLAC ? 0 : 1,
 			select.ENABLE_FLAC ? 1 : 2
 		);
