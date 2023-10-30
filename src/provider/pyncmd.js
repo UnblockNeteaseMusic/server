@@ -7,7 +7,7 @@ const track = (info) => {
 		'https://csm.sayqz.com/api/?type=apiSongUrlV1&id=' +
 		info.id +
 		'&level=' +
-		['jymaster','hires', 'exhigh'].slice(
+		['jymaster', 'exhigh'].slice(
 			select.ENABLE_FLAC ? 0 : 1,
 			select.ENABLE_FLAC ? 1 : 2
 		);
