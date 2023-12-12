@@ -20,7 +20,7 @@ const logger = pino(
 						messageFormat: messageFormat,
 						ignore: 'time,pid,hostname,scope',
 						errorProps: '*',
-				  },
+					},
 	},
 	// Redirect the logs to destFile if specified.
 	destFile && pino.destination(destFile)

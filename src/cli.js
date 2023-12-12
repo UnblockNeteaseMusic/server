@@ -68,7 +68,7 @@ const cli = {
 								.slice(1)
 								.split('')
 								.map((string) => '-' + string)
-					  )
+						)
 					: result.concat(part),
 			[]
 		);
@@ -203,10 +203,10 @@ const help = () => {
 					`  ${option[0]}${pad(align - option[0].length)}  ${slice(
 						option[1]
 					)}`
-			  )
+				)
 			: console.log(
 					`  ${option[0]}\n${pad(align + 4)}${slice(option[1])}`
-			  );
+				);
 	};
 	if (positionals.length) console.log('\npositional arguments:');
 	positionals.forEach(publish);
