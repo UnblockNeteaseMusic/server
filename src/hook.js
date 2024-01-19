@@ -138,7 +138,7 @@ hook.request.before = (ctx) => {
 		});
 
 		req.headers.cookie = mapToCookie(cookies);
-		console.log('Replace netease cookie');
+		console.debug('Replace netease cookie');
 	}
 
 	if (
