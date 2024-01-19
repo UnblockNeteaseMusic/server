@@ -21,7 +21,22 @@ const isHost = (url, host) => {
  */
 const isHostWrapper = (url) => (host) => isHost(url, host);
 
+const cookieToMap = (cookie) => {
+	return cookie
+		.split(';')
+		.map((cookie) => cookie.trim().split('='))
+		.reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {});
+};
+
+const mapToCookie = (map) => {
+	return Object.entries(map)
+		.map(([key, value]) => `${key}=${value}`)
+		.join('; ');
+};
+
 module.exports = {
 	isHost,
 	isHostWrapper,
+	cookieToMap,
+	mapToCookie,
 };
