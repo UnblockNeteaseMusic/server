@@ -203,6 +203,7 @@ node app.js -o bilibili ytdlp
 | SIGN_CERT             | path | 自定义证书文件                                                                                          | `SIGN_CERT="./server.crt"`                                       |
 | SIGN_KEY              | path | 自定义密钥文件                                                                                          | `SIGN_KEY="./server.key"`                                        |
 | SEARCH_ALBUM          | bool | 在其他音源搜索歌曲时携带专辑名称（默认搜索条件 `歌曲名 - 歌手`，启用后搜索条件 `歌曲名 - 歌手 专辑名`） | `SEARCH_ALBUM=true`                                              |
+| NETEASE_COOKIE        | str  | 网易云 Cookie                                                                                           | `MUSIC_U=007554xxx`                                              |
 
 #### 日志等级 (`LOG_LEVEL`)
 

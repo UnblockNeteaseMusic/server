@@ -3,7 +3,7 @@ const crypto = require('./crypto');
 const request = require('./request');
 const match = require('./provider/match');
 const querystring = require('querystring');
-const { isHost } = require('./utilities');
+const { isHost, cookieToMap, mapToCookie } = require('./utilities');
 const { getManagedCacheStorage } = require('./cache');
 const { logScope } = require('./logger');
 
@@ -128,6 +128,19 @@ hook.request.before = (ctx) => {
 		)
 	)
 		ctx.decision = 'proxy';
+
+	if (process.env.NETEASE_COOKIE && url.path.includes('url')) {
+		var cookies = cookieToMap(req.headers.cookie);
+		var new_cookies = cookieToMap(process.env.NETEASE_COOKIE);
+
+		Object.entries(new_cookies).forEach(([key, value]) => {
+			cookies[key] = value;
+		});
+
+		req.headers.cookie = mapToCookie(cookies);
+		console.log('Replace netease cookie');
+	}
+
 	if (
 		[url.hostname, req.headers.host].some((host) =>
 			hook.target.host.has(host)
