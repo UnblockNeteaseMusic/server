@@ -19,7 +19,7 @@ jobs:
               # Setup .npmrc file to publish to npm
             - uses: actions/setup-node@v4
               with:
-                  node-version: '18.x'
+                  node-version: 20
 
             - run: yarn
             - run: yarn npm publish
@@ -40,7 +40,7 @@ jobs:
               # Setup .npmrc file to publish to npm
             - uses: actions/setup-node@v4
               with:
-                  node-version: '18.x'
+                  node-version: 20
 
             - run: yarn
             - run: yarn npm publish
