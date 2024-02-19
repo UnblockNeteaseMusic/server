@@ -328,7 +328,9 @@ hook.request.after = (ctx) => {
 								LOCAL_VIP_UID.includes(info.data.userId))
 						) {
 							try {
-								const expireTime = info.data.now + 31622400000;
+								const nowTime =
+									info.data.now || new Date().getTime();
+								const expireTime = nowTime + 31622400000;
 								info.data.redVipLevel = vipLevel;
 								info.data.redVipAnnualCount = 1;
 
