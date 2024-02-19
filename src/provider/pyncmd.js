@@ -4,7 +4,7 @@ const { getManagedCacheStorage } = require('../cache');
 
 const track = (info) => {
 	const url =
-		'https://api.tunefree.fun/ncm/song/?id=' +
+		'https://csm.sayqz.com/api/?type=apiSongUrlV1&id=' +
 		info.id +
 		'&level=' +
 		['hires', 'exhigh'].slice(
@@ -22,8 +22,8 @@ const track = (info) => {
 			)
 				return Promise.reject();
 
-			const playUrl = jsonBody?.data['0']?.url;
-			if (playUrl) return playUrl;
+			const matched = jsonBody.data.find((song) => song.id === info.id);
+			if (matched && matched.url) return matched.url;
 
 			return Promise.reject();
 		});
