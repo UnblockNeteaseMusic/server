@@ -3,8 +3,9 @@ const parse = require('url').parse;
 require('./provider/insure').disable = true;
 
 const router = require('./consts').PROVIDERS;
-const cs = getManagedCacheStorage('bridge');
-cs.aliveDuration = 15 * 60 * 1000;
+const cs = getManagedCacheStorage('bridge', {
+	ttl: 15*60*1000, // 15m
+});
 
 const distribute = (url, router) =>
 	Promise.resolve().then(() => {

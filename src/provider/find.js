@@ -68,7 +68,7 @@ const find = (id, data) => {
 	}
 };
 
-const cs = getManagedCacheStorage('provider/find');
+const cs = getManagedCacheStorage('provider');
 
 module.exports = (id, data) => {
 	if (data) {

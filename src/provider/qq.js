@@ -108,7 +108,7 @@ const track = (id) => {
 		.catch(() => insure().qq.track(id));
 };
 
-const cs = getManagedCacheStorage('provider/qq');
+const cs = getManagedCacheStorage('provider');
 const check = (info) => cs.cache(info, () => search(info)).then(track);
 
 module.exports = { check, track };

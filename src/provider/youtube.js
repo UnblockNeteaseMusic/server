@@ -6,7 +6,7 @@ const parse = (query) =>
 		return Object.assign({}, result, { [splitItem[0]]: splitItem[1] });
 	}, {});
 
-const cs = getManagedCacheStorage('provider/youtube');
+const cs = getManagedCacheStorage('provider');
 
 // const proxy = require('url').parse('http://127.0.0.1:1080')
 const proxy = undefined;

@@ -72,7 +72,7 @@ const track = (id) =>
 		.then((result) => result.find((url) => url) || Promise.reject())
 		.catch(() => insure().migu.track(id));
 
-const cs = getManagedCacheStorage('provider/migu');
+const cs = getManagedCacheStorage('provider');
 const check = (info) => cs.cache(info, () => search(info)).then(track);
 
 module.exports = { check, track };

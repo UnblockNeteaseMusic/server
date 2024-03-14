@@ -83,7 +83,7 @@ const track = (id) => {
 		.catch(() => insure().kuwo.track(id));
 };
 
-const cs = getManagedCacheStorage('provider/kuwo');
+const cs = getManagedCacheStorage('provider');
 const check = (info) => cs.cache(info, () => search(info)).then(track);
 
 module.exports = { check, track };
