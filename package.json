@@ -41,8 +41,8 @@
 		"pino-pretty": "^7.6.1"
 	},
 	"devDependencies": {
-		"@swc/core": "^1.4.2",
-		"@types/node": "^20.11.19",
+		"@swc/core": "^1.4.8",
+		"@types/node": "^20.11.27",
 		"@types/pino": "6.3.12",
 		"@yarnpkg/sdks": "^3.1.0",
 		"browserslist": "^4.23.0",
@@ -53,7 +53,7 @@
 		"prettier": "^3.2.5",
 		"swc-loader": "^0.2.6",
 		"terser-webpack-plugin": "^5.3.10",
-		"typescript": "^5.3.3",
+		"typescript": "^5.4.2",
 		"webpack": "^5.90.3",
 		"webpack-cli": "^5.1.4"
 	},
@@ -66,5 +66,5 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"packageManager": "yarn@3.7.0"
+	"packageManager": "yarn@3.8.1"
 }
