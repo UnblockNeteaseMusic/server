@@ -4,10 +4,10 @@ const { getManagedCacheStorage } = require('../cache');
 
 const track = (info) => {
 	const url =
-		'https://csm.sayqz.com/api/?type=apiSongUrlV1&id=' +
+		'https://music.gdstudio.xyz/api.php?types=url&source=netease&id=' +
 		info.id +
-		'&level=' +
-		['hires', 'exhigh'].slice(
+		'&br=' +
+		['999', '320'].slice(
 			select.ENABLE_FLAC ? 0 : 1,
 			select.ENABLE_FLAC ? 1 : 2
 		);
@@ -17,15 +17,11 @@ const track = (info) => {
 			if (
 				jsonBody &&
 				typeof jsonBody === 'object' &&
-				'code' in jsonBody &&
-				jsonBody.code !== 200
+				(!'url') in jsonBody
 			)
 				return Promise.reject();
 
-			const matched = jsonBody.data.find((song) => song.id === info.id);
-			if (matched && matched.url) return matched.url;
-
-			return Promise.reject();
+			return jsonBody.br > 0 ? jsonBody.url : Promise.reject();
 		});
 };
 
