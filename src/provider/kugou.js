@@ -32,49 +32,31 @@ const search = (info) => {
 		.then((response) => response.json())
 		.then((jsonBody) => {
 			// const list = jsonBody.data.lists.map(format)
-			const list = jsonBody.data.info.map(format);
+			const list = jsonBody.data.info.map(song => song.group.map(format)).flat();
 			const matched = select(list, info);
 			return matched ? matched : Promise.reject();
 		})
 		.catch(() => insure().kugou.search(info));
 };
 
-const single = (song, format) => {
-	const getHashId = () => {
-		switch (format) {
-			case 'hash':
-				return song.id;
-			case 'hqhash':
-				return song.id_hq;
-			case 'sqhash':
-				return song.id_sq;
-			default:
-				break;
-		}
-		return '';
-	};
-
+const single = (song) => {
 	const url =
-		'http://trackercdn.kugou.com/i/v2/?' +
-		'key=' +
-		crypto.md5.digest(`${getHashId()}kgcloudv2`) +
-		'&hash=' +
-		getHashId() +
+		'https://wwwapi.kugou.com/yy/index.php?r=play/getdata&' +
+		'hash=' +
+		song.id +
 		'&' +
-		'appid=1005&pid=2&cmd=25&behavior=play&album_id=' +
+		'dfid=2mSZvv2GejpK2VDsgh0K7U0O&mid=c18aeb062e34929c6e90e3af8f7e2512&platid=4&_=1653050047389&album_id=' +
 		song.album.id;
 	return request('GET', url)
 		.then((response) => response.json())
-		.then((jsonBody) => jsonBody.url[0] || Promise.reject());
+		.then((jsonBody) => {
+                        return jsonBody.data.play_url || Promise.reject();
+                    })
 };
 
 const track = (song) =>
-	Promise.all(
-		['sqhash', 'hqhash', 'hash']
-			.slice(select.ENABLE_FLAC ? 0 : 1)
-			.map((format) => single(song, format).catch(() => null))
-	)
-		.then((result) => result.find((url) => url) || Promise.reject())
+                single(song)
+		.then(resp => resp || Promise.reject())
 		.catch(() => insure().kugou.track(song));
 
 const cs = getManagedCacheStorage('provider/kugou');
