@@ -178,6 +178,8 @@ node app.js -o bilibili ytdlp
 | B 站音乐                    | `bilibili`  | ✅       |                                                                                |
 | 第三方网易云 API            | `pyncmd`    |          |                                                                                |
 
+- 支持 `pyncmd` 的 API 服务由 GD studio <music.gdstudio.xyz> 提供。
+
 ### 环境变量
 
 | 变量名称              | 类型 | 描述                                                                                                    | 示例                                                             |
