@@ -844,90 +844,90 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swc/core-darwin-arm64@npm:1.4.17":
-  version: 1.4.17
-  resolution: "@swc/core-darwin-arm64@npm:1.4.17"
+"@swc/core-darwin-arm64@npm:1.5.6":
+  version: 1.5.6
+  resolution: "@swc/core-darwin-arm64@npm:1.5.6"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@swc/core-darwin-x64@npm:1.4.17":
-  version: 1.4.17
-  resolution: "@swc/core-darwin-x64@npm:1.4.17"
+"@swc/core-darwin-x64@npm:1.5.6":
+  version: 1.5.6
+  resolution: "@swc/core-darwin-x64@npm:1.5.6"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm-gnueabihf@npm:1.4.17":
-  version: 1.4.17
-  resolution: "@swc/core-linux-arm-gnueabihf@npm:1.4.17"
+"@swc/core-linux-arm-gnueabihf@npm:1.5.6":
+  version: 1.5.6
+  resolution: "@swc/core-linux-arm-gnueabihf@npm:1.5.6"
   conditions: os=linux & cpu=arm
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm64-gnu@npm:1.4.17":
-  version: 1.4.17
-  resolution: "@swc/core-linux-arm64-gnu@npm:1.4.17"
+"@swc/core-linux-arm64-gnu@npm:1.5.6":
+  version: 1.5.6
+  resolution: "@swc/core-linux-arm64-gnu@npm:1.5.6"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm64-musl@npm:1.4.17":
-  version: 1.4.17
-  resolution: "@swc/core-linux-arm64-musl@npm:1.4.17"
+"@swc/core-linux-arm64-musl@npm:1.5.6":
+  version: 1.5.6
+  resolution: "@swc/core-linux-arm64-musl@npm:1.5.6"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@swc/core-linux-x64-gnu@npm:1.4.17":
-  version: 1.4.17
-  resolution: "@swc/core-linux-x64-gnu@npm:1.4.17"
+"@swc/core-linux-x64-gnu@npm:1.5.6":
+  version: 1.5.6
+  resolution: "@swc/core-linux-x64-gnu@npm:1.5.6"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@swc/core-linux-x64-musl@npm:1.4.17":
-  version: 1.4.17
-  resolution: "@swc/core-linux-x64-musl@npm:1.4.17"
+"@swc/core-linux-x64-musl@npm:1.5.6":
+  version: 1.5.6
+  resolution: "@swc/core-linux-x64-musl@npm:1.5.6"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@swc/core-win32-arm64-msvc@npm:1.4.17":
-  version: 1.4.17
-  resolution: "@swc/core-win32-arm64-msvc@npm:1.4.17"
+"@swc/core-win32-arm64-msvc@npm:1.5.6":
+  version: 1.5.6
+  resolution: "@swc/core-win32-arm64-msvc@npm:1.5.6"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@swc/core-win32-ia32-msvc@npm:1.4.17":
-  version: 1.4.17
-  resolution: "@swc/core-win32-ia32-msvc@npm:1.4.17"
+"@swc/core-win32-ia32-msvc@npm:1.5.6":
+  version: 1.5.6
+  resolution: "@swc/core-win32-ia32-msvc@npm:1.5.6"
   conditions: os=win32 & cpu=ia32
   languageName: node
   linkType: hard
 
-"@swc/core-win32-x64-msvc@npm:1.4.17":
-  version: 1.4.17
-  resolution: "@swc/core-win32-x64-msvc@npm:1.4.17"
+"@swc/core-win32-x64-msvc@npm:1.5.6":
+  version: 1.5.6
+  resolution: "@swc/core-win32-x64-msvc@npm:1.5.6"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"@swc/core@npm:^1.4.17":
-  version: 1.4.17
-  resolution: "@swc/core@npm:1.4.17"
+"@swc/core@npm:^1.5.6":
+  version: 1.5.6
+  resolution: "@swc/core@npm:1.5.6"
   dependencies:
-    "@swc/core-darwin-arm64": 1.4.17
-    "@swc/core-darwin-x64": 1.4.17
-    "@swc/core-linux-arm-gnueabihf": 1.4.17
-    "@swc/core-linux-arm64-gnu": 1.4.17
-    "@swc/core-linux-arm64-musl": 1.4.17
-    "@swc/core-linux-x64-gnu": 1.4.17
-    "@swc/core-linux-x64-musl": 1.4.17
-    "@swc/core-win32-arm64-msvc": 1.4.17
-    "@swc/core-win32-ia32-msvc": 1.4.17
-    "@swc/core-win32-x64-msvc": 1.4.17
+    "@swc/core-darwin-arm64": 1.5.6
+    "@swc/core-darwin-x64": 1.5.6
+    "@swc/core-linux-arm-gnueabihf": 1.5.6
+    "@swc/core-linux-arm64-gnu": 1.5.6
+    "@swc/core-linux-arm64-musl": 1.5.6
+    "@swc/core-linux-x64-gnu": 1.5.6
+    "@swc/core-linux-x64-musl": 1.5.6
+    "@swc/core-win32-arm64-msvc": 1.5.6
+    "@swc/core-win32-ia32-msvc": 1.5.6
+    "@swc/core-win32-x64-msvc": 1.5.6
     "@swc/counter": ^0.1.2
     "@swc/types": ^0.1.5
   peerDependencies:
@@ -956,7 +956,7 @@ __metadata:
   peerDependenciesMeta:
     "@swc/helpers":
       optional: true
-  checksum: 65fce1ebee900e4e6bdbc6f6eda22ffdda71e9b34895a7d3a185578d9aab0accc3202f367d480aaa35e99137a762121b913bbdb62113ac823d0c7acab00808d0
+  checksum: 47a1ce273cc0622f9c9f7b21db3ea09ab53e824cab61f802f9b238b9b6116c5e05b6bd6bf0f5bfa6162d61e001ad5ebb5903a72feeed0cd951ffc52506e58452
   languageName: node
   linkType: hard
 
@@ -1134,12 +1134,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^20.12.7":
-  version: 20.12.7
-  resolution: "@types/node@npm:20.12.7"
+"@types/node@npm:*, @types/node@npm:^20.12.12":
+  version: 20.12.12
+  resolution: "@types/node@npm:20.12.12"
   dependencies:
     undici-types: ~5.26.4
-  checksum: 7cc979f7e2ca9a339ec71318c3901b9978555257929ef3666987f3e447123bc6dc92afcc89f6347e09e07d602fde7d51bcddea626c23aa2bb74aeaacfd1e1686
+  checksum: 5373983874b9af7c216e7ca5d26b32a8d9829c703a69f1e66f2113598b5be8582c0e009ca97369f1ec9a6282b3f92812208d06eb1e9fc3bd9b939b022303d042
   languageName: node
   linkType: hard
 
@@ -1224,10 +1224,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@unblockneteasemusic/server@workspace:."
   dependencies:
-    "@swc/core": ^1.4.17
-    "@types/node": ^20.12.7
+    "@swc/core": ^1.5.6
+    "@types/node": ^20.12.12
     "@types/pino": 6.3.12
-    "@yarnpkg/sdks": ^3.1.0
+    "@yarnpkg/sdks": ^3.1.2
     browserslist: ^4.23.0
     core-js: ^3.37.0
     cross-env: ^7.0.3
@@ -1445,17 +1445,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@yarnpkg/core@npm:^4.0.2":
-  version: 4.0.2
-  resolution: "@yarnpkg/core@npm:4.0.2"
+"@yarnpkg/core@npm:^4.0.5":
+  version: 4.0.5
+  resolution: "@yarnpkg/core@npm:4.0.5"
   dependencies:
     "@arcanis/slice-ansi": ^1.1.1
     "@types/semver": ^7.1.0
     "@types/treeify": ^1.0.0
-    "@yarnpkg/fslib": ^3.0.1
-    "@yarnpkg/libzip": ^3.0.0
-    "@yarnpkg/parsers": ^3.0.0
-    "@yarnpkg/shell": ^4.0.0
+    "@yarnpkg/fslib": ^3.0.2
+    "@yarnpkg/libzip": ^3.0.1
+    "@yarnpkg/parsers": ^3.0.2
+    "@yarnpkg/shell": ^4.0.2
     camelcase: ^5.3.1
     chalk: ^3.0.0
     ci-info: ^3.2.0
@@ -1475,49 +1475,49 @@ __metadata:
     treeify: ^1.1.0
     tslib: ^2.4.0
     tunnel: ^0.0.6
-  checksum: 6cbfacd7099705b1c2b4098e67c547f9ba66792dc3f9291f81a885e53b04ad549bb6a5e1f814513b025f7427407a77a1e2bf4e291b3dbd8ede6cbcd02dc82a22
+  checksum: 84c20d70033a513225130456d530d93f9217b6ec7fcc04a4d3666ff20be9063c1b7a4300b1219fa0281b5eecb2e152c3e5e2957179df1d819880569991ef720c
   languageName: node
   linkType: hard
 
-"@yarnpkg/fslib@npm:^3.0.0, @yarnpkg/fslib@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "@yarnpkg/fslib@npm:3.0.1"
+"@yarnpkg/fslib@npm:^3.0.2, @yarnpkg/fslib@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "@yarnpkg/fslib@npm:3.1.0"
   dependencies:
     tslib: ^2.4.0
-  checksum: cb5874f4c1deae85d9c098f92cd55f3a7cf8bf0561b8b8914f827745fce8a51cb9e2faff5c1d99b1689000b936e4169bae88e036177ca320304de55a5c4299b8
+  checksum: 5274c63731cb30283a93e1446d6796b890fc56c55ed046156b2963a527465bc3add091a1e7f471b7533c8b1aa67b8532960e64589787014dee2cf3d97a9304f6
   languageName: node
   linkType: hard
 
-"@yarnpkg/libzip@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "@yarnpkg/libzip@npm:3.0.0"
+"@yarnpkg/libzip@npm:^3.0.1":
+  version: 3.1.0
+  resolution: "@yarnpkg/libzip@npm:3.1.0"
   dependencies:
     "@types/emscripten": ^1.39.6
-    "@yarnpkg/fslib": ^3.0.0
+    "@yarnpkg/fslib": ^3.1.0
     tslib: ^2.4.0
   peerDependencies:
-    "@yarnpkg/fslib": ^3.0.0
-  checksum: 2965c351d229a8afa7e8f88aede6e3b1d8a03a02dc035a61681299689a76b01d985e4cc34085a64dd115cdc73a06349b2f7ac7978bdf53dfc843547db73ad7f5
+    "@yarnpkg/fslib": ^3.1.0
+  checksum: 2bb7c10b41184a079906ec4ebdadda69e4cd3b101d11aae965c08934254dbd303e51e9869fd8d799c5f58d59214cd13d67d454ad96e1c76ce9384816d58da08c
   languageName: node
   linkType: hard
 
-"@yarnpkg/parsers@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "@yarnpkg/parsers@npm:3.0.0"
+"@yarnpkg/parsers@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "@yarnpkg/parsers@npm:3.0.2"
   dependencies:
     js-yaml: ^3.10.0
     tslib: ^2.4.0
-  checksum: fefe5ecafb5bfa2b678ac9ba9259810fdda40142afd9d0b7e0e5cc1cce1fd824dffc52217c5e429807481d8fd18ead074bd317e64fd626335d3c9f1a320bade2
+  checksum: fb40a87ae7c9f3fc0b2a6b7d84375d1c69ae8304daf598c089b52966bfb4ac94fbd2dcd87ed041970416e03d34359cb5ff16be5f5601f48d1f936213a8edaf4d
   languageName: node
   linkType: hard
 
-"@yarnpkg/sdks@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "@yarnpkg/sdks@npm:3.1.0"
+"@yarnpkg/sdks@npm:^3.1.2":
+  version: 3.1.2
+  resolution: "@yarnpkg/sdks@npm:3.1.2"
   dependencies:
-    "@yarnpkg/core": ^4.0.2
-    "@yarnpkg/fslib": ^3.0.1
-    "@yarnpkg/parsers": ^3.0.0
+    "@yarnpkg/core": ^4.0.5
+    "@yarnpkg/fslib": ^3.0.2
+    "@yarnpkg/parsers": ^3.0.2
     chalk: ^3.0.0
     clipanion: ^4.0.0-rc.2
     comment-json: ^2.2.0
@@ -1525,16 +1525,16 @@ __metadata:
     tslib: ^2.4.0
   bin:
     sdks: ./lib/cli.js
-  checksum: 0b81d4b7fc095f025ba6a7d8b26d6c2611e90ae82b97a6ead64acedc96d3615d16b6a0ada71e6339e56fafcf4537aa824570492d86ec1941261042512656898b
+  checksum: dfcca45311a511f8c7dcb67355cc9500ae20a37819f8aed4013ef1968583d4949701323d03e87a64d716a55e8c9795460f26f1d14be16c8010a34c5b706b85c0
   languageName: node
   linkType: hard
 
-"@yarnpkg/shell@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "@yarnpkg/shell@npm:4.0.0"
+"@yarnpkg/shell@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "@yarnpkg/shell@npm:4.0.2"
   dependencies:
-    "@yarnpkg/fslib": ^3.0.0
-    "@yarnpkg/parsers": ^3.0.0
+    "@yarnpkg/fslib": ^3.0.2
+    "@yarnpkg/parsers": ^3.0.2
     chalk: ^3.0.0
     clipanion: ^4.0.0-rc.2
     cross-spawn: 7.0.3
@@ -1543,7 +1543,7 @@ __metadata:
     tslib: ^2.4.0
   bin:
     shell: ./lib/cli.js
-  checksum: 8497e278b1d3d0ffe324a3b9c878ca7165bbbe4d182f5ecb02f1bfaaf4dd18c8aaa54c33ee17bb37eb09173816dc4617b70c3fe0925f5fb99749687e2650b7a2
+  checksum: 01d1b6db891df60ad9458a110657189d4ee19d9df33dd73103ad7d0a8dfebfcd523126d24f745e9465a292863faac570690571535849a2668535688416bba960
   languageName: node
   linkType: hard
 
