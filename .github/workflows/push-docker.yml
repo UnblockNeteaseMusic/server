@@ -1,73 +1,32 @@
-name: Build cross-platform docker image
+name: Docker Image CI
 
 on:
-    push:
-        branches:
-            - 'enhanced'
-        paths:
-            - '.github/workflows/push-docker.yml'
-            - 'precompiled/**'
-            - 'server.crt'
-            - 'server.key'
-
-    release:
-        types:
-            - published
-
-    # Allows you to run this workflow manually from the Actions tab
-    workflow_dispatch:
-
-env:
-    platforms: linux/amd64,linux/arm64,linux/arm/v6,linux/arm/v7
-    image: pan93412/unblock-netease-music-enhanced
-    develop_tag: latest
-    released_tag: release
+  push:
+    branches: [ "enhanced" ]
+  pull_request:
+    branches: [ "enhanced" ]
 
 jobs:
-    build-and-publish:
-        runs-on: ubuntu-latest
-        steps:
-            # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-            - name: Checkout
-              uses: actions/checkout@v4
 
-            - name: Get the current tag name
-              uses: olegtarasov/get-tag@2.1.3
-              id: tagName
+  build-and-push:
 
-            - name: Set up QEMU
-              uses: docker/setup-qemu-action@v3
+    runs-on: ubuntu-latest
 
-            - name: Set up Docker Buildx
-              uses: docker/setup-buildx-action@v3
+    steps:
+    - uses: actions/checkout@v3
 
-            - name: Login to DockerHub
-              uses: docker/login-action@v3
-              with:
-                  username: ${{ secrets.DOCKERHUB_USERNAME }}
-                  password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-            - name: Build and push the latest version
-              uses: docker/build-push-action@v5
-              if: github.event_name != 'release'
-              with:
-                  context: .
-                  platforms: ${{ env.platforms }}
-                  push: true
-                  tags: ${{ env.image }}:${{ env.develop_tag }}
-                  cache-from: type=gha
-                  cache-to: type=gha,mode=max
-
-            - name: Build and push the released version
-              uses: docker/build-push-action@v5
-              if: github.event_name == 'release'
-              with:
-                  context: .
-                  platforms: ${{ env.platforms }}
-                  push: true
-                  tags: >-
-                      ${{ env.image }}:${{ env.develop_tag }},
-                      ${{ env.image }}:${{ env.released_tag }},
-                      ${{ env.image }}:${{ steps.tagName.outputs.tag }}
-                  cache-from: type=gha
-                  cache-to: type=gha,mode=max
+    # 构建 Docker 镜像并打上相应标签
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/netease:latest
+      
+    # 登录至 Docker Hub 
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        
+    # 推送镜像至 Docker Hub
+    - name: Push the Docker image
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/netease:latest
