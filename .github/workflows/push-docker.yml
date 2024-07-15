@@ -3,8 +3,7 @@ name: Docker Image CI
 on:
   push:
     branches: [ "enhanced" ]
-  pull_request:
-    branches: [ "enhanced" ]
+    paths: [ "precompiled/**" ]
 
 jobs:
 
