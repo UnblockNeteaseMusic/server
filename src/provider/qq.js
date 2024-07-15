@@ -86,7 +86,7 @@ const single = (id, format) => {
 		});
 };
 
-const track = (id) => {
+const trackbak = (id) => {
 	id.key = id.file;
 	return Promise.all(
 		[
@@ -106,6 +106,30 @@ const track = (id) => {
 	)
 		.then((result) => result.find((url) => url) || Promise.reject())
 		.catch(() => insure().qq.track(id));
+};
+
+const track = (id) => {
+	// Credit: This API is provided by GD studio (music.gdstudio.xyz).
+	const url =
+		'https://music-api.gdstudio.xyz/api.php?types=url&source=tencent&id=' +
+		id.song +
+		'&br=' +
+		['999', '320'].slice(
+			select.ENABLE_FLAC ? 0 : 1,
+			select.ENABLE_FLAC ? 1 : 2
+		);
+	return request('GET', url)
+		.then((response) => response.json())
+		.then((jsonBody) => {
+			if (
+				jsonBody &&
+				typeof jsonBody === 'object' &&
+				(!'url') in jsonBody
+			)
+				return Promise.reject();
+
+			return jsonBody.br > 0 ? jsonBody.url : Promise.reject();
+		});
 };
 
 const cs = getManagedCacheStorage('provider/qq');
