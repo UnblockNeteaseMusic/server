@@ -14,7 +14,7 @@ const format = (song) => ({
 
 const search = (info) => {
 	const url =
-		'https://music-api.gdstudio.xyz/api.php?types=search&source=spotify&name='+info.keyword+'&count=5&pages=1';
+		'https://music-api.gdstudio.xyz/api.php?types=search&source=spotify&name='+encodeURIComponent(info.keyword)+'&count=5&pages=1';
 
 	return request('GET', url)
 		.then((response) => response.json())
