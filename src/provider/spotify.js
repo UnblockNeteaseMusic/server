@@ -19,7 +19,7 @@ const search = (info) => {
 	return request('GET', url)
 		.then((response) => response.json())
 		.then((jsonBody) => {
-			const result = jsonBody.search.data.body.song.list.map(format);
+			const result = jsonBody.map(format);
 			const matched = select(result, info);
 			return matched ? matched.id : Promise.reject();
 		});
