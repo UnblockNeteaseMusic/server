@@ -10,6 +10,7 @@ const PROVIDERS = {
 	ytdlp: require('./provider/yt-dlp'),
 	bilibili: require('./provider/bilibili'),
 	pyncmd: require('./provider/pyncmd'),
+	spotify: require('./provider/spotify'),
 };
 
 module.exports = {
