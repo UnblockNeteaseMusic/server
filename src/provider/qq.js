@@ -111,7 +111,7 @@ const trackbak = (id) => {
 const track = (id) => {
 	// Credit: This API is provided by GD studio (music.gdstudio.xyz).
 	const url =
-		'https://music-api.gdstudio.xyz/api.php?types=url&source=tencent&id=' +
+		'https://music-api-cn.gdstudio.xyz:22443/api.php?callback=jQuery11130011454769037164692_1721093829004&types=url&source=tencent&id=' +
 		id.song +
 		'&br=' +
 		['999', '320'].slice(
