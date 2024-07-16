@@ -45,7 +45,7 @@ const track = (id) => {
 			)
 				return Promise.reject();
 
-			return jsonBody.br > 0 ? 'https://music.gdstudio.xyz/'+jsonBody.url : Promise.reject();
+			return jsonBody.br > 0 ? 'https://music-api.gdstudio.xyz/'+jsonBody.url : Promise.reject();
 		});
 };
 
