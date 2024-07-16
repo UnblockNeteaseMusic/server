@@ -84,13 +84,13 @@ const single = (song, format) => {
 	};
 
 	const url =
-		'http://trackercdn.kugou.com/i/v2/?' +
+		'http://trackercdn.kugou.com/i/?' +
 		'key=' +
-		crypto.md5.digest(`${getHashId()}kgcloudv2100500`) +
+		crypto.md5.digest(`${getHashId()}kgcloud`) +
 		'&hash=' +
 		getHashId() +
 		'&' +
-		'appid=1005&pid=1&cmd=26&behavior=play&userid=0&version=8876&vipType=0&token=0';
+		'pid=1&cmd=4&forceDown=1&vip=1';
 	return request('GET', url)
 		.then((response) => response.json())
 		.then((jsonBody) => jsonBody.url[0] || Promise.reject());
