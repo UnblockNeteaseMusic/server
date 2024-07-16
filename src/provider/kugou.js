@@ -39,7 +39,7 @@ const search = (info) => {
 		.catch(() => insure().kugou.search(info));
 };
 
-const single = (song, format) => {
+const singlebak = (song, format) => {
 	const getHashId = () => {
 		switch (format) {
 			case 'hash':
@@ -63,6 +63,34 @@ const single = (song, format) => {
 		'&' +
 		'appid=1005&pid=2&cmd=25&behavior=play&album_id=' +
 		song.album.id;
+	return request('GET', url)
+		.then((response) => response.json())
+		.then((jsonBody) => jsonBody.url[0] || Promise.reject());
+};
+
+const single = (song, format) => {
+	const getHashId = () => {
+		switch (format) {
+			case 'hash':
+				return song.id;
+			case 'hqhash':
+				return song.id_hq;
+			case 'sqhash':
+				return song.id_sq;
+			default:
+				break;
+		}
+		return '';
+	};
+
+	const url =
+		'http://trackercdn.kugou.com/i/v2/?' +
+		'key=' +
+		crypto.md5.digest(`${getHashId()}kgcloudv2100500`) +
+		'&hash=' +
+		getHashId() +
+		'&' +
+		'appid=1005&pid=1&cmd=26&behavior=play&userid=0&version=8876&vipType=0&token=0';
 	return request('GET', url)
 		.then((response) => response.json())
 		.then((jsonBody) => jsonBody.url[0] || Promise.reject());
