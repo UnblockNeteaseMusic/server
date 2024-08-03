@@ -107,6 +107,8 @@ const domainList = [
 	'iplay.163.com',
 	'look.163.com',
 	'y.163.com',
+	'interface.music.163.com',
+	'interface3.music.163.com',
 ];
 
 hook.request.before = (ctx) => {
@@ -117,7 +119,7 @@ hook.request.before = (ctx) => {
 			: (req.socket.encrypted ? 'https:' : 'http:') +
 				'//' +
 				(domainList.some((domain) =>
-					(req.headers.host || '').endsWith(domain)
+					(req.headers.host || '').includes(domain)
 				)
 					? req.headers.host
 					: null)) + req.url;
@@ -292,14 +294,17 @@ hook.request.after = (ctx) => {
 						/([^\\]"\s*:\s*)(\d{16,})(\s*[}|,])/g,
 						'$1"$2L"$3'
 					); // for js precision
-				try {
-					netease.encrypted = false;
-					netease.jsonBody = JSON.parse(patch(buffer.toString()));
-				} catch (error) {
-					netease.encrypted = true;
+
+				if (netease.param.hasOwnProperty('e_r') && (netease.param.e_r == 'true' || netease.param.e_r == true)) {
+					// eapi's e_r is true, needs to be encrypted
+					netease.e_r = true;
 					netease.jsonBody = JSON.parse(
 						patch(crypto.eapi.decrypt(buffer).toString())
 					);
+				}
+				else {
+					netease.e_r = false;
+					netease.jsonBody = JSON.parse(patch(buffer.toString()));
 				}
 
 				if (ENABLE_LOCAL_VIP) {
@@ -466,7 +471,7 @@ hook.request.after = (ctx) => {
 					/([^\\]"\s*:\s*)"(\d{16,})L"(\s*[}|,])/g,
 					'$1$2$3'
 				); // for js precision
-				proxyRes.body = netease.encrypted
+				proxyRes.body = netease.e_r // eapi's e_r is true, needs to be encrypted
 					? crypto.eapi.encrypt(Buffer.from(body))
 					: body;
 			})
