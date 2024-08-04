@@ -41,6 +41,15 @@ module.exports = {
 			};
 		},
 	},
+	api: {
+		encryptRequest: (url, object) => {
+			url = parse(url);
+			return {
+				url: url.href.replace(/\w*api/, 'api'),
+				body: bodyify(object),
+			};
+		},
+	},
 	linuxapi: {
 		encrypt: (buffer) => encrypt(buffer, linuxapiKey),
 		decrypt: (buffer) => decrypt(buffer, linuxapiKey),

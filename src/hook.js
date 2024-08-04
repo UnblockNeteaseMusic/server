@@ -148,7 +148,7 @@ hook.request.before = (ctx) => {
 			hook.target.host.has(host)
 		) &&
 		req.method === 'POST' &&
-		(url.path === '/api/linux/forward' || url.path.startsWith('/eapi/'))
+		(url.path.startsWith('/eapi/') || url.path.startsWith('/api/'))
 	) {
 		return request
 			.read(req)
@@ -164,41 +164,74 @@ hook.request.before = (ctx) => {
 					return; // look living/cloudupload eapi can not be decrypted
 				req.headers['Accept-Encoding'] = 'gzip, deflate'; // https://blog.csdn.net/u013022222/article/details/51707352
 				if (body) {
-					let data;
 					const netease = {};
 					netease.pad = (body.match(/%0+$/) || [''])[0];
-					netease.forward = url.path === '/api/linux/forward';
-					if (netease.forward) {
-						data = JSON.parse(
-							crypto.linuxapi
+					if (url.path === '/api/linux/forward') {
+						netease.crypto = 'linuxapi'
+					}
+					else if (url.path.startsWith('/eapi/')) {
+						netease.crypto = 'eapi'
+					}
+					else if (url.path.startsWith('/api/')) {
+						netease.crypto = 'api'
+					}
+					let data;
+					switch (netease.crypto) {
+						case 'linuxapi':
+							data = JSON.parse(
+								crypto.linuxapi
+									.decrypt(
+										Buffer.from(
+											body.slice(
+												8,
+												body.length - netease.pad.length
+											),
+											'hex'
+										)
+									)
+									.toString()
+							);
+							netease.path = parse(data.url).path;
+							netease.param = data.params;
+							break;
+						case 'eapi':
+							data = crypto.eapi
 								.decrypt(
 									Buffer.from(
 										body.slice(
-											8,
+											7,
 											body.length - netease.pad.length
 										),
 										'hex'
 									)
 								)
 								.toString()
-						);
-						netease.path = parse(data.url).path;
-						netease.param = data.params;
-					} else {
-						data = crypto.eapi
-							.decrypt(
-								Buffer.from(
-									body.slice(
-										7,
-										body.length - netease.pad.length
-									),
-									'hex'
-								)
-							)
-							.toString()
-							.split('-36cd479b6b5-');
-						netease.path = data[0];
-						netease.param = JSON.parse(data[1]);
+								.split('-36cd479b6b5-');
+							netease.path = data[0];
+							netease.param = JSON.parse(data[1]);
+							if (
+								netease.param.hasOwnProperty('e_r') &&
+								(netease.param.e_r == 'true' ||
+									netease.param.e_r == true)
+							) {
+								// eapi's e_r is true, needs to be encrypted
+								netease.e_r = true;
+							} else {
+								netease.e_r = false;
+							}
+							break;
+						case 'api':
+							data = {};
+							decodeURIComponent(body).split('&').forEach((pair) => {
+								let [key, value] = pair.split('=');
+								data[key] = value
+							});
+							netease.path = url.path
+							netease.param = data
+							break;
+						default:
+							// unsupported crypto
+							break;
 					}
 					netease.path = netease.path.replace(/\/\d*$/, '');
 					ctx.netease = netease;
@@ -295,15 +328,13 @@ hook.request.after = (ctx) => {
 						'$1"$2L"$3'
 					); // for js precision
 
-				if (netease.param.hasOwnProperty('e_r') && (netease.param.e_r == 'true' || netease.param.e_r == true)) {
+				if (netease.e_r) {
 					// eapi's e_r is true, needs to be encrypted
-					netease.e_r = true;
 					netease.jsonBody = JSON.parse(
 						patch(crypto.eapi.decrypt(buffer).toString())
 					);
 				}
 				else {
-					netease.e_r = false;
 					netease.jsonBody = JSON.parse(patch(buffer.toString()));
 				}
 
@@ -531,14 +562,22 @@ const pretendPlay = (ctx) => {
 	const { req, netease } = ctx;
 	const turn = 'http://music.163.com/api/song/enhance/player/url';
 	let query;
-	if (netease.forward) {
-		const { id, br } = netease.param;
-		netease.param = { ids: `["${id}"]`, br };
-		query = crypto.linuxapi.encryptRequest(turn, netease.param);
-	} else {
-		const { id, br, e_r, header } = netease.param;
-		netease.param = { ids: `["${id}"]`, br, e_r, header };
-		query = crypto.eapi.encryptRequest(turn, netease.param);
+	const { id, br, e_r, header } = netease.param;
+	switch (netease.crypto) {
+		case 'linuxapi':
+			netease.param = { ids: `["${id}"]`, br };
+			query = crypto.linuxapi.encryptRequest(turn, netease.param);
+			break;
+		case 'eapi':
+		case 'api':
+			netease.param = { ids: `["${id}"]`, br, e_r, header };
+			if (netease.crypto == 'eapi')
+				query = crypto.eapi.encryptRequest(turn, netease.param);
+			else if (netease.crypto == 'api')
+				query = crypto.api.encryptRequest(turn, netease.param);
+			break;
+		default:
+			break;
 	}
 	req.url = query.url;
 	req.body = query.body + netease.pad;
@@ -548,26 +587,34 @@ const pretendPlayV1 = (ctx) => {
 	const { req, netease } = ctx;
 	const turn = 'http://music.163.com/api/song/enhance/player/url/v1';
 	let query;
-	if (netease.forward) {
-		const { id, level, immerseType } = netease.param;
-		netease.param = {
-			ids: `["${id}"]`,
-			level,
-			encodeType: 'flac',
-			immerseType,
-		};
-		query = crypto.linuxapi.encryptRequest(turn, netease.param);
-	} else {
-		const { id, level, immerseType, e_r, header } = netease.param;
-		netease.param = {
-			ids: `["${id}"]`,
-			level,
-			encodeType: 'flac',
-			immerseType,
-			e_r,
-			header,
-		};
-		query = crypto.eapi.encryptRequest(turn, netease.param);
+	const { id, level, immerseType, e_r, header } = netease.param;
+	switch (netease.crypto) {
+		case 'linuxapi':
+			netease.param = {
+				ids: `["${id}"]`,
+				level,
+				encodeType: 'flac',
+				immerseType,
+			};
+			query = crypto.linuxapi.encryptRequest(turn, netease.param);
+			break;
+		case 'eapi':
+		case 'api':
+			netease.param = {
+				ids: `["${id}"]`,
+				level,
+				encodeType: 'flac',
+				immerseType,
+				e_r,
+				header,
+			};
+			if (netease.crypto == 'eapi')
+				query = crypto.eapi.encryptRequest(turn, netease.param);
+			else if (netease.crypto == 'api')
+				query = crypto.api.encryptRequest(turn, netease.param);
+			break;
+		default:
+			break;
 	}
 	req.url = query.url;
 	req.body = query.body + netease.pad;
