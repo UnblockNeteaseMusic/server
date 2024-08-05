@@ -1447,9 +1447,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@yarnpkg/core@npm:^4.1.0":
-  version: 4.1.1
-  resolution: "@yarnpkg/core@npm:4.1.1"
+"@yarnpkg/core@npm:^4.1.2":
+  version: 4.1.2
+  resolution: "@yarnpkg/core@npm:4.1.2"
   dependencies:
     "@arcanis/slice-ansi": ^1.1.1
     "@types/semver": ^7.1.0
@@ -1460,7 +1460,7 @@ __metadata:
     "@yarnpkg/shell": ^4.0.2
     camelcase: ^5.3.1
     chalk: ^3.0.0
-    ci-info: ^3.2.0
+    ci-info: ^4.0.0
     clipanion: ^4.0.0-rc.2
     cross-spawn: 7.0.3
     diff: ^5.1.0
@@ -1477,7 +1477,7 @@ __metadata:
     treeify: ^1.1.0
     tslib: ^2.4.0
     tunnel: ^0.0.6
-  checksum: e5255c84c1af276f5360b26d82d1d9124ae90eea54fb2635b4a6a7b7e8467452985105876259f63357d13a7a97b63c0e362d8f5a47d056b52aed2dabe358ca25
+  checksum: f84919298e63ac6e6c6febf23835c294d079d7f8cbfd562f22cb2d85c7cbfce23fdc341f8b3d527a08dc3e11201658953e945ebb7936c8c14ef0c3433b0f60af
   languageName: node
   linkType: hard
 
@@ -1514,10 +1514,10 @@ __metadata:
   linkType: hard
 
 "@yarnpkg/sdks@npm:^3.1.3":
-  version: 3.1.3
-  resolution: "@yarnpkg/sdks@npm:3.1.3"
+  version: 3.2.0
+  resolution: "@yarnpkg/sdks@npm:3.2.0"
   dependencies:
-    "@yarnpkg/core": ^4.1.0
+    "@yarnpkg/core": ^4.1.2
     "@yarnpkg/fslib": ^3.1.0
     "@yarnpkg/parsers": ^3.0.2
     chalk: ^3.0.0
@@ -1527,7 +1527,7 @@ __metadata:
     tslib: ^2.4.0
   bin:
     sdks: ./lib/cli.js
-  checksum: 3d7e53611b574e4a4d47a43eff95620c592cf60774bd5d83d2e340635efa5e3d869c84e2f1608815aa58ece50ad90b33f62ff3005989f9fd1e59552b45d165d8
+  checksum: 7f093d949deadfee755410b9c7301a17b8598c77c322abd86e4bd5538d09dd9d836c852add8782231a994318bce20e1fd0799d448adbe8ffc2d0875751c9da3d
   languageName: node
   linkType: hard
 
@@ -2041,6 +2041,13 @@ __metadata:
   version: 3.3.0
   resolution: "ci-info@npm:3.3.0"
   checksum: c3d86fe374938ecda5093b1ba39acb535d8309185ba3f23587747c6a057e63f45419b406d880304dbc0e1d72392c9a33e42fe9a1e299209bc0ded5efaa232b66
+  languageName: node
+  linkType: hard
+
+"ci-info@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "ci-info@npm:4.0.0"
+  checksum: 122fe41c5eb8d0b5fa0ab6fd674c5ddcf2dc59766528b062a0144ff0d913cfb210ef925ec52110e7c2a7f4e603d5f0e8b91cfe68867e196e9212fa0b94d0a08a
   languageName: node
   linkType: hard
 
