@@ -167,13 +167,11 @@ hook.request.before = (ctx) => {
 					const netease = {};
 					netease.pad = (body.match(/%0+$/) || [''])[0];
 					if (url.path === '/api/linux/forward') {
-						netease.crypto = 'linuxapi'
-					}
-					else if (url.path.startsWith('/eapi/')) {
-						netease.crypto = 'eapi'
-					}
-					else if (url.path.startsWith('/api/')) {
-						netease.crypto = 'api'
+						netease.crypto = 'linuxapi';
+					} else if (url.path.startsWith('/eapi/')) {
+						netease.crypto = 'eapi';
+					} else if (url.path.startsWith('/api/')) {
+						netease.crypto = 'api';
 					}
 					let data;
 					switch (netease.crypto) {
@@ -222,12 +220,14 @@ hook.request.before = (ctx) => {
 							break;
 						case 'api':
 							data = {};
-							decodeURIComponent(body).split('&').forEach((pair) => {
-								let [key, value] = pair.split('=');
-								data[key] = value
-							});
-							netease.path = url.path
-							netease.param = data
+							decodeURIComponent(body)
+								.split('&')
+								.forEach((pair) => {
+									let [key, value] = pair.split('=');
+									data[key] = value;
+								});
+							netease.path = url.path;
+							netease.param = data;
 							break;
 						default:
 							// unsupported crypto
@@ -333,8 +333,7 @@ hook.request.after = (ctx) => {
 					netease.jsonBody = JSON.parse(
 						patch(crypto.eapi.decrypt(buffer).toString())
 					);
-				}
-				else {
+				} else {
 					netease.jsonBody = JSON.parse(patch(buffer.toString()));
 				}
 
