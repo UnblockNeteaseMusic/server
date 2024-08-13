@@ -8,6 +8,7 @@ const {pathToFileURL} = require(`url`);
 const relPnpApiPath = "../../../../.pnp.cjs";
 
 const absPnpApiPath = resolve(__dirname, relPnpApiPath);
+const absUserWrapperPath = resolve(__dirname, `./sdk.user.cjs`);
 const absRequire = createRequire(absPnpApiPath);
 
 const absPnpLoaderPath = resolve(absPnpApiPath, `../.pnp.loader.mjs`);
@@ -23,5 +24,9 @@ if (existsSync(absPnpApiPath)) {
   }
 }
 
+const wrapWithUserWrapper = existsSync(absUserWrapperPath)
+  ? exports => absRequire(absUserWrapperPath)(exports)
+  : exports => exports;
+
 // Defer to the real prettier/bin/prettier.cjs your application uses
-module.exports = absRequire(`prettier/bin/prettier.cjs`);
+module.exports = wrapWithUserWrapper(absRequire(`prettier/bin/prettier.cjs`));
