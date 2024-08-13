@@ -53,9 +53,7 @@ const search = (info) => {
 				jsonBody.content[1].musicpage.abslist.length < 1
 			)
 				return Promise.reject();
-			const list = jsonBody.content[1].musicpage.abslist
-				.filter((v) => v.tpay /* vip ? */ === '0')
-				.map(format);
+			const list = jsonBody.content[1].musicpage.abslist.map(format);
 			const matched = select(list, info);
 			return matched ? matched.id : Promise.reject();
 		});
