@@ -47,24 +47,18 @@ async function getUrl(args) {
 	}
 }
 
-const search = async (info) => {
-	const { id } = await getUrl(dlArguments(byKeyword(info.keyword)));
-	return id;
-};
-
-const track = async (id) => {
-	const { url } = await getUrl(dlArguments(byId(id)));
+const track = async (info) => {
+	const { url } = await getUrl(dlArguments(byKeyword(info.keyword)));
 	return url;
 };
 
 const cs = getManagedCacheStorage('youtube-dl');
 const check = (info) =>
 	cs
-		.cache(info, () => search(info))
-		.then(track)
+		.cache(info, () => track(info))
 		.catch((e) => {
 			if (e) logger.error(e);
 			throw e;
 		});
 
-module.exports = { check, track };
+module.exports = { check };
