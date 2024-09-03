@@ -16,8 +16,6 @@ const YtDlpNotInstalled = require('../exceptions/YtDlpNotInstalled');
  * @param {string} query
  */
 const dlArguments = (query) => ['-f', '140', '--dump-json', query];
-/** @param {string} id */
-const byId = (id) => `https://www.youtube.com/watch?v=${id}`;
 /** @param {string} keyword */
 const byKeyword = (keyword) => `ytsearch1:${keyword}`;
 const logger = logScope('provider/yt-dlp');
