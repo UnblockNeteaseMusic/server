@@ -12,9 +12,11 @@ COPY ./*.key /app/
 ENV SIGN_CERT /app/server.crt
 ENV SIGN_KEY /app/server.key
 ENV NODE_ENV production
+ENV PORTS="80:443"
+ENV CHINA_IP="103.126.92.133"
 
 WORKDIR /app
 
-EXPOSE 8080 8081
+EXPOSE 80 443
 
-ENTRYPOINT ["node", "app.js"]
+ENTRYPOINT ["sh", "-c", "node app.js -p $PORTS -f $CHINA_IP"]
