@@ -10,10 +10,10 @@
 
 ## 特性
 
--   支援多个音源，替换变灰歌曲链接
-    -   支援的完整音源清单可以见下方〈音源清单〉处。
--   为请求增加 `X-Real-IP` 参数解锁海外限制，支持指定网易云服务器 IP，支持设置上游 HTTP / HTTPS 代理
--   完整的流量代理功能 (HTTP / HTTPS)，可直接作为系统代理 (同时支持 PAC)
+- 支援多个音源，替换变灰歌曲链接
+    - 支援的完整音源清单可以见下方〈音源清单〉处。
+- 为请求增加 `X-Real-IP` 参数解锁海外限制，支持指定网易云服务器 IP，支持设置上游 HTTP / HTTPS 代理
+- 完整的流量代理功能 (HTTP / HTTPS)，可直接作为系统代理 (同时支持 PAC)
 
 ## 运行
 
@@ -178,7 +178,7 @@ node app.js -o bilibili ytdlp
 | B 站音乐                    | `bilibili`  | ✅       |                                                                                |
 | 第三方网易云 API            | `pyncmd`    |          |                                                                                |
 
--   支持 `pyncmd` 的 API 服务由 GD studio <https://music.gdstudio.xyz> 提供。
+- 支持 `pyncmd` 的 API 服务由 GD studio <https://music.gdstudio.xyz> 提供。
 
 ### 环境变量
 
@@ -211,9 +211,9 @@ node app.js -o bilibili ytdlp
 
 这些是常用的值：
 
--   `debug`: 输出所有记录（调试用）
--   `info`: 只输出一般资讯（默认值）
--   `error`: 只在出严重问题时输出
+- `debug`: 输出所有记录（调试用）
+- `info`: 只输出一般资讯（默认值）
+- `error`: 只在出严重问题时输出
 
 详细请参见 [Pino 对此的说明](https://github.com/pinojs/pino/blob/master/docs/api.md#level-string)。
 
