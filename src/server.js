@@ -131,7 +131,7 @@ const proxy = {
 					req.headers['referer'] = 'https://www.bilibili.com/';
 					req.headers['user-agent'] = 'okhttp/3.4.1';
 				}
-				const url = parse(req.url);
+				const url = parse(req.url.replace("http://", 'https://'));
 				const options = request.configure(req.method, url, req.headers);
 				ctx.proxyReq = request
 					.create(url)(options)
