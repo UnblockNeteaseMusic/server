@@ -58,7 +58,7 @@ http 代理使用 `127.0.0.1`，端口默认使用 `8080`。
 
 #### Docker Hub
 
-见 [pan93412/unblock-netease-music-enhanced](https://hub.docker.com/repository/docker/pan93412/unblock-netease-music-enhanced)
+见 [pan93412/unblock-netease-music-enhanced](https://hub.docker.com/r/pan93412/unblock-netease-music-enhanced)
 。`latest` 是从 `enhanced` 组建的最新版本；`release` 是最新 tag 的版本。
 
 直接运行 `pan93412/unblock-netease-music-enhanced` 的命令如下：
