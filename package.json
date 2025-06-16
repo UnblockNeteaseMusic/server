@@ -48,7 +48,7 @@
 		"browserslist": "^4.25.0",
 		"core-js": "^3.42.0",
 		"cross-env": "^7.0.3",
-		"jest": "^29.7.0",
+		"jest": "^30.0.0",
 		"pkg": "^5.8.1",
 		"prettier": "^3.5.3",
 		"swc-loader": "^0.2.6",
