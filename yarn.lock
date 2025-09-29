@@ -2472,15 +2472,15 @@ __metadata:
   linkType: hard
 
 "cross-env@npm:^10.0.0":
-  version: 10.0.0
-  resolution: "cross-env@npm:10.0.0"
+  version: 10.1.0
+  resolution: "cross-env@npm:10.1.0"
   dependencies:
     "@epic-web/invariant": ^1.0.0
     cross-spawn: ^7.0.6
   bin:
     cross-env: dist/bin/cross-env.js
     cross-env-shell: dist/bin/cross-env-shell.js
-  checksum: 3ab63968e015e5de56e1a411aff34e4c94536574be85666fa173ffd4bda899891acfd5bd4fd8dfedcb107220908b88c79565df35fd6c848c87ab623ec9888982
+  checksum: bd7e013603df8dc3a5a2d259a84f43a62114486e141395668ea46e9c5d154b312ebf26486f30699ffe7ff8f275331e00e61d7a720d1593185fce685b0f1c3d9f
   languageName: node
   linkType: hard
 
