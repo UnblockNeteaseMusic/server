@@ -170,7 +170,7 @@ hook.request.before = (ctx) => {
 					req.url.includes('/eapi/cloud/upload/check')
 				)
 					return; // look living/cloudupload eapi can not be decrypted
-				if (req.headers['sec-ch-ua'])
+				if (req.headers['Accept-Encoding'])
 					req.headers['Accept-Encoding'] = 'gzip, deflate'; // https://blog.csdn.net/u013022222/article/details/51707352
 				if (body) {
 					const netease = {};
