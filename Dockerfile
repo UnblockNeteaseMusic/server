@@ -2,7 +2,9 @@ FROM node:lts-alpine
 
 RUN set -ex && mkdir /app
 RUN apk add --no-cache python3 youtube-dl \
-    && wget https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -O /usr/local/bin/yt-dlp \
+    && wget https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -O /usr/local/bin/.yt-dlp \
+    && chmod a+rx /usr/local/bin/.yt-dlp \
+    && printf '#!/bin/sh\nexec /usr/local/bin/.yt-dlp --js-runtimes node "$@"\n' | tee /usr/local/bin/yt-dlp \
     && chmod a+rx /usr/local/bin/yt-dlp
 
 COPY ./precompiled/* /app/
