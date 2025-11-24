@@ -14,7 +14,7 @@ jobs:
         steps:
             # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
             - name: Checkout
-              uses: actions/checkout@v5
+              uses: actions/checkout@v6
 
               # Setup .npmrc file to publish to npm
             - uses: actions/setup-node@v6
@@ -35,7 +35,7 @@ jobs:
         steps:
             # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
             - name: Checkout
-              uses: actions/checkout@v5
+              uses: actions/checkout@v6
 
               # Setup .npmrc file to publish to npm
             - uses: actions/setup-node@v6
