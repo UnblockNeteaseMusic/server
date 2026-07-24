@@ -28,3 +28,5 @@ elif [ "$TYPE" == "ECC" ]; then
 	openssl req -new -sha384 -key server.key -out server.csr -subj "/C=CN/L=Hangzhou/O=NetEase (Hangzhou) Network Co., Ltd/OU=IT Dept./CN=*.music.163.com"
 	openssl x509 -req -extfile san.cnf -sha384 -days 365 -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt
 fi
+
+rm -f san.cnf
