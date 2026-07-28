@@ -165,20 +165,20 @@ optional arguments:
 node app.js -o bilibili ytdlp
 ```
 
-| 名称                        | 代号        | 默认启用 | 注意事项                                                                       |
-| --------------------------- | ----------- | -------- | ------------------------------------------------------------------------------ |
-| QQ 音乐                     | `qq`        |          | 需要准备自己的 `QQ_COOKIE`（请参阅下方〈环境变量〉处）。必须使用 QQ 登录。     |
-| 酷狗音乐                    | `kugou`     | ✅       |                                                                                |
-| 酷我音乐                    | `kuwo`      |          |                                                                                |
-| 波点音乐                    | `bodian`    | ✅       |                                                                                |
-| 咪咕音乐                    | `migu`      | ✅       | 需要准备自己的 `MIGU_COOKIE`（请参阅下方〈环境变量〉处）。                     |
+| 名称                        | 代号        | 默认启用 | 注意事项                                                                                                              |
+| --------------------------- | ----------- | -------- | --------------------------------------------------------------------------------------------------------------------- |
+| QQ 音乐                     | `qq`        |          | 需要准备自己的 `QQ_COOKIE`（请参阅下方〈环境变量〉处）。必须使用 QQ 登录。                                            |
+| 酷狗音乐                    | `kugou`     | ✅       |                                                                                                                       |
+| 酷我音乐                    | `kuwo`      |          |                                                                                                                       |
+| 波点音乐                    | `bodian`    | ✅       |                                                                                                                       |
+| 咪咕音乐                    | `migu`      | ✅       | 需要准备自己的 `MIGU_COOKIE`（请参阅下方〈环境变量〉处）。                                                            |
 | JOOX                        | `joox`      |          | 需要准备自己的 `JOOX_COOKIE`（请参阅下方〈环境变量〉处）。<br>仅支持 Hong Kong, Macau, Thailand, Malaysia, Indonesia. |
-| YouTube（纯 JS 解析方式）   | `youtube`   |          | 需要 Google 认定的**非中国大陆区域** IP 地址。                                 |
-| YouTube（通过 `youtube-dl`) | `youtubedl` |          | 需要自行安装 `youtube-dl`。                                                    |
-| YouTube（通过 `yt-dlp`)     | `ytdlp`     | ✅       | 需要自行安装 `yt-dlp`（`youtube-dl` 仍在活跃维护的 fork）。                    |
-| B 站音乐                    | `bilibili`  |          |                                                                                |
-| B 站音乐                    | `bilivideo` |          | 在大陆地区外的IP地址可能查询不到某些版权视频（如索尼音乐上传的MV等）           |
-| 第三方网易云 API            | `pyncmd`    |          |                                                                                |
+| YouTube（纯 JS 解析方式）   | `youtube`   |          | 需要 Google 认定的**非中国大陆区域** IP 地址。                                                                        |
+| YouTube（通过 `youtube-dl`) | `youtubedl` |          | 需要自行安装 `youtube-dl`。                                                                                           |
+| YouTube（通过 `yt-dlp`)     | `ytdlp`     | ✅       | 需要自行安装 `yt-dlp`（`youtube-dl` 仍在活跃维护的 fork）。                                                           |
+| B 站音乐                    | `bilibili`  |          |                                                                                                                       |
+| B 站音乐                    | `bilivideo` |          | 在大陆地区外的IP地址可能查询不到某些版权视频（如索尼音乐上传的MV等）                                                  |
+| 第三方网易云 API            | `pyncmd`    |          |                                                                                                                       |
 
 - 支持 `pyncmd` 的 API 服务由 GD studio <https://music.gdstudio.xyz> 提供。
 
