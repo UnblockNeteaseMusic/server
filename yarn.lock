@@ -2769,13 +2769,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"enhanced-resolve@npm:^5.24.2":
-  version: 5.24.3
-  resolution: "enhanced-resolve@npm:5.24.3"
+"enhanced-resolve@npm:^5.24.4":
+  version: 5.24.5
+  resolution: "enhanced-resolve@npm:5.24.5"
   dependencies:
     graceful-fs: ^4.2.4
     tapable: ^2.3.3
-  checksum: b9a8c59b1e2b2ac31472026831a2ef40196226fd27848432662cf097dd44cc747a26c561f509fb6af5dfa6febb0aa8ee41695c9182b2a5900c0e59fb76ad6ca5
+  checksum: dc2da64244f529335c603870ca485281f92cd92c4579b1baf613d5f86cfc71f901ea3c29066e242c115340be8164e9d9c917bd05720b3be8bed649745004dc24
   languageName: node
   linkType: hard
 
@@ -6209,8 +6209,8 @@ __metadata:
   linkType: hard
 
 "webpack@npm:^5.109.1":
-  version: 5.109.1
-  resolution: "webpack@npm:5.109.1"
+  version: 5.109.2
+  resolution: "webpack@npm:5.109.2"
   dependencies:
     "@types/estree": ^1.0.8
     "@types/json-schema": ^7.0.15
@@ -6220,7 +6220,7 @@ __metadata:
     acorn: ^8.16.0
     browserslist: ^4.28.1
     chrome-trace-event: ^1.0.2
-    enhanced-resolve: ^5.24.2
+    enhanced-resolve: ^5.24.4
     es-module-lexer: ^2.1.0
     eslint-scope: 5.1.1
     events: ^3.2.0
@@ -6237,7 +6237,7 @@ __metadata:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: 2fdd71df478fea483583e58379aace0e738609bf19074e052a577b6ce1123627e71ca6ab867978c33e89eb326fe04df4cb44d2d45f6b0388f69f8ef9dc4b4576
+  checksum: 108a974320b3c8f592eac5fdcaa3916da2a9894026b1df3612c9dd51b0ed5597d8993d163f1252e339f8a2b41f22d49f1df33a17d7e061da63e79b58bc8958bc
   languageName: node
   linkType: hard
 
