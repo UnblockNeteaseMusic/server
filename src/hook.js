@@ -881,7 +881,17 @@ const tryMatch = (ctx) => {
 				); // reduce time cost
 		tasks = jsonBody.data.map((item) => inject(item));
 	}
-	return Promise.all(tasks).catch((e) => e && logger.error(e));
+	return Promise.all(tasks)
+	.then(() => {
+		if (
+			jsonBody.code === -460 &&
+			jsonBody.data?.some((item) => item?.code === 200 && item?.url)
+		) {
+			jsonBody.code = 200;
+			delete jsonBody.message;
+		}
+	})
+	.catch((e) => e && logger.error(e));
 };
 
 const unblockSoundEffects = (obj) => {
