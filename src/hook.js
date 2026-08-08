@@ -117,6 +117,17 @@ const domainList = [
 	'interface3.music.163.com',
 ];
 
+const setHeader = (headers, name, value) => {
+	for (const key in headers) {
+		if (key.toLowerCase() === name.toLowerCase()) {
+			headers[key] = value;
+			return;
+		}
+	}
+
+	headers[name.toLowerCase()] = value;
+};
+
 hook.request.before = (ctx) => {
 	const { req } = ctx;
 	req.url =
@@ -140,28 +151,26 @@ hook.request.before = (ctx) => {
 	if (url.path.includes('url')) {
 	let replaced = [];
 
-	// 可选：替换网易云 Cookie
 	if (process.env.NETEASE_COOKIE) {
-		var cookies = cookieToMap(req.headers.cookie || '');
-		var new_cookies = cookieToMap(process.env.NETEASE_COOKIE);
-
-		Object.entries(new_cookies).forEach(([key, value]) => {
-			cookies[key] = value;
-		});
-
-		req.headers.cookie = mapToCookie(cookies);
+		setHeader(req.headers, 'Cookie', process.env.NETEASE_COOKIE);
 		replaced.push('Cookie');
 	}
 
-	// 可选：替换 User-Agent
 	if (process.env.NETEASE_USER_AGENT) {
-		req.headers['user-agent'] = process.env.NETEASE_USER_AGENT;
+		setHeader(
+			req.headers,
+			'User-Agent',
+			process.env.NETEASE_USER_AGENT
+		);
 		replaced.push('User-Agent');
 	}
 
-	// 可选：替换 MConfig-Info
 	if (process.env.NETEASE_MCONFIG_INFO) {
-		req.headers['mconfig-info'] = process.env.NETEASE_MCONFIG_INFO;
+		setHeader(
+			req.headers,
+			'MConfig-Info',
+			process.env.NETEASE_MCONFIG_INFO
+		);
 		replaced.push('MConfig-Info');
 	}
 
