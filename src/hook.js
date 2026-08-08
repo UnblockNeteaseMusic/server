@@ -93,6 +93,7 @@ hook.target.path = new Set([
 	'/api/cloudsearch/pc',
 	'/api/v1/playlist/manipulate/tracks',
 	'/api/song/like',
+	'/api/radio/like',
 	'/api/v1/play/record',
 	'/api/playlist/v4/detail',
 	'/api/v1/radio/get',
@@ -136,8 +137,12 @@ hook.request.before = (ctx) => {
 	)
 		ctx.decision = 'proxy';
 
-	if (process.env.NETEASE_COOKIE && url.path.includes('url')) {
-		var cookies = cookieToMap(req.headers.cookie);
+	if (url.path.includes('url')) {
+	let replaced = [];
+
+	// 可选：替换网易云 Cookie
+	if (process.env.NETEASE_COOKIE) {
+		var cookies = cookieToMap(req.headers.cookie || '');
 		var new_cookies = cookieToMap(process.env.NETEASE_COOKIE);
 
 		Object.entries(new_cookies).forEach(([key, value]) => {
@@ -145,8 +150,25 @@ hook.request.before = (ctx) => {
 		});
 
 		req.headers.cookie = mapToCookie(cookies);
-		logger.debug('Replace netease cookie');
+		replaced.push('Cookie');
 	}
+
+	// 可选：替换 User-Agent
+	if (process.env.NETEASE_USER_AGENT) {
+		req.headers['user-agent'] = process.env.NETEASE_USER_AGENT;
+		replaced.push('User-Agent');
+	}
+
+	// 可选：替换 MConfig-Info
+	if (process.env.NETEASE_MCONFIG_INFO) {
+		req.headers['mconfig-info'] = process.env.NETEASE_MCONFIG_INFO;
+		replaced.push('MConfig-Info');
+	}
+
+	if (replaced.length) {
+		logger.debug(`Replace netease ${replaced.join(', ')}`);
+	}
+    }
 
 	if (
 		[url.hostname, req.headers.host].some((host) =>
@@ -431,8 +453,11 @@ hook.request.after = (ctx) => {
 				) {
 					if (netease.path.includes('manipulate'))
 						return tryCollect(ctx);
-					else if (netease.path === '/api/song/like')
-						return tryLike(ctx);
+					else if (
+	netease.path === '/api/song/like' ||
+	netease.path === '/api/radio/like'
+)
+	return tryLike(ctx);
 				} else if (netease.path.includes('url')) return tryMatch(ctx);
 				else if (netease.path.includes('/usertool/sound/'))
 					return unblockSoundEffects(netease.jsonBody);
@@ -685,18 +710,50 @@ const computeHash = (task) =>
 const tryMatch = (ctx) => {
 	const { req, netease } = ctx;
 	const { jsonBody } = netease;
-	/** @type {number} */
+
+	if (jsonBody.code === -460) {
+		logger.debug(
+			'Official player url blocked (-460), fallback to provider.'
+		);
+
+		const id = Number(
+			netease.param.id ??
+				(
+					Array.isArray(netease.param.ids)
+						? netease.param.ids
+						: JSON.parse(netease.param.ids)
+				)[0]
+					.toString()
+					.replace('_0', '')
+		);
+
+		jsonBody.data = [
+			{
+				id,
+				code: -460,
+				url: null,
+				br: 0,
+				freeTrialInfo: null,
+			},
+		];
+	}
 	const min_br = Number(process.env.MIN_BR) || 0;
 	/** @type {Promise<any>[]} */
 	let tasks;
 	let target = 0;
 
 	const inject = (item) => {
-		item.flag = 0;
-		if (
-			(item.code !== 200 || item.freeTrialInfo || item.br < min_br) &&
-			(target === 0 || item.id === target)
-		) {
+	if (!item) return;
+
+	item.flag = 0;
+
+	if (
+		(item.code !== 200 ||
+			!item.url ||
+			item.freeTrialInfo ||
+			item.br < min_br) &&
+		(target === 0 || item.id === target)
+	) {
 			return match(item.id)
 				.then((song) => {
 					let os = '';
