@@ -744,14 +744,26 @@ const tryMatch = (ctx) => {
 			'Official player url blocked (-460), fallback to provider.'
 		);
 
-		const id = Number(
-			netease.param.id ??
-				(Array.isArray(netease.param.ids)
-					? netease.param.ids
-					: JSON.parse(netease.param.ids))[0]
-					.toString()
-					.replace('_0', '')
-		);
+		// 优先从请求参数取 id（eapi/linuxapi 等可解密请求体的场景）。
+		// xeapi 请求体由客户端 X25519 会话密钥加密，netease.param 为空，
+		// 此时退化为从已解密响应体 data 中已有的歌曲 id 获取。
+		let id;
+		try {
+			id = Number(
+				netease.param.id ??
+					(Array.isArray(netease.param.ids)
+						? netease.param.ids
+						: JSON.parse(netease.param.ids))[0]
+						.toString()
+						.replace('_0', '')
+			);
+		} catch (error) {
+			const item = Array.isArray(jsonBody.data)
+				? jsonBody.data[0]
+				: jsonBody.data;
+			id = item && Number(item.id);
+		}
+		if (isNaN(id)) return;
 
 		jsonBody.data = [
 			{
