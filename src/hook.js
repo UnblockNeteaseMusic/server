@@ -149,35 +149,35 @@ hook.request.before = (ctx) => {
 		ctx.decision = 'proxy';
 
 	if (url.path.includes('url')) {
-	let replaced = [];
+		let replaced = [];
 
-	if (process.env.NETEASE_COOKIE) {
-		setHeader(req.headers, 'Cookie', process.env.NETEASE_COOKIE);
-		replaced.push('Cookie');
-	}
+		if (process.env.NETEASE_COOKIE) {
+			setHeader(req.headers, 'Cookie', process.env.NETEASE_COOKIE);
+			replaced.push('Cookie');
+		}
 
-	if (process.env.NETEASE_USER_AGENT) {
-		setHeader(
-			req.headers,
-			'User-Agent',
-			process.env.NETEASE_USER_AGENT
-		);
-		replaced.push('User-Agent');
-	}
+		if (process.env.NETEASE_USER_AGENT) {
+			setHeader(
+				req.headers,
+				'User-Agent',
+				process.env.NETEASE_USER_AGENT
+			);
+			replaced.push('User-Agent');
+		}
 
-	if (process.env.NETEASE_MCONFIG_INFO) {
-		setHeader(
-			req.headers,
-			'MConfig-Info',
-			process.env.NETEASE_MCONFIG_INFO
-		);
-		replaced.push('MConfig-Info');
-	}
+		if (process.env.NETEASE_MCONFIG_INFO) {
+			setHeader(
+				req.headers,
+				'MConfig-Info',
+				process.env.NETEASE_MCONFIG_INFO
+			);
+			replaced.push('MConfig-Info');
+		}
 
-	if (replaced.length) {
-		logger.debug(`Replace netease ${replaced.join(', ')}`);
+		if (replaced.length) {
+			logger.debug(`Replace netease ${replaced.join(', ')}`);
+		}
 	}
-    }
 
 	if (
 		[url.hostname, req.headers.host].some((host) =>
@@ -185,6 +185,7 @@ hook.request.before = (ctx) => {
 		) &&
 		req.method === 'POST' &&
 		(url.path.startsWith('/eapi/') || // eapi
+			url.path.startsWith('/xeapi/') || // xeapi
 			// url.path.startsWith('/api/') || // api
 			url.path.startsWith('/api/linux/forward')) // linuxapi
 	) {
@@ -195,7 +196,8 @@ hook.request.before = (ctx) => {
 				if ('x-napm-retry' in req.headers)
 					delete req.headers['x-napm-retry'];
 				req.headers['X-Real-IP'] = '118.88.88.88';
-				if ('x-aeapi' in req.headers) req.headers['x-aeapi'] = 'false';
+				if (url.path.startsWith('/eapi/') && 'x-aeapi' in req.headers)
+					req.headers['x-aeapi'] = 'false';
 				if (
 					req.url.includes('stream') ||
 					req.url.includes('/eapi/cloud/upload/check')
@@ -208,6 +210,13 @@ hook.request.before = (ctx) => {
 					netease.pad = (body.match(/%0+$/) || [''])[0];
 					if (url.path === '/api/linux/forward') {
 						netease.crypto = 'linuxapi';
+					} else if (url.path.startsWith('/xeapi/')) {
+						// xeapi uses a per-request X25519 session key. Its request
+						// body cannot be decrypted by this proxy, but its response can.
+						netease.crypto = 'xeapi';
+						netease.path = url.path.replace(/^\/xeapi\//, '/api/');
+						netease.param = {};
+						netease.e_r = true;
 					} else if (url.path.startsWith('/eapi/')) {
 						netease.crypto = 'eapi';
 					} else if (url.path.startsWith('/api/')) {
@@ -277,10 +286,16 @@ hook.request.before = (ctx) => {
 					ctx.netease = netease;
 					// console.log(netease.path, netease.param)
 
-					if (netease.path === '/api/song/enhance/download/url')
+					if (
+						netease.crypto !== 'xeapi' &&
+						netease.path === '/api/song/enhance/download/url'
+					)
 						return pretendPlay(ctx);
 
-					if (netease.path === '/api/song/enhance/download/url/v1')
+					if (
+						netease.crypto !== 'xeapi' &&
+						netease.path === '/api/song/enhance/download/url/v1'
+					)
 						return pretendPlayV1(ctx);
 
 					if (BLOCK_ADS) {
@@ -368,7 +383,11 @@ hook.request.after = (ctx) => {
 						'$1"$2L"$3'
 					); // for js precision
 
-				if (netease.e_r) {
+				if (netease.crypto === 'xeapi') {
+					netease.jsonBody = JSON.parse(
+						patch(crypto.xeapi.decrypt(buffer).toString())
+					);
+				} else if (netease.e_r) {
 					// eapi's e_r is true, needs to be encrypted
 					netease.jsonBody = JSON.parse(
 						patch(crypto.eapi.decrypt(buffer).toString())
@@ -463,10 +482,10 @@ hook.request.after = (ctx) => {
 					if (netease.path.includes('manipulate'))
 						return tryCollect(ctx);
 					else if (
-	netease.path === '/api/song/like' ||
-	netease.path === '/api/radio/like'
-)
-	return tryLike(ctx);
+						netease.path === '/api/song/like' ||
+						netease.path === '/api/radio/like'
+					)
+						return tryLike(ctx);
 				} else if (netease.path.includes('url')) return tryMatch(ctx);
 				else if (netease.path.includes('/usertool/sound/'))
 					return unblockSoundEffects(netease.jsonBody);
@@ -544,7 +563,7 @@ hook.request.after = (ctx) => {
 					/([^\\]"\s*:\s*)"(\d{16,})L"(\s*[}|,])/g,
 					'$1$2$3'
 				); // for js precision
-				proxyRes.body = netease.e_r // eapi's e_r is true, needs to be encrypted
+				proxyRes.body = netease.e_r // encrypted eapi/xeapi responses
 					? crypto.eapi.encrypt(Buffer.from(body))
 					: body;
 			})
@@ -727,11 +746,9 @@ const tryMatch = (ctx) => {
 
 		const id = Number(
 			netease.param.id ??
-				(
-					Array.isArray(netease.param.ids)
-						? netease.param.ids
-						: JSON.parse(netease.param.ids)
-				)[0]
+				(Array.isArray(netease.param.ids)
+					? netease.param.ids
+					: JSON.parse(netease.param.ids))[0]
 					.toString()
 					.replace('_0', '')
 		);
@@ -752,17 +769,17 @@ const tryMatch = (ctx) => {
 	let target = 0;
 
 	const inject = (item) => {
-	if (!item) return;
+		if (!item) return;
 
-	item.flag = 0;
+		item.flag = 0;
 
-	if (
-		(item.code !== 200 ||
-			!item.url ||
-			item.freeTrialInfo ||
-			item.br < min_br) &&
-		(target === 0 || item.id === target)
-	) {
+		if (
+			(item.code !== 200 ||
+				!item.url ||
+				item.freeTrialInfo ||
+				item.br < min_br) &&
+			(target === 0 || item.id === target)
+		) {
 			return match(item.id)
 				.then((song) => {
 					let os = '';
@@ -868,30 +885,32 @@ const tryMatch = (ctx) => {
 		jsonBody.data = jsonBody.data[0];
 		tasks = [inject(jsonBody.data)];
 	} else {
-		target = netease.web
-			? 0
-			: parseInt(
-					(
-						(Array.isArray(netease.param.ids)
-							? netease.param.ids
-							: JSON.parse(netease.param.ids))[0] || 0
-					)
-						.toString()
-						.replace('_0', '')
-				); // reduce time cost
+		if (netease.crypto !== 'xeapi') {
+			target = netease.web
+				? 0
+				: parseInt(
+						(
+							(Array.isArray(netease.param.ids)
+								? netease.param.ids
+								: JSON.parse(netease.param.ids))[0] || 0
+						)
+							.toString()
+							.replace('_0', '')
+					); // reduce time cost
+		}
 		tasks = jsonBody.data.map((item) => inject(item));
 	}
 	return Promise.all(tasks)
-	.then(() => {
-		if (
-			jsonBody.code === -460 &&
-			jsonBody.data?.some((item) => item?.code === 200 && item?.url)
-		) {
-			jsonBody.code = 200;
-			delete jsonBody.message;
-		}
-	})
-	.catch((e) => e && logger.error(e));
+		.then(() => {
+			if (
+				jsonBody.code === -460 &&
+				jsonBody.data?.some((item) => item?.code === 200 && item?.url)
+			) {
+				jsonBody.code = 200;
+				delete jsonBody.message;
+			}
+		})
+		.catch((e) => e && logger.error(e));
 };
 
 const unblockSoundEffects = (obj) => {
