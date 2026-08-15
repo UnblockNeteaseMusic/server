@@ -35,10 +35,10 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            - uses: actions/checkout@v6
+            - uses: actions/checkout@v7
 
             - name: Use Node.js 20
-              uses: actions/setup-node@v6
+              uses: actions/setup-node@v7
               with:
                   node-version: 20
                   cache: yarn
@@ -71,7 +71,7 @@ jobs:
                       ./dist/*
 
             - name: Publishing to GitHub Releases
-              uses: svenstaro/upload-release-action@2.11.4
+              uses: svenstaro/upload-release-action@2.11.5
               if: github.event_name == 'release'
               with:
                   repo_token: ${{ github.token }}
