@@ -32,6 +32,11 @@ const PLAIN_ENDPOINT_OS = new Set(
 		.filter(Boolean)
 );
 const PACKAGE_SCHEME = (process.env.PACKAGE_SCHEME || '').toLowerCase();
+// Verdicts the upstream returns instead of a url when it refuses to serve the
+// track at all — a risk check tripping, rather than the track being unlicensed.
+// These arrive at the top level of the response, where a per-entry code would
+// normally be, and can leave the entry itself empty.
+const BLOCKED_CODES = new Set([-460, -462]);
 
 const hook = {
 	request: {
@@ -107,6 +112,7 @@ hook.target.path = new Set([
 	'/api/cloudsearch/pc',
 	'/api/v1/playlist/manipulate/tracks',
 	'/api/song/like',
+	'/api/radio/like',
 	'/api/v1/play/record',
 	'/api/playlist/v4/detail',
 	'/api/v1/radio/get',
@@ -149,6 +155,22 @@ const domainList = [
 	'interface.music.163.com',
 	'interface3.music.163.com',
 ];
+
+/**
+ * Set a request header, replacing whatever casing it already arrived under.
+ * Node lowercases what it parses, but a header this hook added itself may not
+ * be, and two spellings of the same name would both be sent.
+ *
+ * @param {Record<string, string>} headers
+ * @param {string} name
+ * @param {string} value
+ */
+const setHeader = (headers, name, value) => {
+	const existing = Object.keys(headers).find(
+		(key) => key.toLowerCase() === name.toLowerCase()
+	);
+	headers[existing || name.toLowerCase()] = value;
+};
 
 /**
  * The `x-encr-sskey` a xeapi response carries is the very key the client will
@@ -235,16 +257,42 @@ hook.request.before = (ctx) => {
 	)
 		ctx.decision = 'proxy';
 
-	if (process.env.NETEASE_COOKIE && url.path.includes('url')) {
-		var cookies = cookieToMap(req.headers.cookie);
-		var new_cookies = cookieToMap(process.env.NETEASE_COOKIE);
+	if (url.path.includes('url')) {
+		const replaced = [];
 
-		Object.entries(new_cookies).forEach(([key, value]) => {
-			cookies[key] = value;
-		});
+		// Merge rather than replace: the client's own cookie carries the
+		// platform and version this hook later reads back out of it.
+		if (process.env.NETEASE_COOKIE) {
+			const cookies = cookieToMap(req.headers.cookie || '');
+			Object.entries(cookieToMap(process.env.NETEASE_COOKIE)).forEach(
+				([key, value]) => {
+					cookies[key] = value;
+				}
+			);
+			setHeader(req.headers, 'Cookie', mapToCookie(cookies));
+			replaced.push('Cookie');
+		}
 
-		req.headers.cookie = mapToCookie(cookies);
-		logger.debug('Replace netease cookie');
+		if (process.env.NETEASE_USER_AGENT) {
+			setHeader(
+				req.headers,
+				'User-Agent',
+				process.env.NETEASE_USER_AGENT
+			);
+			replaced.push('User-Agent');
+		}
+
+		if (process.env.NETEASE_MCONFIG_INFO) {
+			setHeader(
+				req.headers,
+				'MConfig-Info',
+				process.env.NETEASE_MCONFIG_INFO
+			);
+			replaced.push('MConfig-Info');
+		}
+
+		if (replaced.length)
+			logger.debug(`Replaced the netease ${replaced.join(', ')}.`);
 	}
 
 	if (
@@ -494,7 +542,10 @@ hook.request.after = (ctx) => {
 				) {
 					if (netease.path.includes('manipulate'))
 						return tryCollect(ctx);
-					else if (netease.path === '/api/song/like')
+					else if (
+						netease.path === '/api/song/like' ||
+						netease.path === '/api/radio/like'
+					)
 						return tryLike(ctx);
 				} else if (netease.path.includes('url')) return tryMatch(ctx);
 				else if (netease.path.includes('/usertool/sound/'))
@@ -942,14 +993,42 @@ const tryMatch = (ctx) => {
 	let tasks;
 	let target = 0;
 
+	// A refused response may carry nothing to patch — no entry, or none with a
+	// usable id. Stand one in so the track still goes through the providers.
+	if (BLOCKED_CODES.has(jsonBody.code)) {
+		const present = Array.isArray(jsonBody.data)
+			? jsonBody.data[0]
+			: jsonBody.data;
+		const id =
+			(present && Number(present.id)) || requestedId(netease.param);
+		if (!id) {
+			logger.debug(
+				`The upstream refused with ${jsonBody.code} and named no song, so there is nothing to match.`
+			);
+			return;
+		}
+		logger.debug(
+			`The upstream refused with ${jsonBody.code}, falling back to the providers for ${id}.`
+		);
+		jsonBody.data = [
+			{ ...present, id, code: jsonBody.code, url: null, br: 0 },
+		];
+	}
+
 	const inject = (item) => {
+		// A blocked response can carry no entry at all.
+		if (!item) return;
 		item.flag = 0;
 		// A response to a download request may leave the id out, so fall back
 		// to the one that was asked for.
 		const songId = item.id || requestedId(netease.param);
 		if (
 			songId &&
-			(item.code !== 200 || item.freeTrialInfo || item.br < min_br) &&
+			// A `200` that still has no url is as unplayable as an error.
+			(item.code !== 200 ||
+				!item.url ||
+				item.freeTrialInfo ||
+				item.br < min_br) &&
 			(target === 0 || songId === target)
 		) {
 			return match(songId)
@@ -1031,7 +1110,24 @@ const tryMatch = (ctx) => {
 		target = netease.web ? 0 : requestedId(netease.param); // reduce time cost
 		tasks = jsonBody.data.map((item) => inject(item));
 	}
-	return Promise.all(tasks).catch((e) => e && logger.error(e));
+	return Promise.all(tasks)
+		.then(() => {
+			// A response the upstream refused carries its verdict at the top
+			// level, and a client that reads that first never looks at the
+			// entry we just filled in. Once something is playable, the refusal
+			// no longer describes the response.
+			if (
+				BLOCKED_CODES.has(jsonBody.code) &&
+				Array.isArray(jsonBody.data) &&
+				jsonBody.data.some(
+					(item) => item && item.code === 200 && item.url
+				)
+			) {
+				jsonBody.code = 200;
+				delete jsonBody.message;
+			}
+		})
+		.catch((e) => e && logger.error(e));
 };
 
 /**
