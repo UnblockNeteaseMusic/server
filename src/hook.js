@@ -122,14 +122,22 @@ hook.target.path = new Set([
 	'/api/vipauth/app/auth/query',
 	'/api/music-vip-membership/client/vip/info',
 	'/api/music-vip-membership/front/vip/info',
+	'/api/nuser/account/get',
+	'/api/w/nuser/account/get',
 ]);
 
-// The two interchangeable endpoints the client reads the membership state
-// from. `client` is the one the app has always used; `front` is the newer
-// variant, and either may show up standalone or inside a `/batch`.
+// The membership state reaches the client on two unrelated responses, and both
+// have to agree or the status looks unchanged: the entitlement endpoint says
+// what the account may play, while the account endpoint carries the flag the
+// badge is drawn from. Each has an older and a newer variant that are both
+// still served, and any of them may show up standalone or inside a `/batch`.
 const VIP_INFO_PATHS = [
 	'/api/music-vip-membership/client/vip/info',
 	'/api/music-vip-membership/front/vip/info',
+];
+const VIP_ACCOUNT_PATHS = [
+	'/api/nuser/account/get',
+	'/api/w/nuser/account/get',
 ];
 
 const domainList = [
@@ -621,15 +629,56 @@ hook.negotiate.before = (ctx) => {
 };
 
 /**
- * Rewrite a membership response so the client believes it is a paying member.
- * The state may arrive on its own or as one entry of a `/batch`, under either
- * of the two interchangeable endpoints.
+ * Rewrite the membership responses so the client believes it is a paying
+ * member. This has to cover both signals: the entitlement endpoint the player
+ * consults for playback, and the account endpoint the VIP badge is drawn from.
+ * Either may arrive on its own or as one entry of a `/batch`.
  *
  * @param {{ path: string, jsonBody: Record<string, any> }} netease
  */
 const applyLocalVip = (netease) => {
 	const batched = netease.path === '/batch' || netease.path === '/api/batch';
-	if (!batched && !VIP_INFO_PATHS.includes(netease.path)) return;
+	const entry = (path) =>
+		batched
+			? netease.jsonBody[path]
+			: netease.path === path
+				? netease.jsonBody
+				: undefined;
+	const store = (path, value) => {
+		if (batched) netease.jsonBody[path] = value;
+		else netease.jsonBody = value;
+	};
+
+	VIP_INFO_PATHS.forEach((path) => {
+		const info = entry(path);
+		if (info === undefined) return;
+		if (patchVipEntitlement(info)) {
+			store(path, info);
+			logger.debug(`Applied the local VIP on ${path}.`);
+		}
+	});
+
+	VIP_ACCOUNT_PATHS.forEach((path) => {
+		const account = entry(path);
+		if (account === undefined) return;
+		if (patchVipAccount(account)) {
+			store(path, account);
+			logger.debug(`Applied the local VIP on ${path}.`);
+		}
+	});
+};
+
+/**
+ * The entitlement response: `associator`/`redplus`/`musicPackage` describe what
+ * the account is allowed to play. `redplus` is the SVIP tier.
+ *
+ * @param {Record<string, any>} info
+ * @return {boolean} Whether the response was patched.
+ */
+const patchVipEntitlement = (info) => {
+	if (!info || !info.data) return false;
+	if (LOCAL_VIP_UID.length !== 0 && !LOCAL_VIP_UID.includes(info.data.userId))
+		return false;
 
 	const defaultPackage = {
 		iconUrl: null,
@@ -641,63 +690,73 @@ const applyLocalVip = (netease) => {
 	};
 	const vipLevel = 7; // ? months
 
-	VIP_INFO_PATHS.forEach((vipPath) => {
-		if (!batched && netease.path !== vipPath) return;
-		const info = batched ? netease.jsonBody[vipPath] : netease.jsonBody;
-		if (!info || !info.data) return;
-		if (
-			LOCAL_VIP_UID.length !== 0 &&
-			!LOCAL_VIP_UID.includes(info.data.userId)
-		)
-			return;
+	try {
+		const nowTime = info.data.now || new Date().getTime();
+		const expireTime = nowTime + 31622400000;
+		info.data.redVipLevel = vipLevel;
+		info.data.redVipAnnualCount = 1;
 
-		try {
-			const nowTime = info.data.now || new Date().getTime();
-			const expireTime = nowTime + 31622400000;
-			info.data.redVipLevel = vipLevel;
-			info.data.redVipAnnualCount = 1;
+		info.data.musicPackage = {
+			...defaultPackage,
+			...info.data.musicPackage,
+			vipCode: 230,
+			vipLevel,
+			expireTime,
+		};
 
-			info.data.musicPackage = {
+		info.data.associator = {
+			...defaultPackage,
+			...info.data.associator,
+			vipCode: 100,
+			vipLevel,
+			expireTime,
+		};
+
+		if (ENABLE_LOCAL_SVIP) {
+			info.data.redplus = {
 				...defaultPackage,
-				...info.data.musicPackage,
-				vipCode: 230,
+				...info.data.redplus,
+				vipCode: 300,
 				vipLevel,
 				expireTime,
 			};
 
-			info.data.associator = {
+			info.data.albumVip = {
 				...defaultPackage,
-				...info.data.associator,
-				vipCode: 100,
-				vipLevel,
+				...info.data.albumVip,
+				vipCode: 400,
+				vipLevel: 0,
 				expireTime,
 			};
-
-			if (ENABLE_LOCAL_SVIP) {
-				info.data.redplus = {
-					...defaultPackage,
-					...info.data.redplus,
-					vipCode: 300,
-					vipLevel,
-					expireTime,
-				};
-
-				info.data.albumVip = {
-					...defaultPackage,
-					...info.data.albumVip,
-					vipCode: 400,
-					vipLevel: 0,
-					expireTime,
-				};
-			}
-
-			if (batched) netease.jsonBody[vipPath] = info;
-			else netease.jsonBody = info;
-			logger.debug(`Applied the local VIP on ${vipPath}.`);
-		} catch (error) {
-			logger.debug({ err: error }, 'Unable to apply the local VIP.');
 		}
-	});
+		return true;
+	} catch (error) {
+		logger.debug({ err: error }, 'Unable to apply the local VIP.');
+		return false;
+	}
+};
+
+/**
+ * The account response: `profile.vipType` is the flag the client draws the VIP
+ * badge from. `11` is the ordinary black-vinyl VIP, `100` the SVIP tier. Left
+ * untouched, the entitlement patch above shows nothing on the profile itself.
+ *
+ * @param {Record<string, any>} account
+ * @return {boolean} Whether the response was patched.
+ */
+const patchVipAccount = (account) => {
+	const profile = account && account.profile;
+	if (!profile) return false;
+	if (LOCAL_VIP_UID.length !== 0 && !LOCAL_VIP_UID.includes(profile.userId))
+		return false;
+
+	try {
+		profile.vipType = ENABLE_LOCAL_SVIP ? 100 : 11;
+		return true;
+	} catch (error) {
+		logger.debug({ err: error }, 'Unable to apply the local VIP account.');
+		return false;
+	}
 };
 
 const pretendPlay = (ctx) => {
