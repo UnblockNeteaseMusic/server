@@ -131,7 +131,9 @@ async function match(id, source, data) {
 		},
 		`Replaced: [${audioId}] ${name}`
 	);
-	return audioData;
+	// Carry the track length along: the caller needs it to describe the
+	// replacement, and it was already fetched to look the song up.
+	return { duration: audioInfo.duration, ...audioData };
 }
 
 /**

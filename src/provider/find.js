@@ -1,5 +1,8 @@
 const request = require('../request');
 const { getManagedCacheStorage } = require('../cache');
+const { logScope } = require('../logger');
+
+const logger = logScope('provider/find');
 
 const filter = (object, keys) =>
 	Object.keys(object).reduce(
@@ -23,14 +26,19 @@ const limit = (text) => {
 
 const getFormatData = (data) => {
 	try {
-		const info = filter(data, ['id', 'name', 'alias', 'duration']);
+		const info = filter(data, ['id', 'name']);
+		// `/api/v3/song/detail` renames most of what the legacy endpoint
+		// returned: `ar`, `al`, `dt` and `alia` instead of `artists`, `album`,
+		// `duration` and `alias`. Accept either shape.
+		info.alias = data.alias || data.alia || [];
+		info.duration = data.duration ?? data.dt;
 		info.name = (info.name || '')
 			.replace(/（\s*cover[:：\s][^）]+）/i, '')
 			.replace(/\(\s*cover[:：\s][^)]+\)/i, '')
 			.replace(/（\s*翻自[:：\s][^）]+）/, '')
 			.replace(/\(\s*翻自[:：\s][^)]+\)/, '');
-		info.album = filter(data.album, ['id', 'name']);
-		info.artists = data.artists.map((artist) =>
+		info.album = filter(data.album || data.al || {}, ['id', 'name']);
+		info.artists = (data.artists || data.ar || []).map((artist) =>
 			filter(artist, ['id', 'name'])
 		);
 		info.keyword =
@@ -50,21 +58,58 @@ const getFormatData = (data) => {
 	}
 };
 
+/**
+ * Ask Netease Music what a song is. `/api/v3/song/detail` is what the current
+ * client uses; the long-standing `/api/song/detail` is kept as a fallback for
+ * when the newer one is unreachable.
+ *
+ * @param {string | number} id
+ * @return {Promise<Record<string, unknown>>}
+ */
+const detail = (id) => {
+	const url = 'https://music.163.com/api/v3/song/detail';
+	const body =
+		'c=' + encodeURIComponent(JSON.stringify([{ id: Number(id) }]));
+	return request(
+		'POST',
+		url,
+		{
+			'content-type': 'application/x-www-form-urlencoded',
+			referer: 'https://music.163.com',
+		},
+		body
+	)
+		.then((response) => response.json())
+		.then((jsonBody) =>
+			jsonBody && jsonBody.songs && jsonBody.songs.length
+				? jsonBody.songs[0]
+				: Promise.reject()
+		)
+		.catch((error) => {
+			if (error)
+				logger.debug(error, 'Falling back to the legacy detail.');
+			return request(
+				'GET',
+				'https://music.163.com/api/song/detail?ids=[' + id + ']'
+			)
+				.then((response) => response.json())
+				.then((jsonBody) =>
+					jsonBody && jsonBody.songs && jsonBody.songs.length
+						? jsonBody.songs[0]
+						: Promise.reject()
+				);
+		});
+};
+
 const find = (id, data) => {
 	if (data) {
 		const info = getFormatData(data);
 		return info.name ? Promise.resolve(info) : Promise.reject();
 	} else {
-		const url = 'https://music.163.com/api/song/detail?ids=[' + id + ']';
-		return request('GET', url)
-			.then((response) => response.json())
-			.then((jsonBody) => {
-				if (jsonBody && jsonBody.songs && jsonBody.songs.length) {
-					const info = getFormatData(jsonBody.songs[0]);
-					return info.name ? info : Promise.reject();
-				}
-				return Promise.reject();
-			});
+		return detail(id).then((song) => {
+			const info = getFormatData(song);
+			return info.name ? info : Promise.reject();
+		});
 	}
 };
 

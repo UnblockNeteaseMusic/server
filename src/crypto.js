@@ -1,26 +1,98 @@
 'use strict';
 
 const crypto = require('crypto');
+const zlib = require('zlib');
 const parse = require('url').parse;
 const bodyify = require('querystring').stringify;
 
 const eapiKey = 'e82ckenh8dichen8';
 const linuxapiKey = 'rFgB&h#%2?^eDg:Q';
+// The fixed key the client uses for the outer layer of every xeapi payload.
+const xeapiKey = Buffer.from(
+	'ab1d5a430f6bb04a3f01e81ddd72bd916d5ce591248ac128714806d7f8fb1b84',
+	'hex'
+);
 
 const decrypt = (buffer, key) => {
-	const decipher = crypto.createDecipheriv('aes-128-ecb', key, null);
+	const decipher = crypto.createDecipheriv(
+		`aes-${key.length * 8}-ecb`,
+		key,
+		null
+	);
 	return Buffer.concat([decipher.update(buffer), decipher.final()]);
 };
 
 const encrypt = (buffer, key) => {
-	const cipher = crypto.createCipheriv('aes-128-ecb', key, null);
+	const cipher = crypto.createCipheriv(
+		`aes-${key.length * 8}-ecb`,
+		key,
+		null
+	);
 	return Buffer.concat([cipher.update(buffer), cipher.final()]);
+};
+
+const compressed = (buffer) =>
+	buffer.length > 1 && buffer[0] === 0x1f && buffer[1] === 0x8b;
+
+/**
+ * The obfuscation the client wraps around the inner xeapi ciphertext: the
+ * payload is XOR-ed with a random pad, base64-ed, then rotated by an offset
+ * derived from that pad. The pad is prepended, so it is fully reversible.
+ */
+const transform = (buffer) => {
+	const pad = crypto.randomBytes(16);
+	const masked = Buffer.alloc(buffer.length);
+	for (let index = 0; index < buffer.length; index++)
+		masked[index] = buffer[index] ^ pad[index & 0x0f];
+	const encoded = Buffer.from(masked.toString('base64'));
+	const rotation = encoded.length ? (pad[0] & 0x0f) % encoded.length : 0;
+	return Buffer.concat([
+		pad,
+		encoded.subarray(rotation),
+		encoded.subarray(0, rotation),
+	]);
+};
+
+const untransform = (buffer) => {
+	const pad = buffer.subarray(0, 16);
+	const rotated = buffer.subarray(16);
+	const rotation = rotated.length ? (pad[0] & 0x0f) % rotated.length : 0;
+	const encoded = Buffer.concat([
+		rotated.subarray(rotated.length - rotation),
+		rotated.subarray(0, rotated.length - rotation),
+	]);
+	const masked = Buffer.from(encoded.toString(), 'base64');
+	const result = Buffer.alloc(masked.length);
+	for (let index = 0; index < masked.length; index++)
+		result[index] = masked[index] ^ pad[index & 0x0f];
+	return result;
 };
 
 module.exports = {
 	eapi: {
 		encrypt: (buffer) => encrypt(buffer, eapiKey),
 		decrypt: (buffer) => decrypt(buffer, eapiKey),
+		/**
+		 * Encrypted response bodies (eapi with `e_r`, and every xeapi
+		 * response) share one codec: the ciphertext may wrap a gzip stream,
+		 * which is what the client asks for with the `x-aeapi` header.
+		 *
+		 * @param {Buffer} buffer
+		 * @return {{ body: Buffer, compressed: boolean }}
+		 */
+		decryptResponse: (buffer) => {
+			const body = decrypt(buffer, eapiKey);
+			return compressed(body)
+				? { body: zlib.gunzipSync(body), compressed: true }
+				: { body, compressed: false };
+		},
+		/**
+		 * @param {Buffer} buffer
+		 * @param {boolean} compress Re-compress, to answer in the same shape
+		 *                           the upstream response arrived in.
+		 */
+		encryptResponse: (buffer, compress) =>
+			encrypt(compress ? zlib.gzipSync(buffer) : buffer, eapiKey),
 		encryptRequest: (url, object) => {
 			url = parse(url);
 			const text = JSON.stringify(object);
@@ -40,6 +112,32 @@ module.exports = {
 				}),
 			};
 		},
+	},
+	/**
+	 * The encryption newer clients use, posted to `/xeapi/<path>`. A request
+	 * carries three base64 fields:
+	 *
+	 * - `B`: `AES-ECB(dynamicKey, transform(AES-ECB(xeapiKey, plaintext)))`,
+	 *   where the plaintext is `{ body, queryString, ... }` with the form
+	 *   parameters base64-ed into `body`.
+	 * - `S`: the `dynamicKey` sealed against the server's X25519 key, so it is
+	 *   readable by the server only.
+	 * - `R`: `AES-ECB(xeapiKey, "<keyVersion>|<sessionId>")`.
+	 *
+	 * The first request of a session uses a random `dynamicKey` we cannot
+	 * recover, but the server answers with the session key in plaintext
+	 * (`x-encr-sskey`) and the client reuses it from then on — which is how
+	 * the proxy gets to read the following requests. Responses are always
+	 * encrypted with the well-known eapi key, so they need no session at all.
+	 */
+	xeapi: {
+		/** @return {[version: string, sessionId: string]} */
+		decryptSession: (buffer) =>
+			decrypt(buffer, xeapiKey).toString().split('|'),
+		decryptRequest: (buffer, key) =>
+			decrypt(untransform(decrypt(buffer, key)), xeapiKey),
+		encryptRequest: (buffer, key) =>
+			encrypt(transform(encrypt(buffer, xeapiKey)), key),
 	},
 	api: {
 		encryptRequest: (url, object) => {
