@@ -89,3 +89,12 @@ daemon/
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# IDE
+.idea/
+
+# YouTube cookies
+youtube-cookies.txt
+
+# yt-dlp binary
+yt-dlp.exe

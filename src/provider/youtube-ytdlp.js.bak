@@ -1,0 +1,182 @@
+const { exec } = require('child_process');
+const util = require('util');
+const path = require('path');
+const fs = require('fs');
+const { logScope } = require('../logger');
+
+const execPromise = util.promisify(exec);
+const logger = logScope('provider/youtube');
+
+// yt-dlp 可执行文件路径 - 根据环境自动选择
+let YT_DLP_PATH;
+if (fs.existsSync('/usr/local/bin/yt-dlp')) {
+    // Docker/Linux 环境
+    YT_DLP_PATH = '/usr/local/bin/yt-dlp';
+} else if (fs.existsSync(path.join(__dirname, '..', '..', 'yt-dlp.exe'))) {
+    // Windows 环境
+    YT_DLP_PATH = path.join(__dirname, '..', '..', 'yt-dlp.exe');
+} else {
+    // 尝试全局命令
+    YT_DLP_PATH = 'yt-dlp';
+}
+
+// YouTube Cookies 文件路径
+const COOKIES_PATH = process.env.YOUTUBE_COOKIES_PATH || '/app/youtube-cookies.txt';
+const USE_COOKIES = fs.existsSync(COOKIES_PATH);
+
+// 浏览器选项（用于 --cookies-from-browser）
+const BROWSER = process.env.YOUTUBE_BROWSER || null; // 可选: chrome, firefox, edge
+
+logger.info({
+    path: YT_DLP_PATH,
+    useCookies: USE_COOKIES,
+    cookiesPath: USE_COOKIES ? COOKIES_PATH : 'N/A',
+    browser: BROWSER || 'N/A'
+}, '[YouTube] Configuration');
+
+/**
+ * 使用 yt-dlp 搜索 YouTube 视频
+ * @param {string} keyword - 搜索关键词
+ * @returns {Promise<string|null>} 视频 ID 或 null
+ */
+async function searchYouTube(keyword) {
+    try {
+        // 构建命令参数
+        let cookiesArg = '';
+        if (USE_COOKIES) {
+            cookiesArg = `--cookies "${COOKIES_PATH}"`;
+        } else if (BROWSER) {
+            cookiesArg = `--cookies-from-browser ${BROWSER}`;
+        }
+
+        // 使用 yt-dlp 搜索功能，获取第一个结果的 ID
+        const { stdout } = await execPromise(
+            `"${YT_DLP_PATH}" "ytsearch1:${keyword}" --get-id --no-playlist ${cookiesArg}`,
+            { timeout: 15000 }
+        );
+
+        const videoId = stdout.trim();
+        return videoId || null;
+    } catch (error) {
+        logger.debug({ keyword, error: error.message }, '[YouTube] Search failed');
+        return null;
+    }
+}
+
+/**
+ * 使用 yt-dlp 获取音频流 URL
+ * @param {string} videoId - YouTube 视频 ID
+ * @returns {Promise<Object|null>} 音频信息或 null
+ */
+async function getAudioStream(videoId) {
+    try {
+        const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+
+        // 构建命令参数
+        let cookiesArg = '';
+        if (USE_COOKIES) {
+            cookiesArg = `--cookies "${COOKIES_PATH}"`;
+        } else if (BROWSER) {
+            cookiesArg = `--cookies-from-browser ${BROWSER}`;
+        }
+
+        // 使用 yt-dlp 获取最佳音频格式的直链
+        const { stdout } = await execPromise(
+            `"${YT_DLP_PATH}" -f "ba" -g --no-playlist ${cookiesArg} "${videoUrl}"`,
+            { timeout: 20000 }
+        );
+
+        const audioUrl = stdout.trim();
+
+        if (!audioUrl || !audioUrl.startsWith('http')) {
+            return null;
+        }
+
+        return {
+            url: audioUrl,
+            bitrate: 128000,
+            size: 0
+        };
+    } catch (error) {
+        logger.debug({ videoId, error: error.message }, '[YouTube] Failed to get audio stream');
+        return null;
+    }
+}
+
+/**
+ * Search and get audio URL from YouTube
+ * @param {Object} info - 歌曲信息
+ * @param {number} info.id - 网易云歌曲 ID
+ * @param {string} info.keyword - 搜索关键词
+ * @returns {Promise<Object>} 音频信息对象
+ */
+async function check(info) {
+    const { id, keyword, name } = info;
+
+    // 记录收到的完整信息（用于调试）
+    logger.debug({
+        id,
+        keyword,
+        name,
+        keywordLength: keyword ? keyword.length : 0
+    }, '[YouTube] Received request');
+
+    if (!keyword) {
+        logger.debug({ id, name }, '[YouTube] No keyword provided');
+        return null;
+    }
+
+    // 检查关键词是否有效（过滤掉特殊字符和无效关键词）
+    const cleanKeyword = keyword.trim();
+    if (!cleanKeyword || cleanKeyword === '?' || cleanKeyword === ' - ' || cleanKeyword.length < 2) {
+        logger.info({
+            id,
+            keyword,
+            name,
+            cleanKeyword,
+            reason: 'Invalid keyword - skipping YouTube search'
+        }, '[YouTube] Skipping invalid keyword');
+        return null;
+    }
+
+    try {
+        logger.debug({ id, keyword, name }, `[YouTube] 歌名: ${name || keyword}`);
+
+        // 搜索 YouTube 视频
+        const videoId = await searchYouTube(cleanKeyword);
+
+        if (!videoId) {
+            logger.debug({ id, keyword }, '[YouTube] No video found');
+            return null;
+        }
+
+        logger.debug({ id, videoId }, `[YouTube] Found video: ${videoId}`);
+
+        // 获取音频流
+        const audioStream = await getAudioStream(videoId);
+
+        if (!audioStream || !audioStream.url) {
+            logger.debug({ id, videoId }, '[YouTube] No audio stream available');
+            return null;
+        }
+
+        const audioUrl = audioStream.url;
+        const bitrate = audioStream.bitrate;
+
+        logger.debug({ id, bitrate }, `[YouTube] YouTube音源连接 (${Math.floor(bitrate / 1000)}kbps)`);
+
+        // 返回完整音频信息
+        return {
+            id: id.toString(),
+            url: audioUrl,
+            br: bitrate,
+            size: audioStream.size,
+            md5: null
+        };
+    } catch (error) {
+        logger.error({ id, name, error: error.message }, '[YouTube] Failed to get audio');
+        return null;
+    }
+}
+
+module.exports = { check };

@@ -43,9 +43,17 @@ async function getAudioFromSource(source, info) {
 	const audioData = await providers[source].check(info);
 	if (!audioData) throw new SongNotAvailable(source);
 
-	// Get the url from the song data.
-	const song = await check(audioData);
-	logger.debug(song, 'The matched song is:');
+	// If provider already returned full song info (with url), skip the second check
+	let song;
+	if (typeof audioData === 'object' && audioData.url && typeof audioData.url === 'string') {
+		song = audioData;
+		logger.debug(song, 'The matched song is:');
+	} else {
+		// Get the url from the song data.
+		song = await check(audioData);
+		logger.debug(song, 'The matched song is:');
+	}
+
 	if (!song || typeof song.url !== 'string')
 		throw new IncompleteAudioData(
 			'song is undefined, or song.url is not a string.'
@@ -121,15 +129,16 @@ async function match(id, source, data) {
 	}
 
 	const { id: audioId, name } = audioInfo;
-	const { url } = audioData;
+	const { url, source: usedSource } = audioData;
 	logger.debug({ audioInfo, audioData }, 'The data to replace:');
 	logger.info(
 		{
 			audioId,
 			songName: name,
 			url,
+			source: usedSource,
 		},
-		`Replaced: [${audioId}] ${name}`
+		`Replaced: [${audioId}] ${name} (source: ${usedSource})`
 	);
 	return audioData;
 }

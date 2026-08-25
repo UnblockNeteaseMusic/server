@@ -171,9 +171,16 @@ Promise.all(
 		const log = (type) =>
 			logger.info(
 				`${['HTTP', 'HTTPS'][type]} Server running @ http://${
-					address || '0.0.0.0'
+					address || '::'
 				}:${port[type]}`
 			);
+
+		// 显示启用的音源
+		const { DEFAULT_SOURCE } = require('./consts');
+		const enabledSources = global.source || DEFAULT_SOURCE;
+		logger.info(`Enabled music sources: ${enabledSources.join(', ')}`);
+		logger.info(`Priority order: ${enabledSources.map((s, i) => `${i + 1}. ${s}`).join(' -> ')}`);
+
 		if (port[0])
 			server.http
 				.listen(port[0], address)
