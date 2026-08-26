@@ -23,6 +23,20 @@ const LOCAL_VIP_UID = (process.env.LOCAL_VIP_UID || '')
 	.split(',')
 	.map((str) => parseInt(str))
 	.filter((num) => !Number.isNaN(num));
+// Clients that cannot play the package endpoint over TLS, and so are handed
+// plain HTTP (#84). `PACKAGE_SCHEME` overrides the choice for every client.
+const PLAIN_ENDPOINT_OS = new Set(
+	(process.env.PLAIN_ENDPOINT_OS || 'pc,uwp')
+		.split(',')
+		.map((str) => str.trim().toLowerCase())
+		.filter(Boolean)
+);
+const PACKAGE_SCHEME = (process.env.PACKAGE_SCHEME || '').toLowerCase();
+// Verdicts the upstream returns instead of a url when it refuses to serve the
+// track at all — a risk check tripping, rather than the track being unlicensed.
+// These arrive at the top level of the response, where a per-entry code would
+// normally be, and can leave the entry itself empty.
+const BLOCKED_CODES = new Set([-460, -462]);
 
 const hook = {
 	request: {
@@ -60,6 +74,10 @@ hook.target.host = new Set([
 
 hook.target.path = new Set([
 	'/api/v3/playlist/detail',
+	// Song details: v3 is what the current client asks for, the two older
+	// endpoints are still in use by clients that have not moved on.
+	'/api/song/detail',
+	'/api/v2/song/detail',
 	'/api/v3/song/detail',
 	'/api/v6/playlist/detail',
 	'/api/album/play',
@@ -69,6 +87,7 @@ hook.target.path = new Set([
 	'/api/v1/artist/songs',
 	'/api/v2/artist/songs',
 	'/api/artist/top/song',
+	'/api/album',
 	'/api/v1/album',
 	'/api/album/v3/detail',
 	'/api/playlist/privilege',
@@ -93,10 +112,14 @@ hook.target.path = new Set([
 	'/api/cloudsearch/pc',
 	'/api/v1/playlist/manipulate/tracks',
 	'/api/song/like',
+	'/api/radio/like',
 	'/api/v1/play/record',
 	'/api/playlist/v4/detail',
 	'/api/v1/radio/get',
+	// Daily recommendations, every generation the clients in the wild use.
 	'/api/v1/discovery/recommend/songs',
+	'/api/v2/discovery/recommend/songs',
+	'/api/v3/discovery/recommend/songs',
 	'/api/usertool/sound/mobile/promote',
 	'/api/usertool/sound/mobile/theme',
 	'/api/usertool/sound/mobile/animationList',
@@ -104,7 +127,24 @@ hook.target.path = new Set([
 	'/api/usertool/sound/mobile/detail',
 	'/api/vipauth/app/auth/query',
 	'/api/music-vip-membership/client/vip/info',
+	'/api/music-vip-membership/front/vip/info',
+	'/api/nuser/account/get',
+	'/api/w/nuser/account/get',
 ]);
+
+// The membership state reaches the client on two unrelated responses, and both
+// have to agree or the status looks unchanged: the entitlement endpoint says
+// what the account may play, while the account endpoint carries the flag the
+// badge is drawn from. Each has an older and a newer variant that are both
+// still served, and any of them may show up standalone or inside a `/batch`.
+const VIP_INFO_PATHS = [
+	'/api/music-vip-membership/client/vip/info',
+	'/api/music-vip-membership/front/vip/info',
+];
+const VIP_ACCOUNT_PATHS = [
+	'/api/nuser/account/get',
+	'/api/w/nuser/account/get',
+];
 
 const domainList = [
 	'music.163.com',
@@ -115,6 +155,87 @@ const domainList = [
 	'interface.music.163.com',
 	'interface3.music.163.com',
 ];
+
+/**
+ * Set a request header, replacing whatever casing it already arrived under.
+ * Node lowercases what it parses, but a header this hook added itself may not
+ * be, and two spellings of the same name would both be sent.
+ *
+ * @param {Record<string, string>} headers
+ * @param {string} name
+ * @param {string} value
+ */
+const setHeader = (headers, name, value) => {
+	const existing = Object.keys(headers).find(
+		(key) => key.toLowerCase() === name.toLowerCase()
+	);
+	headers[existing || name.toLowerCase()] = value;
+};
+
+/**
+ * The `x-encr-sskey` a xeapi response carries is the very key the client will
+ * encrypt its following requests with, and it arrives as a plain header — so
+ * remembering it here is what lets the proxy read those requests.
+ *
+ * @type {Map<string, string>} Session id to session key.
+ */
+const xeapiSessions = new Map();
+const xeapiSessionLimit = 32;
+
+const rememberXeapiSession = (headers) => {
+	const id = headers['x-encr-ssid'];
+	const key = headers['x-encr-sskey'];
+	if (!id || !key || xeapiSessions.get(id) === key) return;
+	xeapiSessions.set(id, key);
+	while (xeapiSessions.size > xeapiSessionLimit)
+		xeapiSessions.delete(xeapiSessions.keys().next().value);
+	logger.debug(`Remembered the xeapi session ${id}.`);
+};
+
+/**
+ * Read the form parameters out of a xeapi request body. The session the
+ * request belongs to is named in `R`, which is sealed with a well-known key;
+ * the parameters in `B` need that session's key, so they stay unreadable until
+ * a response has handed the session over. An empty object is returned in that
+ * case — the hook then works off the response alone.
+ *
+ * @param {string} body The raw, url-encoded request body.
+ * @return {Record<string, string>}
+ */
+const readXeapiParam = (body) => {
+	const { B, R } = querystring.parse(body);
+	if (!B || !R) return {};
+	// A `+` that reached us unescaped was decoded into a space; base64 never
+	// holds one, so putting it back is always safe.
+	const unbase64 = (value) => Buffer.from(value.replace(/ /g, '+'), 'base64');
+	let id = '';
+	try {
+		id = crypto.xeapi.decryptSession(unbase64(R))[1];
+		const key = xeapiSessions.get(id);
+		if (!key) {
+			logger.debug(
+				`The xeapi session ${
+					id || '(not established yet)'
+				} is unknown, so the request parameters stay sealed.`
+			);
+			return {};
+		}
+		const { body: param } = JSON.parse(
+			crypto.xeapi
+				.decryptRequest(unbase64(B), Buffer.from(key))
+				.toString()
+		);
+		return param
+			? querystring.parse(Buffer.from(param, 'base64').toString())
+			: {};
+	} catch (error) {
+		logger.debug(
+			{ err: error },
+			`Unable to read the parameters of the xeapi session ${id}.`
+		);
+		return {};
+	}
+};
 
 hook.request.before = (ctx) => {
 	const { req } = ctx;
@@ -136,16 +257,42 @@ hook.request.before = (ctx) => {
 	)
 		ctx.decision = 'proxy';
 
-	if (process.env.NETEASE_COOKIE && url.path.includes('url')) {
-		var cookies = cookieToMap(req.headers.cookie);
-		var new_cookies = cookieToMap(process.env.NETEASE_COOKIE);
+	if (url.path.includes('url')) {
+		const replaced = [];
 
-		Object.entries(new_cookies).forEach(([key, value]) => {
-			cookies[key] = value;
-		});
+		// Merge rather than replace: the client's own cookie carries the
+		// platform and version this hook later reads back out of it.
+		if (process.env.NETEASE_COOKIE) {
+			const cookies = cookieToMap(req.headers.cookie || '');
+			Object.entries(cookieToMap(process.env.NETEASE_COOKIE)).forEach(
+				([key, value]) => {
+					cookies[key] = value;
+				}
+			);
+			setHeader(req.headers, 'Cookie', mapToCookie(cookies));
+			replaced.push('Cookie');
+		}
 
-		req.headers.cookie = mapToCookie(cookies);
-		logger.debug('Replace netease cookie');
+		if (process.env.NETEASE_USER_AGENT) {
+			setHeader(
+				req.headers,
+				'User-Agent',
+				process.env.NETEASE_USER_AGENT
+			);
+			replaced.push('User-Agent');
+		}
+
+		if (process.env.NETEASE_MCONFIG_INFO) {
+			setHeader(
+				req.headers,
+				'MConfig-Info',
+				process.env.NETEASE_MCONFIG_INFO
+			);
+			replaced.push('MConfig-Info');
+		}
+
+		if (replaced.length)
+			logger.debug(`Replaced the netease ${replaced.join(', ')}.`);
 	}
 
 	if (
@@ -154,6 +301,7 @@ hook.request.before = (ctx) => {
 		) &&
 		req.method === 'POST' &&
 		(url.path.startsWith('/eapi/') || // eapi
+			url.path.startsWith('/xeapi/') || // xeapi
 			// url.path.startsWith('/api/') || // api
 			url.path.startsWith('/api/linux/forward')) // linuxapi
 	) {
@@ -164,7 +312,10 @@ hook.request.before = (ctx) => {
 				if ('x-napm-retry' in req.headers)
 					delete req.headers['x-napm-retry'];
 				req.headers['X-Real-IP'] = '118.88.88.88';
-				if ('x-aeapi' in req.headers) req.headers['x-aeapi'] = 'false';
+				// xeapi always answers gzipped, and the codec handles that on
+				// its own; for eapi we opt out so the body stays plain JSON.
+				if ('x-aeapi' in req.headers && !url.path.startsWith('/xeapi/'))
+					req.headers['x-aeapi'] = 'false';
 				if (
 					req.url.includes('stream') ||
 					req.url.includes('/eapi/cloud/upload/check')
@@ -179,6 +330,8 @@ hook.request.before = (ctx) => {
 						netease.crypto = 'linuxapi';
 					} else if (url.path.startsWith('/eapi/')) {
 						netease.crypto = 'eapi';
+					} else if (url.path.startsWith('/xeapi/')) {
+						netease.crypto = 'xeapi';
 					} else if (url.path.startsWith('/api/')) {
 						netease.crypto = 'api';
 					}
@@ -227,6 +380,18 @@ hook.request.before = (ctx) => {
 								netease.e_r = false;
 							}
 							break;
+						case 'xeapi':
+							// The path is not part of the ciphertext here, it
+							// is the request URL itself.
+							netease.path =
+								'/api/' +
+								url.path
+									.slice('/xeapi/'.length)
+									.split('?')
+									.shift();
+							netease.param = readXeapiParam(body);
+							netease.e_r = true; // xeapi is always encrypted
+							break;
 						case 'api':
 							data = {};
 							decodeURIComponent(body)
@@ -246,11 +411,19 @@ hook.request.before = (ctx) => {
 					ctx.netease = netease;
 					// console.log(netease.path, netease.param)
 
-					if (netease.path === '/api/song/enhance/download/url')
-						return pretendPlay(ctx);
+					// The download endpoints are answered by asking for the
+					// playable URL instead, which needs the request to be
+					// re-encrypted — impossible for xeapi, whose key only the
+					// upstream server holds. Its response is matched as-is.
+					if (netease.crypto !== 'xeapi') {
+						if (netease.path === '/api/song/enhance/download/url')
+							return pretendPlay(ctx);
 
-					if (netease.path === '/api/song/enhance/download/url/v1')
-						return pretendPlayV1(ctx);
+						if (
+							netease.path === '/api/song/enhance/download/url/v1'
+						)
+							return pretendPlayV1(ctx);
+					}
 
 					if (BLOCK_ADS) {
 						if (netease.path.startsWith('/api/ad')) {
@@ -320,6 +493,10 @@ hook.request.after = (ctx) => {
 		proxyRes.statusCode === 200
 	)
 		proxyRes.statusCode = 206;
+	// Do this for every xeapi response, patched or not: the session it hands
+	// over is what unseals the requests that come after it.
+	if (netease && netease.crypto === 'xeapi')
+		rememberXeapiSession(proxyRes.headers);
 	if (
 		netease &&
 		hook.target.path.has(netease.path) &&
@@ -331,6 +508,15 @@ hook.request.after = (ctx) => {
 				buffer.length ? (proxyRes.body = buffer) : Promise.reject()
 			)
 			.then((buffer) => {
+				// The body has been buffered, and `read()` already undid any
+				// transfer compression. Drop the headers that described the
+				// original framing now rather than after the patching, so a
+				// response we end up not parsing is still served in a shape
+				// that matches these headers.
+				['transfer-encoding', 'content-encoding', 'content-length']
+					.filter((key) => key in proxyRes.headers)
+					.forEach((key) => delete proxyRes.headers[key]);
+
 				const patch = (string) =>
 					string.replace(
 						/([^\\]"\s*:\s*)(\d{16,})(\s*[}|,])/g,
@@ -338,92 +524,17 @@ hook.request.after = (ctx) => {
 					); // for js precision
 
 				if (netease.e_r) {
-					// eapi's e_r is true, needs to be encrypted
-					netease.jsonBody = JSON.parse(
-						patch(crypto.eapi.decrypt(buffer).toString())
-					);
+					// The response is encrypted (eapi's e_r, or any xeapi
+					// one), and may carry a gzip stream inside.
+					const { body, compressed } =
+						crypto.eapi.decryptResponse(buffer);
+					netease.compressed = compressed;
+					netease.jsonBody = JSON.parse(patch(body.toString()));
 				} else {
 					netease.jsonBody = JSON.parse(patch(buffer.toString()));
 				}
 
-				if (ENABLE_LOCAL_VIP) {
-					const vipPath = '/api/music-vip-membership/client/vip/info';
-					if (
-						netease.path === '/batch' ||
-						netease.path === '/api/batch' ||
-						netease.path === vipPath
-					) {
-						const info =
-							netease.path === vipPath
-								? netease.jsonBody
-								: netease.jsonBody[vipPath];
-						const defaultPackage = {
-							iconUrl: null,
-							dynamicIconUrl: null,
-							isSign: false,
-							isSignIap: false,
-							isSignDeduct: false,
-							isSignIapDeduct: false,
-						};
-						const vipLevel = 7; // ? months
-						if (
-							info &&
-							(LOCAL_VIP_UID.length === 0 ||
-								LOCAL_VIP_UID.includes(info.data.userId))
-						) {
-							try {
-								const nowTime =
-									info.data.now || new Date().getTime();
-								const expireTime = nowTime + 31622400000;
-								info.data.redVipLevel = vipLevel;
-								info.data.redVipAnnualCount = 1;
-
-								info.data.musicPackage = {
-									...defaultPackage,
-									...info.data.musicPackage,
-									vipCode: 230,
-									vipLevel,
-									expireTime,
-								};
-
-								info.data.associator = {
-									...defaultPackage,
-									...info.data.associator,
-									vipCode: 100,
-									vipLevel,
-									expireTime,
-								};
-
-								if (ENABLE_LOCAL_SVIP) {
-									info.data.redplus = {
-										...defaultPackage,
-										...info.data.redplus,
-										vipCode: 300,
-										vipLevel,
-										expireTime,
-									};
-
-									info.data.albumVip = {
-										...defaultPackage,
-										...info.data.albumVip,
-										vipCode: 400,
-										vipLevel: 0,
-										expireTime,
-									};
-								}
-
-								if (netease.path === vipPath)
-									netease.jsonBody = info;
-								else netease.jsonBody[vipPath] = info;
-							} catch (error) {
-								logger.debug(
-									{ err: error },
-									'Unable to apply the local VIP.'
-								);
-							}
-						}
-					}
-				}
+				if (ENABLE_LOCAL_VIP) applyLocalVip(netease);
 
 				if (
 					new Set([401, 512]).has(netease.jsonBody.code) &&
@@ -431,7 +542,10 @@ hook.request.after = (ctx) => {
 				) {
 					if (netease.path.includes('manipulate'))
 						return tryCollect(ctx);
-					else if (netease.path === '/api/song/like')
+					else if (
+						netease.path === '/api/song/like' ||
+						netease.path === '/api/radio/like'
+					)
 						return tryLike(ctx);
 				} else if (netease.path.includes('url')) return tryMatch(ctx);
 				else if (netease.path.includes('/usertool/sound/'))
@@ -445,10 +559,6 @@ hook.request.after = (ctx) => {
 					return unblockLyricsEffects(netease.jsonBody);
 			})
 			.then(() => {
-				['transfer-encoding', 'content-encoding', 'content-length']
-					.filter((key) => key in proxyRes.headers)
-					.forEach((key) => delete proxyRes.headers[key]);
-
 				const inject = (key, value) => {
 					if (typeof value === 'object' && value != null) {
 						if ('cp' in value) value['cp'] = 1;
@@ -510,8 +620,11 @@ hook.request.after = (ctx) => {
 					/([^\\]"\s*:\s*)"(\d{16,})L"(\s*[}|,])/g,
 					'$1$2$3'
 				); // for js precision
-				proxyRes.body = netease.e_r // eapi's e_r is true, needs to be encrypted
-					? crypto.eapi.encrypt(Buffer.from(body))
+				proxyRes.body = netease.e_r // answer in the shape it arrived in
+					? crypto.eapi.encryptResponse(
+							Buffer.from(body),
+							netease.compressed
+						)
 					: body;
 			})
 			.catch(
@@ -563,6 +676,137 @@ hook.negotiate.before = (ctx) => {
 	if (target.has(socket.sni) && !target.has(url.hostname)) {
 		target.add(url.hostname);
 		ctx.decision = 'blank';
+	}
+};
+
+/**
+ * Rewrite the membership responses so the client believes it is a paying
+ * member. This has to cover both signals: the entitlement endpoint the player
+ * consults for playback, and the account endpoint the VIP badge is drawn from.
+ * Either may arrive on its own or as one entry of a `/batch`.
+ *
+ * @param {{ path: string, jsonBody: Record<string, any> }} netease
+ */
+const applyLocalVip = (netease) => {
+	const batched = netease.path === '/batch' || netease.path === '/api/batch';
+	const entry = (path) =>
+		batched
+			? netease.jsonBody[path]
+			: netease.path === path
+				? netease.jsonBody
+				: undefined;
+	const store = (path, value) => {
+		if (batched) netease.jsonBody[path] = value;
+		else netease.jsonBody = value;
+	};
+
+	VIP_INFO_PATHS.forEach((path) => {
+		const info = entry(path);
+		if (info === undefined) return;
+		if (patchVipEntitlement(info)) {
+			store(path, info);
+			logger.debug(`Applied the local VIP on ${path}.`);
+		}
+	});
+
+	VIP_ACCOUNT_PATHS.forEach((path) => {
+		const account = entry(path);
+		if (account === undefined) return;
+		if (patchVipAccount(account)) {
+			store(path, account);
+			logger.debug(`Applied the local VIP on ${path}.`);
+		}
+	});
+};
+
+/**
+ * The entitlement response: `associator`/`redplus`/`musicPackage` describe what
+ * the account is allowed to play. `redplus` is the SVIP tier.
+ *
+ * @param {Record<string, any>} info
+ * @return {boolean} Whether the response was patched.
+ */
+const patchVipEntitlement = (info) => {
+	if (!info || !info.data) return false;
+	if (LOCAL_VIP_UID.length !== 0 && !LOCAL_VIP_UID.includes(info.data.userId))
+		return false;
+
+	const defaultPackage = {
+		iconUrl: null,
+		dynamicIconUrl: null,
+		isSign: false,
+		isSignIap: false,
+		isSignDeduct: false,
+		isSignIapDeduct: false,
+	};
+	const vipLevel = 7; // ? months
+
+	try {
+		const nowTime = info.data.now || new Date().getTime();
+		const expireTime = nowTime + 31622400000;
+		info.data.redVipLevel = vipLevel;
+		info.data.redVipAnnualCount = 1;
+
+		info.data.musicPackage = {
+			...defaultPackage,
+			...info.data.musicPackage,
+			vipCode: 230,
+			vipLevel,
+			expireTime,
+		};
+
+		info.data.associator = {
+			...defaultPackage,
+			...info.data.associator,
+			vipCode: 100,
+			vipLevel,
+			expireTime,
+		};
+
+		if (ENABLE_LOCAL_SVIP) {
+			info.data.redplus = {
+				...defaultPackage,
+				...info.data.redplus,
+				vipCode: 300,
+				vipLevel,
+				expireTime,
+			};
+
+			info.data.albumVip = {
+				...defaultPackage,
+				...info.data.albumVip,
+				vipCode: 400,
+				vipLevel: 0,
+				expireTime,
+			};
+		}
+		return true;
+	} catch (error) {
+		logger.debug({ err: error }, 'Unable to apply the local VIP.');
+		return false;
+	}
+};
+
+/**
+ * The account response: `profile.vipType` is the flag the client draws the VIP
+ * badge from. `11` is the ordinary black-vinyl VIP, `100` the SVIP tier. Left
+ * untouched, the entitlement patch above shows nothing on the profile itself.
+ *
+ * @param {Record<string, any>} account
+ * @return {boolean} Whether the response was patched.
+ */
+const patchVipAccount = (account) => {
+	const profile = account && account.profile;
+	if (!profile) return false;
+	if (LOCAL_VIP_UID.length !== 0 && !LOCAL_VIP_UID.includes(profile.userId))
+		return false;
+
+	try {
+		profile.vipType = ENABLE_LOCAL_SVIP ? 100 : 11;
+		return true;
+	} catch (error) {
+		logger.debug({ err: error }, 'Unable to apply the local VIP account.');
+		return false;
 	}
 };
 
@@ -682,6 +926,64 @@ const tryLike = (ctx) => {
 const computeHash = (task) =>
 	request('GET', task.url).then((response) => crypto.md5.pipe(response));
 
+/**
+ * The quality tier a bitrate belongs to, in the vocabulary the newer clients
+ * use in place of a raw `br`.
+ *
+ * @param {number} br
+ * @return {string}
+ */
+const audioLevel = (br) => {
+	if (br >= 999000) return 'lossless';
+	if (br >= 320000) return 'exhigh';
+	if (br >= 192000) return 'higher';
+	return 'standard';
+};
+
+/**
+ * Which client is asking, so the replacement can be handed over in the shape
+ * it accepts. eapi states it in the `header` parameter, a xeapi request states
+ * it in its own headers instead, and the cookie is the last resort.
+ *
+ * @param {import('http').IncomingMessage} req
+ * @param {{ param: Record<string, unknown> }} netease
+ * @return {{ os: string, version: string }}
+ */
+const clientPlatform = (req, netease) => {
+	let header = {};
+	try {
+		const { header: value } = netease.param;
+		header = (typeof value === 'string' ? JSON.parse(value) : value) || {};
+	} catch (e) {}
+	const cookie = querystring.parse(
+		(req.headers.cookie || '').replace(/\s/g, ''),
+		';'
+	);
+	return {
+		os: header.os || req.headers['x-os'] || cookie.os || '',
+		version:
+			header.appver || req.headers['x-appver'] || cookie.appver || '',
+	};
+};
+
+/**
+ * The host the replacement is handed over on. Some clients cannot play the
+ * package endpoint over TLS (#84) and are served plain HTTP, which is picked
+ * from the platform they report. A client that reports no platform gets the
+ * endpoint as configured; set `PACKAGE_SCHEME` to `http` or `https` to decide
+ * for it rather than have the scheme guessed.
+ *
+ * @param {string} os
+ * @return {string}
+ */
+const packageEndpoint = (os) => {
+	const plain = () => global.endpoint.replace('https://', 'http://');
+	if (PACKAGE_SCHEME === 'http') return plain();
+	if (PACKAGE_SCHEME === 'https')
+		return global.endpoint.replace('http://', 'https://');
+	return PLAIN_ENDPOINT_OS.has(os) ? plain() : global.endpoint;
+};
+
 const tryMatch = (ctx) => {
 	const { req, netease } = ctx;
 	const { jsonBody } = netease;
@@ -691,51 +993,66 @@ const tryMatch = (ctx) => {
 	let tasks;
 	let target = 0;
 
+	// A refused response may carry nothing to patch — no entry, or none with a
+	// usable id. Stand one in so the track still goes through the providers.
+	if (BLOCKED_CODES.has(jsonBody.code)) {
+		const present = Array.isArray(jsonBody.data)
+			? jsonBody.data[0]
+			: jsonBody.data;
+		const id =
+			(present && Number(present.id)) || requestedId(netease.param);
+		if (!id) {
+			logger.debug(
+				`The upstream refused with ${jsonBody.code} and named no song, so there is nothing to match.`
+			);
+			return;
+		}
+		logger.debug(
+			`The upstream refused with ${jsonBody.code}, falling back to the providers for ${id}.`
+		);
+		jsonBody.data = [
+			{ ...present, id, code: jsonBody.code, url: null, br: 0 },
+		];
+	}
+
 	const inject = (item) => {
+		// A blocked response can carry no entry at all.
+		if (!item) return;
 		item.flag = 0;
+		// A response to a download request may leave the id out, so fall back
+		// to the one that was asked for.
+		const songId = item.id || requestedId(netease.param);
 		if (
-			(item.code !== 200 || item.freeTrialInfo || item.br < min_br) &&
-			(target === 0 || item.id === target)
+			songId &&
+			// A `200` that still has no url is as unplayable as an error.
+			(item.code !== 200 ||
+				!item.url ||
+				item.freeTrialInfo ||
+				item.br < min_br) &&
+			(target === 0 || songId === target)
 		) {
-			return match(item.id)
+			return match(songId)
 				.then((song) => {
-					let os = '';
-					try {
-						let { header } = netease.param;
-						header =
-							typeof header === 'string'
-								? JSON.parse(header)
-								: header;
-						const cookie = querystring.parse(
-							req.headers.cookie.replace(/\s/g, ''),
-							';'
-						);
-						os = header.os || cookie.os;
-					} catch (e) {}
+					const { os } = clientPlatform(req, netease);
 					item.type = song.br === 999000 ? 'flac' : 'mp3';
-					if (os === 'pc' || os === 'uwp') {
-						item.url = global.endpoint
-							? `${global.endpoint.replace(
-									'https://',
-									'http://'
-								)}/package/${crypto.base64.encode(song.url)}/${
-									item.id
-								}.${item.type}`
-							: song.url;
-					} else {
-						item.url = global.endpoint
-							? `${
-									global.endpoint
-								}/package/${crypto.base64.encode(song.url)}/${
-									item.id
-								}.${item.type}`
-							: song.url;
-					}
+					item.url = global.endpoint
+						? `${packageEndpoint(os)}/package/${crypto.base64.encode(
+								song.url
+							)}/${songId}.${item.type}`
+						: song.url;
 					item.md5 = song.md5 || crypto.md5.digest(song.url);
 					item.br = song.br || 128000;
 					item.size = song.size;
 					item.code = 200;
 					item.freeTrialInfo = null;
+					// A grey response leaves these null, and a player that
+					// reads the quality from them refuses a track it cannot
+					// classify. Describe the replacement the way upstream
+					// describes a track it serves itself.
+					item.encodeType = item.type;
+					item.level = audioLevel(item.br);
+					if ('time' in item && !item.time && song.duration)
+						item.time = song.duration;
 					return song;
 				})
 				.then((song) => {
@@ -768,24 +1085,12 @@ const tryMatch = (ctx) => {
 							.replace(/(?<=kuwo\.cn\/)\w+\/\w+\/resource\//, ''),
 						url: song.url,
 					};
-					try {
-						let { header } = netease.param;
-						header =
-							typeof header === 'string'
-								? JSON.parse(header)
-								: header;
-						const cookie = querystring.parse(
-							req.headers.cookie.replace(/\s/g, ''),
-							';'
-						);
-						const os = header.os || cookie.os,
-							version = header.appver || cookie.appver;
-						if (os in limit && newer(limit[os], version)) {
-							return cs
-								.cache(task, () => computeHash(task))
-								.then((value) => (item.md5 = value));
-						}
-					} catch (e) {}
+					const { os, version } = clientPlatform(req, netease);
+					if (os in limit && newer(limit[os], version)) {
+						return cs
+							.cache(task, () => computeHash(task))
+							.then((value) => (item.md5 = value));
+					}
 				})
 				.catch((e) => e && logger.error(e));
 		} else if (item.code === 200 && netease.web) {
@@ -802,20 +1107,50 @@ const tryMatch = (ctx) => {
 		jsonBody.data = jsonBody.data[0];
 		tasks = [inject(jsonBody.data)];
 	} else {
-		target = netease.web
-			? 0
-			: parseInt(
-					(
-						(Array.isArray(netease.param.ids)
-							? netease.param.ids
-							: JSON.parse(netease.param.ids))[0] || 0
-					)
-						.toString()
-						.replace('_0', '')
-				); // reduce time cost
+		target = netease.web ? 0 : requestedId(netease.param); // reduce time cost
 		tasks = jsonBody.data.map((item) => inject(item));
 	}
-	return Promise.all(tasks).catch((e) => e && logger.error(e));
+	return Promise.all(tasks)
+		.then(() => {
+			// A response the upstream refused carries its verdict at the top
+			// level, and a client that reads that first never looks at the
+			// entry we just filled in. Once something is playable, the refusal
+			// no longer describes the response.
+			if (
+				BLOCKED_CODES.has(jsonBody.code) &&
+				Array.isArray(jsonBody.data) &&
+				jsonBody.data.some(
+					(item) => item && item.code === 200 && item.url
+				)
+			) {
+				jsonBody.code = 200;
+				delete jsonBody.message;
+			}
+		})
+		.catch((e) => e && logger.error(e));
+};
+
+/**
+ * The id the client asked for, used to skip matching the rest of a response.
+ * Zero when the request parameters are unknown — which is the case for a xeapi
+ * request of a session the proxy has not seen the key of yet, and means every
+ * item of the response gets matched instead.
+ *
+ * @param {Record<string, unknown>} param
+ * @return {number}
+ */
+const requestedId = (param) => {
+	try {
+		const { ids } = param;
+		const list = Array.isArray(ids) ? ids : JSON.parse(ids);
+		return (
+			parseInt((list[0] || 0).toString().replace('_0', '')) ||
+			parseInt(param.id) ||
+			0
+		);
+	} catch (e) {
+		return parseInt(param.id) || 0;
+	}
 };
 
 const unblockSoundEffects = (obj) => {
