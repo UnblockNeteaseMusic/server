@@ -1,8 +1,4 @@
-const {
-	cacheStorage,
-	CacheStorageGroup,
-	getManagedCacheStorage,
-} = require('../cache');
+const { getManagedCacheStorage } = require('../cache');
 const insure = require('./insure');
 const select = require('./select');
 const request = require('../request');
@@ -62,20 +58,21 @@ async function getWbiKeys() {
 			Referer: 'https://www.bilibili.com/', //对于直接浏览器调用可能不适用
 		}
 	);
-	const {
-		data: {
-			wbi_img: { img_url, sub_url },
-		},
-	} = await res.json();
+	const jsonBody = await res.json();
+	const imgUrl = jsonBody?.data?.wbi_img?.img_url;
+	const subUrl = jsonBody?.data?.wbi_img?.sub_url;
+	if (typeof imgUrl !== 'string' || typeof subUrl !== 'string') {
+		throw new Error('Bilibili did not return WBI keys');
+	}
 
 	return {
-		img_key: img_url.slice(
-			img_url.lastIndexOf('/') + 1,
-			img_url.lastIndexOf('.')
+		img_key: imgUrl.slice(
+			imgUrl.lastIndexOf('/') + 1,
+			imgUrl.lastIndexOf('.')
 		),
-		sub_key: sub_url.slice(
-			sub_url.lastIndexOf('/') + 1,
-			sub_url.lastIndexOf('.')
+		sub_key: subUrl.slice(
+			subUrl.lastIndexOf('/') + 1,
+			subUrl.lastIndexOf('.')
 		),
 	};
 }
@@ -102,11 +99,12 @@ const getBiliVideoHeader = async () => {
 	const url = 'https://www.bilibili.com';
 
 	return cs.cache('bilicookie', () =>
-		request('GET', url).then((response) =>
-			response.headers['set-cookie']
+		request('GET', url).then((response) => {
+			const cookies = response.headers['set-cookie'];
+			return (Array.isArray(cookies) ? cookies : [])
 				.map((cookie) => cookie.split(';')[0])
-				.join('; ')
-		)
+				.join('; ');
+		})
 	);
 };
 
@@ -125,10 +123,17 @@ const search = (info) => {
 			})
 				.then((response) => response.json())
 				.then((jsonBody) => {
-					const list = jsonBody.data.result.map(format);
+					// Bilibili may return an error body (for example when the request is
+					// rate-limited) instead of a search result. Treat that as a normal
+					// provider miss so the caller can try another source, rather than
+					// throwing "Cannot read properties of undefined" here.
+					const result = jsonBody?.data?.result;
+					const list = Array.isArray(result)
+						? result.filter((song) => song?.bvid).map(format)
+						: [];
 					const matched = select(list, info);
 
-					return matched ? matched.id : Promise.reject();
+					return matched?.id ? matched.id : Promise.reject();
 				});
 		});
 	});
@@ -158,15 +163,23 @@ const track = (id) => {
 						return request('GET', url)
 							.then((response) => response.json())
 							.then((jsonBody) => {
-								if (jsonBody.code === 0) {
-									if (jsonBody.data.dash.audio != null) {
-										return jsonBody.data.dash.audio[0]
-											.base_url;
-									}
-									return Promise.reject();
-								} else {
+								const audio = jsonBody?.data?.dash?.audio;
+								const audioTrack = Array.isArray(audio)
+									? audio.find(
+											(item) =>
+												typeof item?.base_url ===
+													'string' ||
+												typeof item?.backup_url?.[0] ===
+													'string'
+										)
+									: undefined;
+								if (jsonBody?.code !== 0 || !audioTrack) {
 									return Promise.reject();
 								}
+								return (
+									audioTrack.base_url ||
+									audioTrack.backup_url[0]
+								);
 							})
 							.catch(() => insure().bilibili.track(id));
 					});
