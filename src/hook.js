@@ -257,13 +257,20 @@ hook.request.before = (ctx) => {
 	)
 		ctx.decision = 'proxy';
 
-	if (url.path.includes('url')) {
+	if (
+		hook.target.host.has(url.hostname) &&
+		(url.hostname === 'music.163.com' ||
+			url.hostname.endsWith('.music.163.com')) &&
+		url.path.includes('url')
+	) {
 		const replaced = [];
 
 		// Merge rather than replace: the client's own cookie carries the
 		// platform and version this hook later reads back out of it.
 		if (process.env.NETEASE_COOKIE) {
-			const cookies = cookieToMap(req.headers.cookie || '');
+			const cookies = req.headers.cookie
+				? cookieToMap(req.headers.cookie)
+				: {};
 			Object.entries(cookieToMap(process.env.NETEASE_COOKIE)).forEach(
 				([key, value]) => {
 					cookies[key] = value;
@@ -893,7 +900,11 @@ const tryCollect = (ctx) => {
 
 const tryLike = (ctx) => {
 	const { req, netease } = ctx;
-	const { trackId } = netease.param;
+	const { trackId, like } = netease.param || {};
+	if (!trackId || like === false || like === 'false') return;
+	// The radio endpoint also handles unlike requests. Only retry a known like.
+	if (netease.path === '/api/radio/like' && like !== true && like !== 'true')
+		return;
 	let pid = 0,
 		userId = 0;
 	return request('GET', 'http://music.163.com/api/v1/user/info', req.headers)
@@ -989,39 +1000,16 @@ const tryMatch = (ctx) => {
 	const { jsonBody } = netease;
 	/** @type {number} */
 	const min_br = Number(process.env.MIN_BR) || 0;
-	/** @type {Promise<any>[]} */
-	let tasks;
-	let target = 0;
+	const download = netease.path.includes('download');
+	const requested = requestedId(netease.param);
 
-	// A refused response may carry nothing to patch — no entry, or none with a
-	// usable id. Stand one in so the track still goes through the providers.
-	if (BLOCKED_CODES.has(jsonBody.code)) {
-		const present = Array.isArray(jsonBody.data)
-			? jsonBody.data[0]
-			: jsonBody.data;
-		const id =
-			(present && Number(present.id)) || requestedId(netease.param);
-		if (!id) {
-			logger.debug(
-				`The upstream refused with ${jsonBody.code} and named no song, so there is nothing to match.`
-			);
-			return;
-		}
-		logger.debug(
-			`The upstream refused with ${jsonBody.code}, falling back to the providers for ${id}.`
-		);
-		jsonBody.data = [
-			{ ...present, id, code: jsonBody.code, url: null, br: 0 },
-		];
-	}
-
-	const inject = (item) => {
+	const inject = (item, target = 0) => {
 		// A blocked response can carry no entry at all.
 		if (!item) return;
 		item.flag = 0;
 		// A response to a download request may leave the id out, so fall back
 		// to the one that was asked for.
-		const songId = item.id || requestedId(netease.param);
+		const songId = item.id || requested;
 		if (
 			songId &&
 			// A `200` that still has no url is as unplayable as an error.
@@ -1029,11 +1017,12 @@ const tryMatch = (ctx) => {
 				!item.url ||
 				item.freeTrialInfo ||
 				item.br < min_br) &&
-			(target === 0 || songId === target)
+			(target === 0 || Number(songId) === target)
 		) {
 			return match(songId)
 				.then((song) => {
 					const { os } = clientPlatform(req, netease);
+					item.id = songId;
 					item.type = song.br === 999000 ? 'flac' : 'mp3';
 					item.url = global.endpoint
 						? `${packageEndpoint(os)}/package/${crypto.base64.encode(
@@ -1051,12 +1040,11 @@ const tryMatch = (ctx) => {
 					// describes a track it serves itself.
 					item.encodeType = item.type;
 					item.level = audioLevel(item.br);
-					if ('time' in item && !item.time && song.duration)
-						item.time = song.duration;
+					if (!item.time && song.duration) item.time = song.duration;
 					return song;
 				})
 				.then((song) => {
-					if (!netease.path.includes('download') || song.md5) return;
+					if (!download || song.md5) return;
 					const newer = (base, target) => {
 						const difference = Array.from([base, target])
 							.map((version) =>
@@ -1093,7 +1081,7 @@ const tryMatch = (ctx) => {
 					}
 				})
 				.catch((e) => e && logger.error(e));
-		} else if (item.code === 200 && netease.web) {
+		} else if (item.code === 200 && netease.web && item.url) {
 			item.url = item.url.replace(
 				/(m\d+?)(?!c)\.music\.126\.net/,
 				'$1c.music.126.net'
@@ -1101,33 +1089,38 @@ const tryMatch = (ctx) => {
 		}
 	};
 
-	if (!Array.isArray(jsonBody.data)) {
-		tasks = [inject(jsonBody.data)];
-	} else if (netease.path.includes('download')) {
-		jsonBody.data = jsonBody.data[0];
-		tasks = [inject(jsonBody.data)];
-	} else {
-		target = netease.web ? 0 : requestedId(netease.param); // reduce time cost
-		tasks = jsonBody.data.map((item) => inject(item));
-	}
-	return Promise.all(tasks)
-		.then(() => {
-			// A response the upstream refused carries its verdict at the top
-			// level, and a client that reads that first never looks at the
-			// entry we just filled in. Once something is playable, the refusal
-			// no longer describes the response.
-			if (
-				BLOCKED_CODES.has(jsonBody.code) &&
-				Array.isArray(jsonBody.data) &&
-				jsonBody.data.some(
-					(item) => item && item.code === 200 && item.url
-				)
-			) {
+	if (BLOCKED_CODES.has(jsonBody.code)) {
+		const present = Array.isArray(jsonBody.data)
+			? jsonBody.data[0]
+			: jsonBody.data;
+		const id = Number(present?.id) || requested;
+		if (!id) {
+			logger.debug(
+				`The upstream refused with ${jsonBody.code} and named no song, so there is nothing to match.`
+			);
+			return;
+		}
+		logger.debug(
+			`The upstream refused with ${jsonBody.code}, falling back to the providers for ${id}.`
+		);
+		// Keep the original refusal intact until a provider supplies a URL.
+		const item = { ...present, id, code: jsonBody.code, url: null, br: 0 };
+		return inject(item).then(() => {
+			if (item.code === 200 && item.url) {
+				jsonBody.data = download ? item : [item];
 				jsonBody.code = 200;
 				delete jsonBody.message;
 			}
-		})
-		.catch((e) => e && logger.error(e));
+		});
+	}
+
+	if (!Array.isArray(jsonBody.data)) return inject(jsonBody.data);
+	if (download) {
+		jsonBody.data = jsonBody.data[0];
+		return inject(jsonBody.data);
+	}
+	const target = netease.web ? 0 : requested; // reduce time cost
+	return Promise.all(jsonBody.data.map((item) => inject(item, target)));
 };
 
 /**
@@ -1136,21 +1129,18 @@ const tryMatch = (ctx) => {
  * request of a session the proxy has not seen the key of yet, and means every
  * item of the response gets matched instead.
  *
- * @param {Record<string, unknown>} param
+ * @param {Record<string, unknown>} [param]
  * @return {number}
  */
-const requestedId = (param) => {
-	try {
-		const { ids } = param;
-		const list = Array.isArray(ids) ? ids : JSON.parse(ids);
-		return (
-			parseInt((list[0] || 0).toString().replace('_0', '')) ||
-			parseInt(param.id) ||
-			0
-		);
-	} catch (e) {
-		return parseInt(param.id) || 0;
+const requestedId = ({ ids, id } = {}) => {
+	if (ids) {
+		try {
+			const list = Array.isArray(ids) ? ids : JSON.parse(ids);
+			const firstId = parseInt(String(list?.[0] ?? '').replace('_0', ''));
+			if (firstId) return firstId;
+		} catch (e) {}
 	}
+	return parseInt(id) || 0;
 };
 
 const unblockSoundEffects = (obj) => {
