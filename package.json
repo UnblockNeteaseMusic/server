@@ -41,20 +41,20 @@
 		"pino-pretty": "^7.6.1"
 	},
 	"devDependencies": {
-		"@swc/core": "^1.15.46",
-		"@types/node": "^26.1.2",
+		"@swc/core": "^1.16.22",
+		"@types/node": "^26.6.6",
 		"@types/pino": "7.0.5",
-		"@yarnpkg/sdks": "^3.3.0",
-		"browserslist": "^4.28.7",
-		"core-js": "^3.49.0",
+		"@yarnpkg/sdks": "^3.3.2",
+		"browserslist": "^4.29.6",
+		"core-js": "^3.51.0",
 		"cross-env": "^10.1.0",
-		"jest": "^30.4.2",
+		"jest": "^30.5.2",
 		"pkg": "^5.8.1",
-		"prettier": "^3.9.6",
+		"prettier": "^3.10.1",
 		"swc-loader": "^0.2.7",
 		"terser-webpack-plugin": "^5.6.1",
 		"typescript": "^5.9.3",
-		"webpack": "^5.109.1",
+		"webpack": "^5.113.0",
 		"webpack-cli": "^6.0.1"
 	},
 	"resolutions": {
