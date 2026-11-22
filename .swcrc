@@ -1,7 +1,7 @@
 {
 	"env": {
 		"targets": {
-			"node": "12"
+			"node": "22"
 		},
 		"mode": "usage",
 		"coreJs": "3.32",

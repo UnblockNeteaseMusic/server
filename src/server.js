@@ -2,6 +2,7 @@ const fs = require('fs');
 const net = require('net');
 const path = require('path');
 const parse = require('url').parse;
+const { getAsset, isSea } = require('node:sea');
 
 const { logScope } = require('./logger');
 const logger = logScope('server');
@@ -217,11 +218,15 @@ const proxy = {
 	},
 };
 
-const cert = process.env.SIGN_CERT || path.join(__dirname, '..', 'server.crt');
-const key = process.env.SIGN_KEY || path.join(__dirname, '..', 'server.key');
+function readSigningFile(override, filename) {
+	if (override) return fs.readFileSync(override);
+	if (isSea()) return Buffer.from(getAsset(filename));
+	return fs.readFileSync(path.join(__dirname, '..', filename));
+}
+
 const options = {
-	key: fs.readFileSync(key),
-	cert: fs.readFileSync(cert),
+	key: readSigningFile(process.env.SIGN_KEY, 'server.key'),
+	cert: readSigningFile(process.env.SIGN_CERT, 'server.crt'),
 };
 
 const server = {

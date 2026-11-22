@@ -27,10 +27,10 @@ jobs:
             - name: Cleanup precompiled
               run: rm -rf precompiled/*
 
-            - name: Use Node.js 20
+            - name: Use Node.js 22
               uses: actions/setup-node@v7
               with:
-                  node-version: 20
+                  node-version: 22
                   cache: yarn
 
             - name: Install dependencies

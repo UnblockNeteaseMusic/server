@@ -60,7 +60,7 @@ typings/
 # next.js build output
 .next
 
-# pkg dist directory
+# Executable build output
 dist/
 
 # es6 transformation

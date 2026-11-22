@@ -19,9 +19,10 @@ jobs:
               # Setup .npmrc file to publish to npm
             - uses: actions/setup-node@v7
               with:
-                  node-version: 20
+                  node-version: 22
 
             - run: yarn
+            - run: yarn build
             - run: yarn npm publish
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -40,9 +41,10 @@ jobs:
               # Setup .npmrc file to publish to npm
             - uses: actions/setup-node@v7
               with:
-                  node-version: 20
+                  node-version: 22
 
             - run: yarn
+            - run: yarn build
             - run: yarn npm publish
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
