@@ -26,7 +26,7 @@ jobs:
                   fetch-depth: 0
                   persist-credentials: false
             - name: Check the change file
-              run: node scripts/release/changeset.cjs check "origin/${BASE}"
+              run: node scripts/release/changeset.mjs check "origin/${BASE}"
               env:
                   BASE: ${{ github.base_ref }}
                   SKIP_CHANGESET: ${{ contains(github.event.pull_request.labels.*.name, 'no changeset') }}

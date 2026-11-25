@@ -47,7 +47,7 @@ jobs:
                   permission-pull-requests: write
             - id: release
               name: Write CHANGELOG.md and the version
-              run: echo "tag=$(node scripts/release/changeset.cjs prepare "$VERSION")" >> "$GITHUB_OUTPUT"
+              run: echo "tag=$(node scripts/release/changeset.mjs prepare "$VERSION")" >> "$GITHUB_OUTPUT"
               env:
                   VERSION: ${{ inputs.version }}
             - id: notes
@@ -57,7 +57,7 @@ jobs:
                       echo 'body<<EOF'
                       echo "Merging this creates the draft release $TAG. Edit CHANGELOG.md on this branch first if the section should read differently."
                       echo
-                      node scripts/release/changeset.cjs notes "$TAG"
+                      node scripts/release/changeset.mjs notes "$TAG"
                       echo 'EOF'
                   } >> "$GITHUB_OUTPUT"
               env:
@@ -91,7 +91,7 @@ jobs:
                   GH_TOKEN: ${{ github.token }}
                   GH_REPO: ${{ github.repository }}
               run: |
-                  version=$(node scripts/release/changeset.cjs version)
+                  version=$(node scripts/release/changeset.mjs version)
                   tag="v$version"
                   if gh release view "$tag" >/dev/null 2>&1; then
                       echo "$tag already has a release"
@@ -99,7 +99,7 @@ jobs:
                   fi
                   previous=$(git describe --tags --abbrev=0 --match 'v[0-9]*' HEAD)
                   {
-                      node scripts/release/changeset.cjs notes "$tag"
+                      node scripts/release/changeset.mjs notes "$tag"
                       echo
                       # GitHub writes the new contributors and the link to the full changelog.
                       gh api "repos/$GH_REPO/releases/generate-notes" \

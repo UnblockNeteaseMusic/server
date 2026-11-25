@@ -13,8 +13,8 @@
 		"start:dev": "cross-env LOG_LEVEL=debug node src/app.js -e https://music.163.com",
 		"start": "cross-env node src/app.js -e https://music.163.com",
 		"build": "webpack",
-		"test": "node --test \"src/**/*.test.js\" \"scripts/**/*.test.js\"",
-		"changeset": "node scripts/release/changeset.cjs",
+		"test": "node --test \"src/**/*.test.js\" \"scripts/**/*.test.mjs\"",
+		"changeset": "node scripts/release/changeset.mjs",
 		"test:live": "cross-env LIVE_SOURCE_TESTS=1 node --test src/provider/bilivideo.test.js"
 	},
 	"pkg": {
