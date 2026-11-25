@@ -1,3 +1,5 @@
+const assert = require('node:assert/strict');
+const { beforeEach, describe, it, mock } = require('node:test');
 const {
 	CacheStorage,
 	CacheStorageEvents,
@@ -8,12 +10,12 @@ describe('CacheStorage', () => {
 	describe('CacheStorage#constructor', () => {
 		it('constructor() without the parameter "id" should work properly', () => {
 			const cs = new CacheStorage();
-			expect(cs.id).toBe('Default Cache Storage');
+			assert.strictEqual(cs.id, 'Default Cache Storage');
 		});
 
 		it('constructor() with the parameter "id" should work properly', () => {
 			const cs = new CacheStorage('JestTest');
-			expect(cs.id).toBe('JestTest');
+			assert.strictEqual(cs.id, 'JestTest');
 		});
 	});
 
@@ -26,8 +28,8 @@ describe('CacheStorage', () => {
 			});
 
 			cs.removeExpiredCache();
-			expect(cs.cacheMap.size).toBe(0);
-			expect(cs.cacheMap.get('JestExpireTest')).not.toBeDefined();
+			assert.strictEqual(cs.cacheMap.size, 0);
+			assert.strictEqual(cs.cacheMap.get('JestExpireTest'), undefined);
 		});
 
 		it('removeExpiredCache() will not remove the alive entries in the CacheStorage', () => {
@@ -44,60 +46,58 @@ describe('CacheStorage', () => {
 			cs.cacheMap.set('JestAliveTest', aliveTestObject);
 
 			cs.removeExpiredCache();
-			expect(cs.cacheMap.size).toBe(1);
-			expect(cs.cacheMap.get('JestExpireTest')).not.toBeDefined();
-			expect(cs.cacheMap.get('JestAliveTest')).toStrictEqual(
+			assert.strictEqual(cs.cacheMap.size, 1);
+			assert.strictEqual(cs.cacheMap.get('JestExpireTest'), undefined);
+			assert.deepStrictEqual(
+				cs.cacheMap.get('JestAliveTest'),
 				aliveTestObject
 			);
 		});
 
-		it('removeExpiredCache() can be called with CLEANUP (cs@cleanup) event.', (done) => {
+		it('removeExpiredCache() can be called with CLEANUP (cs@cleanup) event.', async () => {
 			const cs = new CacheStorage();
-
-			cs.on(CacheStorageEvents.CLEANUP, () => {
-				expect(cs.removeExpiredCache).toHaveBeenCalledTimes(1);
-				done();
-			});
-			cs.removeExpiredCache = jest.fn();
+			const cleaned = new Promise((resolve) =>
+				cs.on(CacheStorageEvents.CLEANUP, resolve)
+			);
+			cs.removeExpiredCache = mock.fn();
 
 			cs.emit(CacheStorageEvents.CLEANUP);
+			await cleaned;
+
+			assert.strictEqual(cs.removeExpiredCache.mock.callCount(), 1);
 		});
 	});
 
 	describe('CacheStorage#cache', () => {
 		it('cache() can correctly place the cache', async () => {
 			const cs = new CacheStorage();
-			const mockFunc = jest
-				.fn()
-				.mockReturnValue(Promise.resolve().then(() => '12345'));
+			const mockFunc = mock.fn(() => Promise.resolve('12345'));
 
 			await cs.cache('owo', mockFunc);
 
-			expect(mockFunc).toHaveBeenCalledTimes(1);
-			expect(cs.cacheMap.size).toBe(1);
-			expect(cs.cacheMap.get('owo')).toBeDefined();
-			expect(cs.cacheMap.get('owo').data).toBe('12345');
+			assert.strictEqual(mockFunc.mock.callCount(), 1);
+			assert.strictEqual(cs.cacheMap.size, 1);
+			assert.notStrictEqual(cs.cacheMap.get('owo'), undefined);
+			assert.strictEqual(cs.cacheMap.get('owo').data, '12345');
 		});
 
 		it('cache() can correctly reuse the cache', async () => {
 			const cs = new CacheStorage();
-			const mockFunc = jest
-				.fn()
-				.mockReturnValue(Promise.resolve().then(() => '12345'));
+			const mockFunc = mock.fn(() => Promise.resolve('12345'));
 
 			for (let i = 0; i < 5; i++) await cs.cache('owo', mockFunc);
 
-			expect(mockFunc).toHaveBeenCalledTimes(1);
-			expect(cs.cacheMap.size).toBe(1);
-			expect(cs.cacheMap.get('owo')).toBeDefined();
-			expect(cs.cacheMap.get('owo').data).toBe('12345');
+			assert.strictEqual(mockFunc.mock.callCount(), 1);
+			assert.strictEqual(cs.cacheMap.size, 1);
+			assert.notStrictEqual(cs.cacheMap.get('owo'), undefined);
+			assert.strictEqual(cs.cacheMap.get('owo').data, '12345');
 		});
 
 		it('cache() (once) should return the execution result', async () => {
 			const cs = new CacheStorage();
 			const mockFunc = () => Promise.resolve().then(() => '12345');
 
-			expect(await cs.cache('owo', mockFunc)).toBe('12345');
+			assert.strictEqual(await cs.cache('owo', mockFunc), '12345');
 		});
 
 		it('cache() (twice) should return the execution result', async () => {
@@ -106,22 +106,21 @@ describe('CacheStorage', () => {
 
 			await cs.cache('owo', mockFunc);
 
-			expect(await cs.cache('owo', mockFunc)).toBe('12345');
+			assert.strictEqual(await cs.cache('owo', mockFunc), '12345');
 		});
 
-		it('cache() can trigger removeExpiredCache()', (done) => {
+		it('cache() can trigger removeExpiredCache()', async () => {
 			const cs = new CacheStorage();
-			const mockFunc = jest
-				.fn()
-				.mockReturnValue(Promise.resolve().then(() => '12345'));
-
-			cs.on(CacheStorageEvents.CLEANUP, () => {
-				expect(cs.removeExpiredCache).toHaveBeenCalledTimes(1);
-				done();
-			});
-			cs.removeExpiredCache = jest.fn();
+			const mockFunc = mock.fn(() => Promise.resolve('12345'));
+			const cleaned = new Promise((resolve) =>
+				cs.on(CacheStorageEvents.CLEANUP, resolve)
+			);
+			cs.removeExpiredCache = mock.fn();
 
 			cs.cache('owo', mockFunc);
+			await cleaned;
+
+			assert.strictEqual(cs.removeExpiredCache.mock.callCount(), 1);
 		});
 	});
 });
@@ -136,19 +135,19 @@ describe('CacheStorageGroup', () => {
 
 	describe('CacheStorageGroup#getInstance', () => {
 		it('CacheStorageGroup should be singleton', () => {
-			expect(CacheStorageGroup.getInstance()).toStrictEqual(instance);
+			assert.deepStrictEqual(CacheStorageGroup.getInstance(), instance);
 		});
 	});
 
 	describe('CacheStorageGroup#cleanup', () => {
 		it('CacheStorageGroup#cleanup should call the removeExpiredCache() in every storages registered', () => {
 			const cs = new CacheStorage('JestCSGTest');
-			cs.removeExpiredCache = jest.fn();
+			cs.removeExpiredCache = mock.fn();
 
 			instance.cacheStorages.add(cs);
 			instance.cleanup();
 
-			expect(cs.removeExpiredCache).toHaveBeenCalledTimes(1);
+			assert.strictEqual(cs.removeExpiredCache.mock.callCount(), 1);
 		});
 	});
 });

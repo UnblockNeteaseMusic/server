@@ -1,4 +1,12 @@
-const { DEFAULT_SOURCE } = require('../consts');
+const assert = require('node:assert/strict');
+const {
+	after,
+	before,
+	beforeEach,
+	describe,
+	mock,
+	test,
+} = require('node:test');
 const match = require('./match');
 
 const songList = [
@@ -11,18 +19,20 @@ const songList = [
 
 // These tests call Bilibili's real API, which refuses requests from the addresses of CI
 // runners. Run them from a normal network with `yarn test:live`.
-const describeLive = process.env.LIVE_SOURCE_TESTS ? describe : describe.skip;
 
-describeLive('Test if the default sources can get any song', () => {
-	songList.map(
-		(song) =>
+describe(
+	'Test if the default sources can get any song',
+	{ skip: !process.env.LIVE_SOURCE_TESTS },
+	() => {
+		songList.map((song) =>
 			test(
 				`finding: ${song}`,
-				async () => match(song, ['bilivideo']),
-				15000
-			) // can wait for only 15s
-	);
-});
+				{ timeout: 15000 }, // can wait for only 15s
+				async () => match(song, ['bilivideo'])
+			)
+		);
+	}
+);
 
 /* FOR DEVS: Uncomment these if you want to test all the sources */
 // const sources = Object.keys(PROVIDERS);
@@ -54,7 +64,7 @@ describe('Bilibili response handling', () => {
 
 	const response = (jsonBody, headers = {}) => ({
 		headers,
-		json: jest.fn().mockResolvedValue(jsonBody),
+		json: async () => jsonBody,
 	});
 
 	const wbiResponse = () =>
@@ -68,27 +78,33 @@ describe('Bilibili response handling', () => {
 			},
 		});
 
-	beforeAll(() => {
+	before(() => {
 		// Load a second provider instance with request mocked. The live-song
 		// tests above keep the real request function captured by match().
-		jest.resetModules();
-		jest.doMock('../request', () => jest.fn());
-		request = require('../request');
+		const requestId = require.resolve('../request');
+		request = mock.fn();
+		require.cache[requestId] = {
+			id: requestId,
+			filename: requestId,
+			loaded: true,
+			exports: request,
+		};
+		delete require.cache[require.resolve('./bilivideo')];
 		bilivideo = require('./bilivideo');
 	});
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		request.mock.resetCalls();
 		process.env.NO_CACHE = 'true';
 	});
 
-	afterAll(() => {
+	after(() => {
 		delete process.env.NO_CACHE;
-		jest.dontMock('../request');
+		delete require.cache[require.resolve('../request')];
 	});
 
 	test('returns an audio URL from a valid Bilibili response', async () => {
-		request.mockImplementation((method, url) => {
+		request.mock.mockImplementation((method, url) => {
 			if (url === 'https://www.bilibili.com') {
 				return Promise.resolve(
 					response({}, { 'set-cookie': ['buvid3=test; Path=/'] })
@@ -139,13 +155,14 @@ describe('Bilibili response handling', () => {
 			return Promise.reject(new Error(`Unexpected request: ${url}`));
 		});
 
-		await expect(
-			bilivideo.check({ keyword: 'Test Song', duration: 180000 })
-		).resolves.toBe('https://example.com/audio.m4s');
+		assert.strictEqual(
+			await bilivideo.check({ keyword: 'Test Song', duration: 180000 }),
+			'https://example.com/audio.m4s'
+		);
 	});
 
 	test('rejects cleanly when Bilibili omits the search result', async () => {
-		request.mockImplementation((method, url) => {
+		request.mock.mockImplementation((method, url) => {
 			if (url === 'https://www.bilibili.com') {
 				return Promise.resolve(response({}, {}));
 			}
@@ -160,13 +177,14 @@ describe('Bilibili response handling', () => {
 			return Promise.reject(new Error(`Unexpected request: ${url}`));
 		});
 
-		await expect(
-			bilivideo.check({ keyword: 'Blocked Song', duration: 180000 })
-		).rejects.toBeUndefined();
+		await assert.rejects(
+			bilivideo.check({ keyword: 'Blocked Song', duration: 180000 }),
+			(error) => error === undefined
+		);
 	});
 
 	test('uses a backup audio URL when base_url is absent', async () => {
-		request.mockImplementation((method, url) => {
+		request.mock.mockImplementation((method, url) => {
 			if (url.endsWith('/x/web-interface/nav')) {
 				return Promise.resolve(wbiResponse());
 			}
@@ -196,7 +214,8 @@ describe('Bilibili response handling', () => {
 			return Promise.reject(new Error(`Unexpected request: ${url}`));
 		});
 
-		await expect(bilivideo.track('BV1test')).resolves.toBe(
+		assert.strictEqual(
+			await bilivideo.track('BV1test'),
 			'https://example.com/backup.m4s'
 		);
 	});

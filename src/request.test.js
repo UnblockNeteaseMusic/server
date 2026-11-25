@@ -1,3 +1,5 @@
+const assert = require('node:assert/strict');
+const { describe, test } = require('node:test');
 const { CancelRequest } = require('./cancel');
 const request = require('./request');
 const RequestCancelled = require('./exceptions/RequestCancelled');
@@ -18,45 +20,57 @@ describe('request()', () => {
 			);
 		} catch (e) {
 			console.log(e);
-			expect(e).toBeInstanceOf(RequestCancelled);
+			assert.ok(e instanceof RequestCancelled);
 			return;
 		}
 
 		throw new Error('It should not be fulfilled.');
 	});
 
-	test('will NOT throw RequestCancelled when the CancelRequest has not been cancelled', async () => {
-		const cancelRequest = new CancelRequest();
+	test(
+		'will NOT throw RequestCancelled when the CancelRequest has not been cancelled',
+		{ timeout: 15000 },
+		async () => {
+			const cancelRequest = new CancelRequest();
 
-		return request(
-			'GET',
-			'https://www.example.com',
-			undefined,
-			undefined,
-			undefined,
-			cancelRequest
-		);
-	}, 15000);
+			return request(
+				'GET',
+				'https://www.example.com',
+				undefined,
+				undefined,
+				undefined,
+				cancelRequest
+			);
+		}
+	);
 
-	test('headers should be in the response', async () => {
+	test('headers should be in the response', { timeout: 15000 }, async () => {
 		const response = await request('GET', 'https://www.example.com');
 
-		expect(response.headers).toBeDefined();
-	}, 15000);
+		assert.notStrictEqual(response.headers, undefined);
+	});
 
-	test('.body(raw: false) should returns the string', async () => {
-		const response = await request('GET', 'https://www.example.com');
-		const body = await response.body(false);
+	test(
+		'.body(raw: false) should returns the string',
+		{ timeout: 15000 },
+		async () => {
+			const response = await request('GET', 'https://www.example.com');
+			const body = await response.body(false);
 
-		expect(typeof body === 'string').toBeTruthy();
-	}, 15000);
+			assert.ok(typeof body === 'string');
+		}
+	);
 
-	test('.body(raw: true) should returns the Buffer', async () => {
-		const response = await request('GET', 'https://www.example.com');
-		const body = await response.body(true);
+	test(
+		'.body(raw: true) should returns the Buffer',
+		{ timeout: 15000 },
+		async () => {
+			const response = await request('GET', 'https://www.example.com');
+			const body = await response.body(true);
 
-		expect(body).toBeInstanceOf(Buffer);
-	}, 15000);
+			assert.ok(body instanceof Buffer);
+		}
+	);
 
 	// FIXME: re-enable after api.opensource.org becomes online
 	//
