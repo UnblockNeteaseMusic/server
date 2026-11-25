@@ -9,7 +9,11 @@ const songList = [
 	33190502, // ACG; http://music.163.com/song/33190502
 ];
 
-describe('Test if the default sources can get any song', () => {
+// These tests call Bilibili's real API, which refuses requests from the addresses of CI
+// runners. Run them from a normal network with `yarn test:live`.
+const describeLive = process.env.LIVE_SOURCE_TESTS ? describe : describe.skip;
+
+describeLive('Test if the default sources can get any song', () => {
 	songList.map(
 		(song) =>
 			test(
