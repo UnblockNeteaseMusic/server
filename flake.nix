@@ -30,6 +30,7 @@
       overlays.default = final: prev: rec {
         nodejs = prev.nodejs_26;
         yarn = prev.yarn.override { inherit nodejs; };
+        yao-pkg = final.callPackage ./nix/pkg { };
       };
 
       devShells = forEachSupportedSystem (
@@ -43,6 +44,9 @@
               yarn
               jactionlint
               cosign
+              yao-pkg
+              xz
+              zip
               shellcheck
               nixfmt
               knope
