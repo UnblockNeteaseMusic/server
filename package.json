@@ -13,19 +13,12 @@
 		"start:dev": "cross-env LOG_LEVEL=debug node src/app.js -e https://music.163.com",
 		"start": "cross-env node src/app.js -e https://music.163.com",
 		"build": "webpack",
-		"pkg": "pkg . --out-path=dist/",
 		"test": "jest"
 	},
 	"pkg": {
 		"assets": [
 			"server.key",
 			"server.crt"
-		],
-		"targets": [
-			"node18-linux-arm64",
-			"node18-win-arm64",
-			"node18-linux-x64",
-			"node18-win-x64"
 		],
 		"outputPath": "dist"
 	},
@@ -44,12 +37,12 @@
 		"@swc/core": "^1.16.22",
 		"@types/node": "^26.6.6",
 		"@types/pino": "7.0.5",
+		"@yao-pkg/pkg": "^6.26.0",
 		"@yarnpkg/sdks": "^3.3.2",
 		"browserslist": "^4.29.6",
 		"core-js": "^3.51.0",
 		"cross-env": "^10.1.0",
 		"jest": "^30.5.2",
-		"pkg": "^5.8.1",
 		"prettier": "^3.10.1",
 		"swc-loader": "^0.2.7",
 		"terser-webpack-plugin": "^5.6.1",

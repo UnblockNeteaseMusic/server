@@ -1,0 +1,9 @@
+{
+	"name": "yao-pkg-tool",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Pins @yao-pkg/pkg and its dependency tree for the Nix dev shell",
+	"dependencies": {
+		"@yao-pkg/pkg": "6.26.0"
+	}
+}
