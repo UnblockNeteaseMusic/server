@@ -16,8 +16,8 @@ concurrency:
 
 jobs:
     changeset:
-        # The release pull request deletes the change files.
-        if: github.head_ref != 'release/next'
+        # The release pull request deletes the change files. Dependabot writes none.
+        if: github.head_ref != 'release/next' && github.actor != 'dependabot[bot]'
         runs-on: ubuntu-slim
         timeout-minutes: 5
         steps:
