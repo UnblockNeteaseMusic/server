@@ -1,6 +1,6 @@
-const assert = require('node:assert/strict');
-const { describe, test } = require('node:test');
-const { parseChange, nextVersion, render } = require('./changeset.cjs');
+import assert from 'node:assert/strict';
+import { describe, test } from 'node:test';
+import { nextVersion, parseChange, render } from './changeset.mjs';
 
 describe('parseChange', () => {
 	test('reads the type, the title and the body', () => {

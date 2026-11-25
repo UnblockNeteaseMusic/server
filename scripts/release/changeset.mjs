@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 // Change files in .changeset/ -> the next section of CHANGELOG.md and the notes of the release.
 //
-//   changeset.cjs check <base-ref>        a pull request adds a valid change file, or is exempt
-//   changeset.cjs prepare [<version>]     write CHANGELOG.md and package.json, delete the files,
+//   changeset.mjs check <base-ref>        a pull request adds a valid change file, or is exempt
+//   changeset.mjs prepare [<version>]     write CHANGELOG.md and package.json, delete the files,
 //                                         print the tag
-//   changeset.cjs notes <version>         print the notes of a version from CHANGELOG.md
-//   changeset.cjs version                 print the version of the newest section of CHANGELOG.md
-const fs = require('fs');
-const path = require('path');
-const { execFileSync } = require('child_process');
+//   changeset.mjs notes <version>         print the notes of a version from CHANGELOG.md
+//   changeset.mjs version                 print the version of the newest section of CHANGELOG.md
+import { execFileSync } from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
 
-const ROOT = path.join(__dirname, '..', '..');
+const ROOT = path.join(import.meta.dirname, '..', '..');
 const CHANGE_DIR = path.join(ROOT, '.changeset');
 const CHANGELOG = path.join(ROOT, 'CHANGELOG.md');
 const PACKAGE = path.join(ROOT, 'package.json');
@@ -195,7 +195,7 @@ function check(base) {
 	);
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const [command, arg] = process.argv.slice(2);
 	try {
 		if (command === 'check') check(arg);
@@ -204,11 +204,11 @@ if (require.main === module) {
 		else if (command === 'notes') process.stdout.write(notes(arg));
 		else if (command === 'version') console.log(sections()[0][1]);
 		else
-			throw new Error('usage: changeset.cjs check|prepare|notes|version');
+			throw new Error('usage: changeset.mjs check|prepare|notes|version');
 	} catch (error) {
 		console.error(`error: ${error.message}`);
 		process.exit(1);
 	}
 }
 
-module.exports = { parseChange, nextVersion, render };
+export { nextVersion, parseChange, render };
