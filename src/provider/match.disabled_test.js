@@ -1,3 +1,4 @@
+const { describe, test } = require('node:test');
 const { DEFAULT_SOURCE } = require('../consts');
 const match = require('./match');
 

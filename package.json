@@ -13,9 +13,9 @@
 		"start:dev": "cross-env LOG_LEVEL=debug node src/app.js -e https://music.163.com",
 		"start": "cross-env node src/app.js -e https://music.163.com",
 		"build": "webpack",
-		"test": "jest",
+		"test": "node --test \"src/**/*.test.js\" \"scripts/**/*.test.js\"",
 		"changeset": "node scripts/release/changeset.cjs",
-		"test:live": "cross-env LIVE_SOURCE_TESTS=1 jest src/provider/bilivideo.test.js"
+		"test:live": "cross-env LIVE_SOURCE_TESTS=1 node --test src/provider/bilivideo.test.js"
 	},
 	"pkg": {
 		"assets": [
@@ -44,7 +44,6 @@
 		"browserslist": "^4.29.6",
 		"core-js": "^3.51.0",
 		"cross-env": "^10.1.0",
-		"jest": "^30.5.2",
 		"prettier": "^3.10.1",
 		"swc-loader": "^0.2.7",
 		"terser-webpack-plugin": "^5.6.1",
