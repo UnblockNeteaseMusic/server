@@ -2,8 +2,8 @@ name: Release
 
 # A tag vX.Y.Z (pushed by release-pr.yml after the release pull request is merged) builds and signs
 # the executables and creates the draft release with them attached and the notes: the TL; DR; and
-# the lists of the section, then the new contributors and the full changelog link that GitHub
-# writes. Releases are immutable, so the draft is complete before anyone can publish it.
+# the lists of the section, the download steps (scripts/release/install.md), then the new
+# contributors and the full changelog link that GitHub writes. Releases are immutable, so the draft is complete before anyone can publish it.
 #
 # A maintainer publishes the draft. That publishes the npm package (npm trusted publishing, no
 # token), the GitHub Packages package and the Docker image (signed with cosign). Each publishing
@@ -82,6 +82,8 @@ jobs:
                   previous=$(git describe --tags --abbrev=0 --match 'v[0-9]*' "$TAG^")
                   {
                       node scripts/release/changeset.mjs notes "$TAG"
+                      echo
+                      sed "s/{{TAG}}/$TAG/g" scripts/release/install.md
                       echo
                       # GitHub writes the new contributors and the link to the full changelog.
                       gh api "repos/$GH_REPO/releases/generate-notes" \
