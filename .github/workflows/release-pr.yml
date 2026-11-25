@@ -2,11 +2,14 @@ name: Release pull request
 
 # Run by hand on `enhanced`: the change files in .changeset/ become the next section of
 # CHANGELOG.md and the next version, in the pull request `chore(release): vX.Y.Z` from
-# release/next, opened by the release App (environment release-pr). Merge or close it before preparing another.
+# release/next, opened by the release App (environment release-pr), with the rebuilt precompiled/
+# bundle, which holds the version. Merge or close it before preparing another.
 #
-# Merging it starts the second job, which creates the draft release with the notes: the TL; DR;
-# and the lists of the section, then the new contributors and the full changelog link that GitHub
-# writes. A maintainer publishes the draft, and that starts release.yml.
+# Merging it starts the second job: it tags the last commit that changed CHANGELOG.md with the
+# newest section's version, unless that tag exists. The App pushes the tag, since a tag pushed with
+# GITHUB_TOKEN would start no workflow. The tag starts release.yml, which builds and signs the
+# executables and creates the draft release with them attached. Releases are immutable, so the
+# draft is complete before anyone can publish it.
 on:
     workflow_dispatch:
         inputs:
@@ -15,7 +18,7 @@ on:
                 default: ''
     push:
         branches: [enhanced]
-        paths: [CHANGELOG.md]
+        paths: [CHANGELOG.md, .github/workflows/release-pr.yml]
 
 permissions:
     contents: read
@@ -50,6 +53,9 @@ jobs:
               run: echo "tag=$(node scripts/release/changeset.mjs prepare "$VERSION")" >> "$GITHUB_OUTPUT"
               env:
                   VERSION: ${{ inputs.version }}
+            - uses: ./.github/actions/setup
+            - name: Rebuild precompiled/ with the new version
+              run: nix develop -c yarn build
             - id: notes
               name: Write the pull request body
               run: |
@@ -74,38 +80,40 @@ jobs:
                   body: ${{ steps.notes.outputs.body }}
                   labels: no changeset
 
-    draft:
-        if: github.event_name == 'push'
+    tag:
+        if: github.event_name == 'push' && github.ref == 'refs/heads/enhanced'
         runs-on: ubuntu-slim
-        timeout-minutes: 10
-        permissions:
-            contents: write
+        timeout-minutes: 5
+        environment: release-pr
         steps:
-            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-              with:
-                  fetch-depth: 0
-                  persist-credentials: false
-            - name: Create the draft release
+            - id: release
+              name: Find the release that has no tag
               shell: bash
               env:
                   GH_TOKEN: ${{ github.token }}
-                  GH_REPO: ${{ github.repository }}
               run: |
-                  version=$(node scripts/release/changeset.mjs version)
-                  tag="v$version"
-                  if gh release view "$tag" >/dev/null 2>&1; then
-                      echo "$tag already has a release"
+                  version=$(gh api "repos/$GITHUB_REPOSITORY/contents/CHANGELOG.md?ref=$GITHUB_SHA" \
+                      -H "Accept: application/vnd.github.raw" | awk '/^## [^ ]+ \(/ && !v { v = $2 } END { print v }')
+                  [ -n "$version" ] || { echo "CHANGELOG.md has no release section"; exit 1; }
+                  if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/v$version" --silent 2>/dev/null; then
+                      echo "v$version is already tagged"
                       exit 0
                   fi
-                  previous=$(git describe --tags --abbrev=0 --match 'v[0-9]*' HEAD)
-                  {
-                      node scripts/release/changeset.mjs notes "$tag"
-                      echo
-                      # GitHub writes the new contributors and the link to the full changelog.
-                      gh api "repos/$GH_REPO/releases/generate-notes" \
-                          -f tag_name="$tag" -f target_commitish="$GITHUB_SHA" \
-                          -f previous_tag_name="$previous" --jq .body \
-                          | awk '/^## New Contributors|^\*\*Full Changelog/ { p = 1 } p'
-                  } > "$RUNNER_TEMP/notes.md"
-                  gh release create "$tag" --draft --title "$tag" --target "$GITHUB_SHA" \
-                      --notes-file "$RUNNER_TEMP/notes.md"
+                  sha=$(gh api "repos/$GITHUB_REPOSITORY/commits?path=CHANGELOG.md&sha=$GITHUB_SHA&per_page=1" --jq '.[0].sha')
+                  echo "tag=v$version" >> "$GITHUB_OUTPUT"
+                  echo "sha=$sha" >> "$GITHUB_OUTPUT"
+            - id: app
+              if: steps.release.outputs.tag != ''
+              uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+              with:
+                  client-id: ${{ vars.RELEASE_BOT_CLIENT_ID }}
+                  private-key: ${{ secrets.RELEASE_BOT_PRIVATE_KEY }}
+                  repositories: ${{ github.event.repository.name }}
+                  permission-contents: write
+            - name: Tag the release commit
+              if: steps.release.outputs.tag != ''
+              env:
+                  GH_TOKEN: ${{ steps.app.outputs.token }}
+                  TAG: ${{ steps.release.outputs.tag }}
+                  SHA: ${{ steps.release.outputs.sha }}
+              run: gh api "repos/$GITHUB_REPOSITORY/git/refs" -f "ref=refs/tags/$TAG" -f "sha=$SHA" --silent
