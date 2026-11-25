@@ -1,0 +1,32 @@
+name: Changeset
+
+# A pull request adds a change file to .changeset/ (see .changeset/README.md), or takes the label
+# `no changeset` when it changes no behavior.
+on:
+    pull_request:
+        types: [opened, edited, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+    contents: read
+
+# A label and a push in a row leave only the last run.
+concurrency:
+    group: changeset-${{ github.event.pull_request.number }}
+    cancel-in-progress: true
+
+jobs:
+    changeset:
+        # The release pull request deletes the change files.
+        if: github.head_ref != 'release/next'
+        runs-on: ubuntu-slim
+        timeout-minutes: 5
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  fetch-depth: 0
+                  persist-credentials: false
+            - name: Check the change file
+              run: node scripts/release/changeset.cjs check "origin/${BASE}"
+              env:
+                  BASE: ${{ github.base_ref }}
+                  SKIP_CHANGESET: ${{ contains(github.event.pull_request.labels.*.name, 'no changeset') }}
