@@ -50,4 +50,6 @@ jobs:
                   delete-branch: true
                   title: 'build(precompiled): make a bundle with the dependencies'
                   body: Merge till a new release tagged.
-                  labels: ci:build
+                  labels: |
+                      ci:build
+                      no changeset

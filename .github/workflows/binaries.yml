@@ -1,0 +1,40 @@
+name: Binaries
+
+# Build the standalone executables of the checked-out commit and keep them as the artifacts
+# `binary-<target>`. The build jobs hold no credentials. Called by release-pr.yml, which signs
+# the files and puts them on the draft release, and by release.yml for a rehearsal.
+on:
+    workflow_call:
+
+permissions:
+    contents: read
+
+jobs:
+    binaries:
+        name: binary (${{ matrix.target }})
+        runs-on: ${{ matrix.runner }}
+        timeout-minutes: 30
+        strategy:
+            fail-fast: false
+            matrix:
+                # Linux builds the Linux and Windows files, since pkg downloads the Node.js binary of
+                # each target. macOS builds its own, which needs codesign.
+                include:
+                    - { target: linux-arm64, runner: ubuntu-26.04-arm }
+                    - { target: linux-x64, runner: ubuntu-26.04-arm }
+                    - { target: win-arm64, runner: ubuntu-26.04-arm }
+                    - { target: win-x64, runner: ubuntu-26.04-arm }
+                    - { target: macos-arm64, runner: macos-26 }
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
+            - uses: ./.github/actions/setup
+            - run: nix develop -c scripts/ci/binary.sh "$TARGET"
+              env:
+                  TARGET: ${{ matrix.target }}
+            - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+              with:
+                  name: binary-${{ matrix.target }}
+                  path: dist/
+                  if-no-files-found: error

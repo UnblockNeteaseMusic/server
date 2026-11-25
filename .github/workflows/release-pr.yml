@@ -2,17 +2,23 @@ name: Release pull request
 
 # Run by hand on `enhanced`: the change files in .changeset/ become the next section of
 # CHANGELOG.md and the next version, in the pull request `chore(release): vX.Y.Z` from
-# release/next, opened by the release App (environment release-pr). Merge or close it before preparing another.
+# release/next, opened by the release App (environment release-pr), with the rebuilt precompiled/
+# bundle, which holds the version. Merge or close it before preparing another.
 #
-# Merging it starts the second job, which creates the draft release with the notes: the TL; DR;
-# and the lists of the section, then the new contributors and the full changelog link that GitHub
-# writes. A maintainer publishes the draft, and that starts release.yml.
+# Merging it builds and signs the executables and creates the draft release with them attached and
+# the notes: the TL; DR; and the lists of the section, then the new contributors and the full
+# changelog link that GitHub writes. Releases are immutable, so the draft is complete before
+# anyone can publish it. A maintainer publishes the draft, and that starts release.yml.
 on:
     workflow_dispatch:
         inputs:
             version:
                 description: 'Version instead of the one the change files give (0.29.0); empty for theirs'
                 default: ''
+            draft:
+                description: 'Create the draft release of the newest CHANGELOG.md version, which has none, instead of preparing a release pull request'
+                type: boolean
+                default: false
     push:
         branches: [enhanced]
         paths: [CHANGELOG.md]
@@ -26,7 +32,7 @@ concurrency:
 
 jobs:
     prepare:
-        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/enhanced'
+        if: github.event_name == 'workflow_dispatch' && !inputs.draft && github.ref == 'refs/heads/enhanced'
         runs-on: ubuntu-slim
         timeout-minutes: 10
         # The App's key lives in this environment, whose rules keep it to `enhanced`.
@@ -50,6 +56,9 @@ jobs:
               run: echo "tag=$(node scripts/release/changeset.mjs prepare "$VERSION")" >> "$GITHUB_OUTPUT"
               env:
                   VERSION: ${{ inputs.version }}
+            - uses: ./.github/actions/setup
+            - name: Rebuild precompiled/ with the new version
+              run: nix develop -c yarn build
             - id: notes
               name: Write the pull request body
               run: |
@@ -74,38 +83,77 @@ jobs:
                   body: ${{ steps.notes.outputs.body }}
                   labels: no changeset
 
-    draft:
-        if: github.event_name == 'push'
+    plan:
+        if: github.event_name == 'push' || (inputs.draft && github.ref == 'refs/heads/enhanced')
         runs-on: ubuntu-slim
-        timeout-minutes: 10
-        permissions:
-            contents: write
+        timeout-minutes: 5
+        outputs:
+            tag: ${{ steps.plan.outputs.tag }}
+            create: ${{ steps.plan.outputs.create }}
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
-                  fetch-depth: 0
                   persist-credentials: false
-            - name: Create the draft release
+            - id: plan
+              name: Look for a release of the newest version
               shell: bash
               env:
                   GH_TOKEN: ${{ github.token }}
                   GH_REPO: ${{ github.repository }}
               run: |
-                  version=$(node scripts/release/changeset.mjs version)
-                  tag="v$version"
+                  tag="v$(node scripts/release/changeset.mjs version)"
+                  echo "tag=$tag" >> "$GITHUB_OUTPUT"
                   if gh release view "$tag" >/dev/null 2>&1; then
                       echo "$tag already has a release"
-                      exit 0
+                      echo "create=false" >> "$GITHUB_OUTPUT"
+                  else
+                      echo "create=true" >> "$GITHUB_OUTPUT"
                   fi
+
+    binaries:
+        needs: plan
+        if: needs.plan.outputs.create == 'true'
+        permissions:
+            contents: read
+        uses: ./.github/workflows/binaries.yml
+
+    draft:
+        needs: [plan, binaries]
+        runs-on: ubuntu-slim
+        timeout-minutes: 15
+        environment: github-release
+        permissions:
+            contents: write
+            id-token: write
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  fetch-depth: 0
+                  persist-credentials: false
+            - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+              with:
+                  pattern: binary-*
+                  path: dist
+                  merge-multiple: true
+            - uses: ./.github/actions/setup
+            - name: Sign the executables
+              run: nix develop -c scripts/ci/sign.sh dist
+            - name: Create the draft release
+              shell: bash
+              env:
+                  GH_TOKEN: ${{ github.token }}
+                  GH_REPO: ${{ github.repository }}
+                  TAG: ${{ needs.plan.outputs.tag }}
+              run: |
                   previous=$(git describe --tags --abbrev=0 --match 'v[0-9]*' HEAD)
                   {
-                      node scripts/release/changeset.mjs notes "$tag"
+                      node scripts/release/changeset.mjs notes "$TAG"
                       echo
                       # GitHub writes the new contributors and the link to the full changelog.
                       gh api "repos/$GH_REPO/releases/generate-notes" \
-                          -f tag_name="$tag" -f target_commitish="$GITHUB_SHA" \
+                          -f tag_name="$TAG" -f target_commitish="$GITHUB_SHA" \
                           -f previous_tag_name="$previous" --jq .body \
                           | awk '/^## New Contributors|^\*\*Full Changelog/ { p = 1 } p'
                   } > "$RUNNER_TEMP/notes.md"
-                  gh release create "$tag" --draft --title "$tag" --target "$GITHUB_SHA" \
-                      --notes-file "$RUNNER_TEMP/notes.md"
+                  gh release create "$TAG" --draft --title "$TAG" --target "$GITHUB_SHA" \
+                      --notes-file "$RUNNER_TEMP/notes.md" dist/*

@@ -1,9 +1,11 @@
 name: Release
 
-# Publish a GitHub release to every channel: the standalone executables (signed with cosign), the
-# npm package (npm trusted publishing, no token), GitHub Packages and the Docker image (signed with
-# cosign). The build jobs hold no credentials; each publishing job has its own environment, whose
-# rules keep its credentials to release runs.
+# Publish a GitHub release to the package channels: the npm package (npm trusted publishing, no
+# token), GitHub Packages and the Docker image (signed with cosign). Each publishing job has its
+# own environment, whose rules keep its credentials to release runs.
+#
+# The executables are not built here. Releases are immutable, so release-pr.yml builds and signs
+# them and creates the draft release with them already attached; publishing the draft starts this.
 #
 # Manual run: rehearse. It builds every executable and publishes nothing.
 on:
@@ -19,63 +21,9 @@ concurrency:
     cancel-in-progress: false
 
 jobs:
-    binaries:
-        name: binary (${{ matrix.target }})
-        runs-on: ${{ matrix.runner }}
-        timeout-minutes: 30
-        strategy:
-            fail-fast: false
-            matrix:
-                # Linux builds the Linux and Windows files, since pkg downloads the Node.js binary of
-                # each target. macOS builds its own, which needs codesign.
-                include:
-                    - { target: linux-arm64, runner: ubuntu-26.04-arm }
-                    - { target: linux-x64, runner: ubuntu-26.04-arm }
-                    - { target: win-arm64, runner: ubuntu-26.04-arm }
-                    - { target: win-x64, runner: ubuntu-26.04-arm }
-                    - { target: macos-arm64, runner: macos-26 }
-        steps:
-            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-              with:
-                  persist-credentials: false
-            - uses: ./.github/actions/setup
-            - run: nix develop -c scripts/ci/binary.sh "$TARGET"
-              env:
-                  TARGET: ${{ matrix.target }}
-            - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-              with:
-                  name: binary-${{ matrix.target }}
-                  path: dist/
-                  if-no-files-found: error
-
-    github-release:
-        name: GitHub Release assets
-        if: github.event_name == 'release'
-        needs: binaries
-        runs-on: ubuntu-slim
-        timeout-minutes: 15
-        environment: github-release
-        permissions:
-            contents: write
-            id-token: write
-        steps:
-            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-              with:
-                  persist-credentials: false
-            - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-              with:
-                  pattern: binary-*
-                  path: dist
-                  merge-multiple: true
-            - uses: ./.github/actions/setup
-            - name: Sign the executables
-              run: nix develop -c scripts/ci/sign.sh dist
-            - name: Upload to the release
-              run: gh release upload "$TAG" dist/* --clobber
-              env:
-                  GH_TOKEN: ${{ github.token }}
-                  GH_REPO: ${{ github.repository }}
-                  TAG: ${{ github.event.release.tag_name }}
+    rehearsal:
+        if: github.event_name == 'workflow_dispatch'
+        uses: ./.github/workflows/binaries.yml
 
     npm:
         name: npm
