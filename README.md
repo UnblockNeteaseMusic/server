@@ -21,7 +21,26 @@
 
 去右侧的 Releases 找到最新版本，然后在下方的 Assets 找到符合你系统架构的可运行文件。下载回来后点两下即可使用。
 
-> macOS 因为签名问题，暂时不提供可运行文件。请先按照其他做法使用。
+| 系统               | 文件                                                                   |
+| ------------------ | ---------------------------------------------------------------------- |
+| Linux              | `unblockneteasemusic-linux-x64`、`unblockneteasemusic-linux-arm64`     |
+| Windows            | `unblockneteasemusic-win-x64.exe`、`unblockneteasemusic-win-arm64.exe` |
+| macOS (Apple 芯片) | `unblockneteasemusic-macos-arm64`                                      |
+
+每个文件另有压缩版（Linux 和 macOS 为 `.tar.xz`，Windows 为 `.zip`），体积更小。
+
+> Linux 和 macOS 下载后需要加上执行权限：`chmod +x unblockneteasemusic-*`。
+>
+> macOS 的文件只有临时签名（ad hoc），没有经过 Apple 公证。从浏览器下载后，请先运行 `xattr -d com.apple.quarantine unblockneteasemusic-macos-arm64`，再启动。
+
+每个文件都用 [cosign](https://github.com/sigstore/cosign) 签名，旁边的 `.sigstore.json` 是验证用的 bundle，`SHA256SUMS` 列出所有文件的校验值：
+
+```bash
+cosign verify-blob unblockneteasemusic-linux-x64 \
+  --bundle unblockneteasemusic-linux-x64.sigstore.json \
+  --certificate-identity-regexp '^https://github.com/UnblockNeteaseMusic/server/\.github/workflows/release\.yml@' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+```
 
 ### NPM 安装
 
@@ -114,6 +133,25 @@ yarn
 yarn build
 node app.js # 即可使用 repo 的最新开发内容
 ```
+
+#### 开发环境（Nix）
+
+仓库带有 `flake.nix`，`nix develop` 会提供 Node.js 26、Yarn、jactionlint、cosign 和打包用的 pkg：
+
+```bash
+nix develop
+yarn
+scripts/ci/lint.sh # 检查 workflow 与格式
+yarn test
+```
+
+#### 编译可运行文件
+
+```bash
+nix develop -c scripts/ci/binary.sh linux-x64 # 或 linux-arm64、win-x64、win-arm64、macos-arm64
+```
+
+结果在 `dist/`。`macos-arm64` 需要在 macOS 上编译。
 
 #### 采用（而不编译）最新的 package
 
