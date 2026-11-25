@@ -1,0 +1,111 @@
+name: Release pull request
+
+# Run by hand on `enhanced`: the change files in .changeset/ become the next section of
+# CHANGELOG.md and the next version, in the pull request `chore(release): vX.Y.Z` from
+# release/next, opened by the release App (environment release-pr). Merge or close it before preparing another.
+#
+# Merging it starts the second job, which creates the draft release with the notes: the TL; DR;
+# and the lists of the section, then the new contributors and the full changelog link that GitHub
+# writes. A maintainer publishes the draft, and that starts release.yml.
+on:
+    workflow_dispatch:
+        inputs:
+            version:
+                description: 'Version instead of the one the change files give (0.29.0); empty for theirs'
+                default: ''
+    push:
+        branches: [enhanced]
+        paths: [CHANGELOG.md]
+
+permissions:
+    contents: read
+
+concurrency:
+    group: release-pr-${{ github.ref }}
+    cancel-in-progress: false
+
+jobs:
+    prepare:
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/enhanced'
+        runs-on: ubuntu-slim
+        timeout-minutes: 10
+        # The App's key lives in this environment, whose rules keep it to `enhanced`.
+        environment: release-pr
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  fetch-depth: 0
+                  persist-credentials: false
+            # A pull request opened with GITHUB_TOKEN starts no checks; one opened by the App does.
+            - id: app
+              uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+              with:
+                  client-id: ${{ vars.RELEASE_BOT_CLIENT_ID }}
+                  private-key: ${{ secrets.RELEASE_BOT_PRIVATE_KEY }}
+                  repositories: ${{ github.event.repository.name }}
+                  permission-contents: write
+                  permission-pull-requests: write
+            - id: release
+              name: Write CHANGELOG.md and the version
+              run: echo "tag=$(node scripts/release/changeset.cjs prepare "$VERSION")" >> "$GITHUB_OUTPUT"
+              env:
+                  VERSION: ${{ inputs.version }}
+            - id: notes
+              name: Write the pull request body
+              run: |
+                  {
+                      echo 'body<<EOF'
+                      echo "Merging this creates the draft release $TAG. Edit CHANGELOG.md on this branch first if the section should read differently."
+                      echo
+                      node scripts/release/changeset.cjs notes "$TAG"
+                      echo 'EOF'
+                  } >> "$GITHUB_OUTPUT"
+              env:
+                  TAG: ${{ steps.release.outputs.tag }}
+            - uses: peter-evans/create-pull-request@3ffccacd46053766916f087ce41d627c0b8cf2d1 # v8.1.3
+              with:
+                  token: ${{ steps.app.outputs.token }}
+                  branch: release/next
+                  delete-branch: true
+                  author: 'unmbot[bot] <360948888+unmbot[bot]@users.noreply.github.com>'
+                  committer: 'unmbot[bot] <360948888+unmbot[bot]@users.noreply.github.com>'
+                  commit-message: 'chore(release): ${{ steps.release.outputs.tag }}'
+                  title: 'chore(release): ${{ steps.release.outputs.tag }}'
+                  body: ${{ steps.notes.outputs.body }}
+                  labels: no changeset
+
+    draft:
+        if: github.event_name == 'push'
+        runs-on: ubuntu-slim
+        timeout-minutes: 10
+        permissions:
+            contents: write
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  fetch-depth: 0
+                  persist-credentials: false
+            - name: Create the draft release
+              shell: bash
+              env:
+                  GH_TOKEN: ${{ github.token }}
+                  GH_REPO: ${{ github.repository }}
+              run: |
+                  version=$(node scripts/release/changeset.cjs version)
+                  tag="v$version"
+                  if gh release view "$tag" >/dev/null 2>&1; then
+                      echo "$tag already has a release"
+                      exit 0
+                  fi
+                  previous=$(git describe --tags --abbrev=0 --match 'v[0-9]*' HEAD)
+                  {
+                      node scripts/release/changeset.cjs notes "$tag"
+                      echo
+                      # GitHub writes the new contributors and the link to the full changelog.
+                      gh api "repos/$GH_REPO/releases/generate-notes" \
+                          -f tag_name="$tag" -f target_commitish="$GITHUB_SHA" \
+                          -f previous_tag_name="$previous" --jq .body \
+                          | awk '/^## New Contributors|^\*\*Full Changelog/ { p = 1 } p'
+                  } > "$RUNNER_TEMP/notes.md"
+                  gh release create "$tag" --draft --title "$tag" --target "$GITHUB_SHA" \
+                      --notes-file "$RUNNER_TEMP/notes.md"

@@ -16,27 +16,36 @@ permissions:
 
 concurrency:
     group: precompiled-${{ github.ref }}
-    cancel-in-progress: true
+    cancel-in-progress: false
 
 jobs:
     build:
         runs-on: ubuntu-26.04-arm
         timeout-minutes: 15
-        permissions:
-            contents: write
-            pull-requests: write
+        # The App's key lives in this environment, whose rules keep it to `enhanced`.
+        environment: release-pr
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
                   persist-credentials: false
+            # A pull request opened with GITHUB_TOKEN starts no checks; one opened by the App does.
+            - id: app
+              uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+              with:
+                  client-id: ${{ vars.RELEASE_BOT_CLIENT_ID }}
+                  private-key: ${{ secrets.RELEASE_BOT_PRIVATE_KEY }}
+                  repositories: ${{ github.event.repository.name }}
+                  permission-contents: write
+                  permission-pull-requests: write
             - run: rm -rf precompiled/*
             - uses: ./.github/actions/setup
             - run: nix develop -c yarn build
             - uses: peter-evans/create-pull-request@3ffccacd46053766916f087ce41d627c0b8cf2d1 # v8.1.3
               with:
-                  token: ${{ github.token }}
+                  token: ${{ steps.app.outputs.token }}
                   commit-message: 'build(precompiled): make a bundle with the dependencies'
-                  author: 'github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>'
+                  author: 'unmbot[bot] <360948888+unmbot[bot]@users.noreply.github.com>'
+                  committer: 'unmbot[bot] <360948888+unmbot[bot]@users.noreply.github.com>'
                   branch: ci/build-precompiled
                   delete-branch: true
                   title: 'build(precompiled): make a bundle with the dependencies'

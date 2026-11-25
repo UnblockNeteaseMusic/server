@@ -14,6 +14,7 @@
 		"start": "cross-env node src/app.js -e https://music.163.com",
 		"build": "webpack",
 		"test": "jest",
+		"changeset": "node scripts/release/changeset.cjs",
 		"test:live": "cross-env LIVE_SOURCE_TESTS=1 jest src/provider/bilivideo.test.js"
 	},
 	"pkg": {
