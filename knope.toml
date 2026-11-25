@@ -1,0 +1,24 @@
+# Change files in .changeset/ and release pull requests (see CONTRIBUTING.md, "Releases").
+[package]
+versioned_files = ["package.json"]
+changelog = "CHANGELOG.md"
+
+[changes]
+ignore_conventional_commits = true
+
+[[workflows]]
+name = "prepare-release"
+
+[[workflows.steps]]
+type = "PrepareRelease"
+
+# knope writes package.json through its JSON serializer, which drops the final newline.
+[[workflows.steps]]
+type = "Command"
+command = "yarn prettier -w package.json"
+
+[[workflows]]
+name = "document-change"
+
+[[workflows.steps]]
+type = "CreateChangeFile"

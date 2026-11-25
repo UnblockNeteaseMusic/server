@@ -1,0 +1,8 @@
+name: Set up
+description: Install Nix and the packages of the Yarn lock file.
+runs:
+    using: composite
+    steps:
+        - uses: DeterminateSystems/determinate-nix-action@4b040423529d49b1a19ba918742e0aa9aa95031a # v3.24.3
+        - run: nix develop -c yarn install --immutable
+          shell: bash

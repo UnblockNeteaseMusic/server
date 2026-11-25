@@ -1,0 +1,124 @@
+name: Release
+
+# Publish a GitHub release to every channel: the standalone executables (signed with cosign), the
+# npm package (npm trusted publishing, no token), GitHub Packages and the Docker image (signed with
+# cosign). The build jobs hold no credentials; each publishing job has its own environment, whose
+# rules keep its credentials to release runs.
+#
+# Manual run: rehearse. It builds every executable and publishes nothing.
+on:
+    release:
+        types: [published]
+    workflow_dispatch:
+
+permissions:
+    contents: read
+
+concurrency:
+    group: release-${{ github.ref }}
+    cancel-in-progress: false
+
+jobs:
+    binaries:
+        name: binary (${{ matrix.target }})
+        runs-on: ubuntu-26.04-arm
+        timeout-minutes: 30
+        strategy:
+            fail-fast: false
+            matrix:
+                target: [linux-arm64, linux-x64, win-arm64, win-x64]
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
+            - uses: ./.github/actions/setup
+            - run: nix develop -c scripts/ci/binary.sh "$TARGET"
+              env:
+                  TARGET: ${{ matrix.target }}
+            - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+              with:
+                  name: binary-${{ matrix.target }}
+                  path: dist/
+                  if-no-files-found: error
+
+    github-release:
+        name: GitHub Release assets
+        if: github.event_name == 'release'
+        needs: binaries
+        runs-on: ubuntu-slim
+        timeout-minutes: 15
+        environment: github-release
+        permissions:
+            contents: write
+            id-token: write
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
+            - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+              with:
+                  pattern: binary-*
+                  path: dist
+                  merge-multiple: true
+            - uses: ./.github/actions/setup
+            - name: Sign the executables
+              run: nix develop -c scripts/ci/sign.sh dist
+            - name: Upload to the release
+              run: gh release upload "$TAG" dist/* --clobber
+              env:
+                  GH_TOKEN: ${{ github.token }}
+                  GH_REPO: ${{ github.repository }}
+                  TAG: ${{ github.event.release.tag_name }}
+
+    npm:
+        name: npm
+        if: github.event_name == 'release'
+        runs-on: ubuntu-slim
+        timeout-minutes: 15
+        environment: npm
+        permissions:
+            contents: read
+            # npm trusted publishing: the registry trusts this workflow's OIDC token, so no
+            # NPM_TOKEN exists. The package's trusted publisher names release.yml and `npm`.
+            id-token: write
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
+            - uses: ./.github/actions/setup
+            - run: nix develop -c npm publish --provenance --access public
+
+    github-packages:
+        name: GitHub Packages
+        if: github.event_name == 'release'
+        runs-on: ubuntu-slim
+        timeout-minutes: 15
+        environment: github-packages
+        permissions:
+            contents: read
+            packages: write
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
+            - uses: ./.github/actions/setup
+            - name: Publish
+              run: |
+                  umask 077
+                  printf '//npm.pkg.github.com/:_authToken=%s\n' "$GITHUB_TOKEN" > "$RUNNER_TEMP/npmrc"
+                  NPM_CONFIG_USERCONFIG="$RUNNER_TEMP/npmrc" \
+                      nix develop -c npm publish --registry https://npm.pkg.github.com
+              env:
+                  GITHUB_TOKEN: ${{ github.token }}
+
+    docker:
+        if: github.event_name == 'release'
+        permissions:
+            contents: read
+            id-token: write
+        uses: ./.github/workflows/docker.yml
+        with:
+            tags: |
+                pan93412/unblock-netease-music-enhanced:latest
+                pan93412/unblock-netease-music-enhanced:release
+                pan93412/unblock-netease-music-enhanced:${{ github.event.release.tag_name }}

@@ -1,0 +1,44 @@
+name: Precompiled bundle
+
+# Rebuild precompiled/ after a source change and open a pull request with the result.
+on:
+    push:
+        branches: [enhanced]
+        paths:
+            - '*.js'
+            - 'src/**.js'
+            - 'package.json'
+            - 'yarn.lock'
+    workflow_dispatch:
+
+permissions:
+    contents: read
+
+concurrency:
+    group: precompiled-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    build:
+        runs-on: ubuntu-26.04-arm
+        timeout-minutes: 15
+        permissions:
+            contents: write
+            pull-requests: write
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
+            - run: rm -rf precompiled/*
+            - uses: ./.github/actions/setup
+            - run: nix develop -c yarn build
+            - uses: peter-evans/create-pull-request@3ffccacd46053766916f087ce41d627c0b8cf2d1 # v8.1.3
+              with:
+                  token: ${{ github.token }}
+                  commit-message: 'build(precompiled): make a bundle with the dependencies'
+                  author: 'github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>'
+                  branch: ci/build-precompiled
+                  delete-branch: true
+                  title: 'build(precompiled): make a bundle with the dependencies'
+                  body: Merge till a new release tagged.
+                  labels: ci:build

@@ -1,0 +1,41 @@
+name: CI
+
+# Each job runs scripts/ci/<job>.sh in the Nix dev shell, the same as locally.
+on:
+    push:
+        branches: [enhanced]
+    pull_request:
+    merge_group:
+    workflow_dispatch:
+
+permissions:
+    contents: read
+
+concurrency:
+    group: ci-${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    lint:
+        runs-on: ubuntu-slim
+        timeout-minutes: 15
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
+            - uses: ./.github/actions/setup
+            - parallel:
+                  - name: Lint workflows
+                    run: nix develop -c scripts/ci/lint.sh workflows
+                  - name: Check formatting
+                    run: nix develop -c scripts/ci/lint.sh format
+
+    test:
+        runs-on: ubuntu-26.04-arm
+        timeout-minutes: 15
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
+            - uses: ./.github/actions/setup
+            - run: nix develop -c scripts/ci/test.sh

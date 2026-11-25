@@ -10,9 +10,13 @@ updates:
       directory: '/'
       schedule:
           interval: 'weekly'
+      cooldown:
+          default-days: 7
 
     # Maintain dependencies for npm
     - package-ecosystem: 'npm'
       directory: '/'
       schedule:
           interval: 'weekly'
+      cooldown:
+          default-days: 7
